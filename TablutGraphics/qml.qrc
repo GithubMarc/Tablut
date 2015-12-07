@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>MainForm.ui.qml</file>
+        <file>Case.qml</file>
+        <file>Piece.qml</file>
+        <file>Grille.qml</file>
+        <file>Piece.js</file>
+    </qresource>
+</RCC>
