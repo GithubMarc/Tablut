@@ -25,7 +25,7 @@ function highlightedCase() {
     var gridCaseBottom = null;
 
     while (iTop + iLeft + iRight + iBottom > 0) {
-        if (index + j * grid.rows < 81 && iBottom == 1 && (index + j * grid.rows) % grid.columns == index % grid.columns) {
+        if (index + j * grid.rows < board.model && iBottom == 1 && (index + j * grid.rows) % grid.columns == index % grid.columns) {
             gridCaseBottom = board.itemAt(index + j * grid.rows);
             if (gridCaseBottom.pion == null) {
                 gridCaseBottom.border.color = KING_COLOR;
@@ -61,7 +61,7 @@ function highlightedCase() {
             iLeft = 0;
         }
 
-        if (index + j < 81 && iRight == 1 && Math.floor((index + j) / grid.rows) == Math.floor(index / grid.rows) && iRight == 1) {
+        if (index + j < board.model && iRight == 1 && Math.floor((index + j) / grid.rows) == Math.floor(index / grid.rows) && iRight == 1) {
             gridCaseRight = board.itemAt(index + j);
             if (gridCaseRight.pion == null) {
                 gridCaseRight.border.color = KING_COLOR;
@@ -102,11 +102,11 @@ function movePiece(color) {
         grid.savePiece.destroy();
         grid.savePiece = null;
         grid.saveIndex = -1;
-        if (grid.player == BLACK_TEAM) grid.player = RED_TEAM;
-        else grid.player = BLACK_TEAM;
         unhighlightedCase();
         checkCapture();
         checkWin()
+        if (grid.player == BLACK_TEAM) grid.player = RED_TEAM;
+        else grid.player = BLACK_TEAM;
     }
 }
 
@@ -189,19 +189,19 @@ function checkCapture() {
     if (topIndex >= 0 && topIndexPlus2 >= 0) {
         checkCaptureDirection(topIndex, topIndexPlus2);
     }
-    if (bottomIndex < 81 && bottomIndexPlus2 < 81) {
+    if (bottomIndex < board.model && bottomIndexPlus2 < board.model) {
         checkCaptureDirection(bottomIndex, bottomIndexPlus2);
     }
     if (leftIndex >= 0 && leftIndexPlus2 >= 0 && Math.floor(index / grid.rows) == Math.floor(leftIndex / grid.rows) && Math.floor(index / grid.rows) == Math.floor(leftIndexPlus2 / grid.rows)) {
         checkCaptureDirection(leftIndex, leftIndexPlus2);
     }
-    if (rightIndex < 81 && rightIndexPlus2 < 81 && Math.floor(index / grid.rows) == Math.floor(rightIndex / grid.rows) && Math.floor(index / grid.rows) == Math.floor(rightIndexPlus2 / grid.rows)) {
+    if (rightIndex < board.model && rightIndexPlus2 < board.model && Math.floor(index / grid.rows) == Math.floor(rightIndex / grid.rows) && Math.floor(index / grid.rows) == Math.floor(rightIndexPlus2 / grid.rows)) {
         checkCaptureDirection(rightIndex, rightIndexPlus2);
     }
 }
 
 function checkRedWin() {
-    if (pion.color == KING_COLOR && (index == 0 || index == 8 || index == 72 || index == 80)) {
+    if (pion.color == KING_COLOR && (index == 0 || index == grid.columns - 1 || index == board.model - grid.columns || index == board.model - 1)) {
         return true
     } else return false;
 }
@@ -210,37 +210,40 @@ function checkBlackWin() {
     //Tour de jeu du joueur noir
     var i = 0;
     var cpt = 0;
-    var stop = false;
 
     //Récupérer l'index du king
-    while (!stop && i < 81) {
+    while (i < board.model) {
         if (board.itemAt(i).pion != null) {
-            if (board.itemAt(i).pion.color == KING_COLOR) stop = true;
-            else i++;
-        } else i++;
+            if (board.itemAt(i).pion.color == KING_COLOR) break;
+        }
+        i++;
     }
 
-    if (i - grid.columns >= 0 && board.itemAt(i - grid.columns).pion != null && board.itemAt(i - grid.columns).pion.color == BLACK_COLOR) {
+    // Vérification case nord
+    if (i - grid.rows >= 0 && board.itemAt(i - grid.columns).pion != null && board.itemAt(i - grid.columns).pion.color == BLACK_COLOR) {
         cpt++;
     } else if (i - grid.columns < 0){
         cpt++;
     }
 
-    if (i + grid.columns <= 80 && board.itemAt(i + grid.columns).pion != null && board.itemAt(i + grid.columns).pion.color == BLACK_COLOR) {
+    // Vérification case sud
+    if (i + grid.columns <= board.model - 1 && board.itemAt(i + grid.columns).pion != null && board.itemAt(i + grid.columns).pion.color == BLACK_COLOR) {
         cpt++;
-    } else if (i + grid.columns > 80) {
+    } else if (i + grid.columns > board.model - 1) {
         cpt++;
     }
 
+    // Vérification case ouest
     if (i - 1 >= 0 && Math.floor((i - 1) / grid.columns) == Math.floor(i / grid.columns) && board.itemAt(i - 1).pion != null && board.itemAt(i - 1).pion.color == BLACK_COLOR) {
         cpt++;
     } else if (i - 1 >= 0 && Math.floor((i - 1) / grid.columns) != Math.floor(i / grid.columns)) {
         cpt++;
     }
 
-    if (i + 1 < 81 && Math.floor((i + 1) / grid.columns) == Math.floor(i / grid.columns) && board.itemAt(i + 1).pion != null && board.itemAt(i + 1).pion.color == BLACK_COLOR) {
+    // Vérification case est
+    if (i + 1 < board.model && Math.floor((i + 1) / grid.columns) == Math.floor(i / grid.columns) && board.itemAt(i + 1).pion != null && board.itemAt(i + 1).pion.color == BLACK_COLOR) {
         cpt++;
-    } else if (i + 1 < 81 && Math.floor((i + 1) / grid.columns) != Math.floor(i / grid.columns)) {
+    } else if (i + 1 < board.model && Math.floor((i + 1) / grid.columns) != Math.floor(i / grid.columns)) {
         cpt++;
     }
 
@@ -249,10 +252,10 @@ function checkBlackWin() {
 }
 
 function checkWin() {
-    if (checkBlackWin()) {
+    if (grid.player == BLACK_TEAM && checkBlackWin()) {
         console.log("Black won");
         return true;
-    } else if (checkRedWin()) {
+    } else if (grid.player == RED_TEAM && checkRedWin()) {
         console.log("Red won");
         return true;
     } else return false;
