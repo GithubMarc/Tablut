@@ -13,9 +13,9 @@ Grid {
 
     property Piece savePiece: null
     property Case saveCase: null
-    property int saveIndex: 0
+    property int saveIndex: -1
     property bool clicked: false
-    property int player: 0
+    property string player: PieceScript.BLACK_TEAM
 
     Repeater {
         id: board

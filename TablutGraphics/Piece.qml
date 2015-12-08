@@ -8,4 +8,6 @@ Rectangle {
     enabled: true
     clip: false
     anchors.centerIn: parent
+
+    property string team
 }
