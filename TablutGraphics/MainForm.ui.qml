@@ -3,24 +3,26 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 
 Item {
-    id: item1
-    width: 560
-    height: 560
-    anchors.centerIn: parent.Center
+    id: firstItem
+    anchors.horizontalCenter: parent.horizontalCenter
 
-    Rectangle {
-        id: rectangle1
-        border.width: 1
-        anchors.centerIn: parent.Center
+    ColumnLayout {
+        id: columnLayout1
+        width: firstItem.width
+        height: firstItem.height
+        spacing: 0
 
-        Grille{
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.bottomMargin: 0
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.fill: parent
-            //anchors.centerIn: parent
+        TimerLabel {
+            id: time
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Grille {
+            id: field
+            y: 42
+            width: 518
+            height: 518
+            anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 }
