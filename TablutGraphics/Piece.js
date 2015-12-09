@@ -1,9 +1,11 @@
+Qt.include("Score.js");
+
+
 var BLACK_COLOR = "#000000";
 var RED_COLOR = "#ff0000";
 var KING_COLOR = "#fff000";
 var BLACK_TEAM = "black";
 var RED_TEAM = "red";
-
 
 function createPion(container, color) {
     var component = Qt.createComponent("Piece.qml");
@@ -102,6 +104,7 @@ function movePiece(color) {
         grid.savePiece.destroy();
         grid.savePiece = null;
         grid.saveIndex = -1;
+        updateScore(); // Function from the Score.js script
         unhighlightedCase();
         checkCapture();
         checkWin()
