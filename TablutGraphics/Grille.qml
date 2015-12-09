@@ -15,6 +15,7 @@ Grid {
     property int saveIndex: -1
     property bool clicked: false
     property string player: PieceScript.BLACK_TEAM
+    property int scoring: 0
 
     Repeater {
         id: board
