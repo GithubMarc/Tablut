@@ -166,8 +166,10 @@ function checkMoveRules(indexFrom, indexTo) {
 
 function checkCaptureDirection(near, nearPlus2) {
     if (board.itemAt(near).pion !== null && board.itemAt(nearPlus2).pion !== null) {
-        if(board.itemAt(near).pion.color != board.itemAt(index).pion.color && board.itemAt(nearPlus2).pion.color == board.itemAt(index).pion.color) {
-            if (board.itemAt(near).pion.color != KING_COLOR) {
+        if(board.itemAt(near).pion.team != board.itemAt(index).pion.team && board.itemAt(nearPlus2).pion.team == board.itemAt(index).pion.team) {
+            if (board.itemAt(near).pion.color != KING_COLOR
+                    && board.itemAt(index).pion.color != KING_COLOR
+                    && board.itemAt(nearPlus2).pion.color != KING_COLOR) {
                 board.itemAt(near).pion.destroy();
                 board.itemAt(near).pion = null;
             }
@@ -201,8 +203,12 @@ function checkCapture() {
 }
 
 function checkRedWin() {
-    if (pion.color == KING_COLOR && (index == 0 || index == grid.columns - 1 || index == board.model - grid.columns || index == board.model - 1)) {
-        return true
+    if (pion.color == KING_COLOR) {
+        var line = Math.floor(index / grid.rows);
+        var column = index % grid.columns;
+        if (line == 0 || line == grid.rows - 1 || column == 0 || column == grid.columns - 1)
+            return true
+        else return false;
     } else return false;
 }
 
