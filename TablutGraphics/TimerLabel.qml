@@ -8,8 +8,6 @@ Rectangle {
     border.color: "red"
     border.width: 2
     color: "transparent"
-    width: 300
-    height :42
 
     property alias timer: timer
 
@@ -35,8 +33,10 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            if(timer.running == true) TimerScript.stopTimer();
-            else TimerScript.startTimer();
+            if(timer.running == true) {
+                TimerScript.stopTimer();
+                mainForm.state = "State1";
+            }
         }
     }
 }

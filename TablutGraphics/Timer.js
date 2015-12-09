@@ -6,14 +6,19 @@ function updateTime() {
 }
 
 function startTimer() {
-    time.timer.running = true;
+    timerLabel.timer.running = true;
 }
 
 function stopTimer() {
-    time.timer.running = false;
+    timerLabel.timer.running = false;
 }
 
 function resetTimer() {
     d = new Date(0, 0, 0, 0, 0, 0, 0);
+}
+
+function resumePart() {
+    mainForm.state = "base state";
+    mainForm.timerLabel.timer.running = true;
 }
 

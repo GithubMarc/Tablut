@@ -4,6 +4,8 @@ import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
+import "Timer.js" as TimerScript
+
 ApplicationWindow {
     id: applicationWindow
     title: qsTr("Plus qu'un jeu, un tablut")
@@ -29,6 +31,8 @@ ApplicationWindow {
     }
 
     MainForm {
+        state: "base state"
         id: mainForm
+        mouseArea.onClicked: TimerScript.resumePart();
     }
 }
