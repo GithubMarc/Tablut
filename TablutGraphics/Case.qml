@@ -1,10 +1,12 @@
-import QtQuick 2.0
+import QtQuick 2.4
+
 import "Piece.js" as PieceScript
+import "Timer.js" as TimerScript
 
 Rectangle {
     id: boardcase
-    width: 50
-    height: 50
+    width: grid.width / grid.columns
+    height: grid.height / grid.rows
     color: "#ffffff"
     enabled: true
     border.width: 1
@@ -12,8 +14,10 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: PieceScript.movePlayerPiece();
-        //onClicked: test();
+        onClicked: {
+            PieceScript.movePlayerPiece();
+            TimerScript.startTimer();
+        }
     }
 
     property Piece pion: null

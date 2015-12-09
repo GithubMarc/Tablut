@@ -6,5 +6,7 @@
         <file>Piece.qml</file>
         <file>Grille.qml</file>
         <file>Piece.js</file>
+        <file>Timer.js</file>
+        <file>TimerLabel.qml</file>
     </qresource>
 </RCC>

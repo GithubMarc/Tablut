@@ -5,11 +5,10 @@ import "Piece.js" as PieceScript
 
 Grid {
     id: grid
-    width: 560
-    height: 560
+    width: parent.width
+    height: parent.height
     rows: 9
     columns: rows
-    anchors.fill: parent
 
     property Piece savePiece: null
     property Case saveCase: null
