@@ -4,30 +4,25 @@ import QtQuick.Layouts 1.1
 
 Item {
     id: firstItem
-    width: 560
-    height: 560
-    anchors.horizontalCenter: parent.horizontalCenter
+    width: 650
+    height: 650
 
     property alias mouseArea: mouseArea
     property alias timerLabel: timerLabel
 
     ColumnLayout {
-        id: columnLayout1
-        x: 0
-        y: 0
-        width: firstItem.width
-        height: firstItem.height
-        spacing: 0
+        id: baseStateLayout
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 5
+        spacing: 5
 
         RowLayout {
-            id: rowLayout1
-            height: 42
+            id: firstLine
             anchors.right: field.right
             anchors.rightMargin: 0
             anchors.left: field.left
             anchors.leftMargin: 0
-            anchors.bottom: field.top
-            anchors.bottomMargin: 0
             spacing: 0
 
             TimerLabel {
@@ -40,7 +35,7 @@ Item {
             Score {
                 id: score
                 width: 75
-                height: 42
+                height: timerLabel.height
                 anchors.right: parent.right
                 anchors.rightMargin: 0
             }
@@ -48,29 +43,43 @@ Item {
 
         Grille {
             id: field
-            width: 518
-            height: 518
+            width: 550
+            height: 550
             anchors.horizontalCenter: parent.horizontalCenter
         }
     }
 
-    Label {
-        id: label1
-        x: 0
-        y: 0
-        text: qsTr("Label")
+    ColumnLayout {
+        id: pauseState
+        anchors.centerIn: parent
         visible: false
-        opacity: 0
 
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
+        Label {
+            id: pauseLabel
+            text: qsTr("Pause")
+            visible: false
+            anchors.horizontalCenter: parent.horizontalCenter
+            opacity: 0
+        }
+
+        Label {
+            id: resumeLabel
+            text: qsTr("Resume")
+            visible: false
+            anchors.horizontalCenter: parent.horizontalCenter
+            opacity: 0
+
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+                hoverEnabled: true
+            }
         }
     }
 
     states: [
         State {
-            name: "State1"
+            name: "Pause"
 
             PropertyChanges {
                 target: columnLayout1
@@ -78,11 +87,13 @@ Item {
             }
 
             PropertyChanges {
-                target: label1
-                x: 234
-                y: 261
-                width: 92
-                height: 39
+                target: columnLayout2
+                spacing: 5
+                opacity: 1
+            }
+
+            PropertyChanges {
+                target: pauseLabel
                 text: qsTr("Pause")
                 visible: true
                 font.family: "Courier"
@@ -91,6 +102,22 @@ Item {
                 font.pointSize: 24
                 opacity: 1
             }
+
+            PropertyChanges {
+                target: resumeLabel
+                color: "#000000"
+                text: qsTr("Resume")
+                visible: true
+                font.family: "Courier"
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                font.pointSize: 12
+                font.italic: true
+                opacity: 1
+            }
+        },
+        State {
+            name: "Connection"
         }
     ]
 }

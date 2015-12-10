@@ -35,7 +35,7 @@ Rectangle {
         onClicked: {
             if(timer.running == true) {
                 TimerScript.stopTimer();
-                mainForm.state = "State1";
+                mainForm.state = "Pause";
             }
         }
     }
