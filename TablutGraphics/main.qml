@@ -34,5 +34,11 @@ ApplicationWindow {
         state: "base state"
         id: mainForm
         mouseArea.onClicked: TimerScript.resumePart();
+        mouseArea.onEntered: {
+            mouseArea.parent.color = "#891ca8";
+        }
+        mouseArea.onExited: {
+            mouseArea.parent.color = "#000000";
+        }
     }
 }
