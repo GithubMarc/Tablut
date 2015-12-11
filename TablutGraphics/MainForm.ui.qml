@@ -6,15 +6,18 @@ Item {
     id: firstItem
     width: 650
     height: 650
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.verticalCenter: parent.verticalCenter
 
     property alias mouseArea: mouseArea
     property alias timerLabel: timerLabel
 
     ColumnLayout {
         id: baseStateLayout
+        visible: true
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 5
+        anchors.topMargin: 20
         spacing: 5
 
         RowLayout {
@@ -50,8 +53,9 @@ Item {
     }
 
     ColumnLayout {
-        id: pauseState
+        id: pauseStateLayout
         anchors.centerIn: parent
+        spacing: 5
         visible: false
 
         Label {
@@ -59,7 +63,6 @@ Item {
             text: qsTr("Pause")
             visible: false
             anchors.horizontalCenter: parent.horizontalCenter
-            opacity: 0
         }
 
         Label {
@@ -67,7 +70,6 @@ Item {
             text: qsTr("Resume")
             visible: false
             anchors.horizontalCenter: parent.horizontalCenter
-            opacity: 0
 
             MouseArea {
                 id: mouseArea
@@ -77,19 +79,69 @@ Item {
         }
     }
 
+    ColumnLayout {
+        id: connectionStateLayout
+        visible: false
+        spacing: 20
+        anchors.centerIn: parent
+
+        TextField {
+            id: loginTextField
+            width: 300
+            placeholderText: qsTr("Login")
+            visible: false
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        TextField {
+            id: passwordTextField
+            width: loginTextField.width
+            placeholderText: qsTr("Password")
+            visible: false
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
+        Rectangle {
+            id: connectionButton
+            width: 300
+            height: 40
+            radius: 10
+            color: "darkblue"
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            Label {
+               text: qsTr("Connection")
+               anchors.centerIn: parent
+               font.pointSize: 18
+               font.family: "Helvetica"
+               color: "white"
+            }
+
+            MouseArea {
+                anchors.fill: parent
+            }
+
+            visible: false
+        }
+    }
+
     states: [
         State {
             name: "Pause"
 
             PropertyChanges {
-                target: columnLayout1
+                target: baseStateLayout
                 visible: false
             }
 
             PropertyChanges {
-                target: columnLayout2
-                spacing: 5
-                opacity: 1
+                target: connectionStateLayout
+                visible: false
+            }
+
+            PropertyChanges {
+                target: pauseStateLayout
+                visible: true
             }
 
             PropertyChanges {
@@ -100,7 +152,6 @@ Item {
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
                 font.pointSize: 24
-                opacity: 1
             }
 
             PropertyChanges {
@@ -113,11 +164,41 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 font.pointSize: 12
                 font.italic: true
-                opacity: 1
             }
         },
+
         State {
             name: "Connection"
+
+            PropertyChanges {
+                target: baseStateLayout
+                visible: false
+            }
+
+            PropertyChanges {
+                target: pauseStateLayout
+                visible: false
+            }
+
+            PropertyChanges {
+                target: connectionStateLayout
+                visible: true
+            }
+
+            PropertyChanges {
+                target: loginTextField
+                visible: true
+            }
+
+            PropertyChanges {
+                target: passwordTextField
+                visible: true
+            }
+
+            PropertyChanges {
+                target: connectionButton
+                visible: true
+            }
         }
     ]
 }
