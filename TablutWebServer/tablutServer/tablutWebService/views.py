@@ -1,11 +1,18 @@
 #-*- coding: utf-8 -*-
 import json
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, Http404, HttpResponseForbidden
 from django.shortcuts import render
 from tablutWebService.models import *
 from django.core.exceptions import PermissionDenied
+from django.contrib.sessions.models import Session
+from django.contrib.auth.decorators import login_required
+import redis
+
+
+
 
 # Create your views here
 def testbase(request):
@@ -33,20 +40,19 @@ def user_connexion(request):
 	if request.method == 'POST':
 		try:
 			user_log = json.loads(request.body)
+			user_name = user_log["login"]
+			user_password = user_log["password"]
 		except:
 			return HttpResponse("bad format json")
-		user = authenticate(username = user_log["login"], password = user_log["password"])
+		user = authenticate(username = user_name, password = user_password)
 		if user is not None:
 			if user.is_active:
 				login(request, user)
-				print request.COOKIES
-				print "GEYGEY"
-				return HttpResponse("GEYGEY")
+				return HttpResponse("connected")
 			else:
 				print "connect fail"
 				return HttpResponse("connect fail")
 		else:
-			print "mauvais mdp ou login"
 			return HttpResponse("mauvais mdp ou login")
 	else:
 		raise PermissionDenied
@@ -57,13 +63,14 @@ def user_logout(request):
 	return HttpResponse("deconnexion")
 
 def new_user(request):
-	if request.method == 'POST'
+	if request.method == 'POST':
 		try:
-			user_log = json.loads(request.body)
+			new_user = json.loads(request.body)
+			user_email = new_user["email"]
+			user_password = new_user["password"]
 		except:
 			return HttpResponse("bad format json")
-		user = authenticate(username = user_log["login"], password = user_log["password"])
-		print "new user"
+		User.objects.create_user(user_email, user_email, user_password)
 		return HttpResponse("utilisateur créé")
 
 	else:

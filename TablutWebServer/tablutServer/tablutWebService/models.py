@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Create your models here.q
 class player_type(models.Model):
 	label = models.CharField(max_length = 100)
@@ -51,7 +52,7 @@ class friend_list(models.Model):
 
 class time(models.Model):
 	match = models.OneToOneField('match')
-	game_time = models.DateTimeField(auto_now_add=False, auto_now=False, verbose_name="Durée de la partie")
+	game_time = models.DateTimeField(auto_now_add=False, auto_now=False, verbose_name="Durée de la partie", default = '', blank = True)
 
 	def __str__(self):
 		return "Score de {0}".format(self.match.name)
