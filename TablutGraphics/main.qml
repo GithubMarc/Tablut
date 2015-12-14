@@ -1,19 +1,17 @@
-import QtQuick 2.4
-import QtQuick.Layouts 1.2
-import QtQuick.Controls 1.3
-import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.2
+import QtQuick 2.5
+import QtQuick.Controls 1.4
 
 import "Timer.js" as TimerScript
 
 ApplicationWindow {
     id: applicationWindow
     title: qsTr("Plus qu'un jeu, un tablut")
-    width: 640
-    height: 640
-    visible: true
+    width: minimumWidth
+    height: minimumHeight
     minimumWidth: 560
-    minimumHeight: 600
+    minimumHeight: 630
+
+    visible: true
 
     menuBar: MenuBar {
         Menu {
@@ -31,8 +29,8 @@ ApplicationWindow {
     }
 
     MainForm {
-        state: "base state"
         id: mainForm
-        mouseArea.onClicked: TimerScript.resumePart();
+        state: "Connection"
+        anchors.centerIn: parent
     }
 }

@@ -19,6 +19,6 @@ function resetTimer() {
 
 function resumePart() {
     mainForm.state = "base state";
-    mainForm.timerLabel.timer.running = true;
+    playPage.timerLabel.timer.running = true;
 }
 
