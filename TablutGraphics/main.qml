@@ -10,6 +10,7 @@ ApplicationWindow {
     height: minimumHeight
     minimumWidth: 560
     minimumHeight: 630
+    color: "#ffdc73"
 
     visible: true
 
@@ -30,7 +31,7 @@ ApplicationWindow {
 
     MainForm {
         id: mainForm
-        state: "Connection"
+        state: "Menu"
         anchors.centerIn: parent
     }
 }
