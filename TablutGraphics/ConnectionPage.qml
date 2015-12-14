@@ -59,13 +59,7 @@ Item {
                     border.width: 2
                     radius: 10
                 }
-                label: Text {
-                    text: qsTr("Connection")
-                    font.pointSize: 18
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
+                label: ButtonLabel { text: qsTr("Connection") }
             }
             onClicked: ConnectionScript.checkConnection();
         }

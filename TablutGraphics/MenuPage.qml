@@ -24,16 +24,7 @@ Item {
                     border.width: 2
                     radius: 10
                 }
-                label: Text {
-                    text: qsTr("Online")
-                    font.family: "britannic bold"
-                    font.pointSize: 22
-                    style: Text.Outline
-                    styleColor: "#744000"
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
+                label: ButtonLabel { text: qsTr("Online") }
             }
             onClicked: mainForm.state = "Connection"
         }
@@ -50,16 +41,7 @@ Item {
                     border.width: 2
                     radius: 10
                 }
-                label: Text {
-                    text: qsTr("Offline")
-                    font.family: "britannic bold"
-                    font.pointSize: 22
-                    style: Text.Outline
-                    styleColor: "#744000"
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
+                label: ButtonLabel { text: qsTr("Offline") }
             }
             onClicked: mainForm.state = "base state";
         }
@@ -76,16 +58,7 @@ Item {
                     border.width: 2
                     radius: 10
                 }
-                label: Text {
-                    text: qsTr("Options")
-                    font.family: "britannic bold"
-                    style: Text.Outline
-                    styleColor: "#744000"
-                    font.pointSize: 22
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
+                label: ButtonLabel { text: "Options" }
             }
             onClicked: ConnectionScript.checkConnection();
         }
