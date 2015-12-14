@@ -23,8 +23,8 @@ Item {
             style: TextFieldStyle {
                 background: Rectangle {
                     radius: 5
-                    border.color: "#333"
-                    border.width: 1
+                    border.color: "#744000"
+                    border.width: 2
                 }
             }
         }
@@ -41,8 +41,8 @@ Item {
             style: TextFieldStyle {
                 background: Rectangle {
                     radius: 5
-                    border.color: "#333"
-                    border.width: 1
+                    border.color: "#744000"
+                    border.width: 2
                 }
             }
         }
@@ -54,8 +54,9 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             style: ButtonStyle {
                 background: Rectangle {
-                    color: "darkblue"
-                    border.color: "#888"
+                    color: "#c77900"
+                    border.color: "#744000"
+                    border.width: 2
                     radius: 10
                 }
                 label: Text {
