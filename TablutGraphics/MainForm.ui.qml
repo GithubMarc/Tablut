@@ -28,6 +28,12 @@ Item {
         anchors.centerIn: parent
     }
 
+    OptionPage {
+        id: optionPage
+        visible: false
+        anchors.fill: parent
+    }
+
     states: [
 
         State {
@@ -50,6 +56,11 @@ Item {
 
             PropertyChanges {
                 target: menuPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: optionPage
                 visible: false
             }
         },
@@ -76,6 +87,11 @@ Item {
                 target: menuPage
                 visible: false
             }
+
+            PropertyChanges {
+                target: optionPage
+                visible: false
+            }
         },
         State {
             name: "Menu"
@@ -97,6 +113,40 @@ Item {
 
             PropertyChanges {
                 target: menuPage
+                visible: true
+            }
+
+            PropertyChanges {
+                target: optionPage
+                visible: false
+            }
+        },
+
+        State {
+            name: "Option"
+
+            PropertyChanges {
+                target: pausePage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: connectionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: playPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: menuPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: optionPage
                 visible: true
             }
         }
