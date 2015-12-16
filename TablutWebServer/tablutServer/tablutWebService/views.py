@@ -9,10 +9,11 @@ from tablutWebService.models import *
 from django.core.exceptions import PermissionDenied
 from django.contrib.sessions.models import Session
 from django.contrib.auth.decorators import login_required
-import redis
 
 
-
+serverAddr = "172.20.200.190"
+#serverAddr = "172.30.1.1"
+wsPort = 4000
 
 # Create your views here
 def testbase(request):
@@ -38,41 +39,64 @@ def testtemplate(request, var1, vartest):
 
 def user_connexion(request):
 	if request.method == 'POST':
+		resp = {}
 		try:
 			user_log = json.loads(request.body)
 			user_name = user_log["login"]
 			user_password = user_log["password"]
 		except:
-			return HttpResponse("bad format json")
+			resp["erreur"] = "bad format json"
+			return HttpResponse(resp, content_type = "application/json")
 		user = authenticate(username = user_name, password = user_password)
 		if user is not None:
 			if user.is_active:
+				resp["succès"] = "connecté"
 				login(request, user)
-				return HttpResponse("connected")
+				return HttpResponse(resp, content_type = "application/json")
 			else:
-				print "connect fail"
-				return HttpResponse("connect fail")
+				resp["erreur"] = "connect fail"
+				return HttpResponse(resp, content_type = "application/json")
 		else:
-			return HttpResponse("mauvais mdp ou login")
+			resp["erreur"] = "mauvais mdp ou login"
+			return HttpResponse(resp, content_type = "application/json")
 	else:
 		raise PermissionDenied
 
 
 def user_logout(request):
-	logout(request)
-	return HttpResponse("deconnexion")
+	if request.method == 'GET':
+		logout(request)
+		resp = {}
+		resp["succès"] = "deconnection"
+		return HttpResponse(resp, content_type = "application/json")
+	else:
+		raise PermissionDenied
 
 def new_user(request):
 	if request.method == 'POST':
+		resp = {}
 		try:
 			new_user = json.loads(request.body)
 			user_email = new_user["email"]
 			user_password = new_user["password"]
 		except:
-			return HttpResponse("bad format json")
+			resp["erreur"] = "bad format json"
+			return HttpResponse(resp, content_type = "application/json")
 		User.objects.create_user(user_email, user_email, user_password)
-		return HttpResponse("utilisateur créé")
+		resp["succès"] = "utilisateur créé"
+		return HttpResponse(addr, content_type = "application/json")
 
 	else:
 		raise PermissionDenied
+
+def return_webSocketAddr(request):
+	if request.method == 'GET':
+		addr = {}
+		addr["addresse"] = serverAddr
+		addr["wsport"] = wsPort
+		print addr
+		return HttpResponse(addr, content_type = "application/json")
+	else:
+		raise PermissionDenied
+
 
