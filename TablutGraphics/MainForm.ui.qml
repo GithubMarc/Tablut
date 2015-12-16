@@ -12,33 +12,29 @@ Item {
 
     PausePage {
         id: pausePage
+        visible: false
         anchors.centerIn: parent
     }
 
     ConnectionPage {
         id: connectionPage
+        visible: false
         anchors.centerIn: parent
     }
 
+    MenuPage {
+        id: menuPage
+        visible: false
+        anchors.centerIn: parent
+    }
+
+    OptionPage {
+        id: optionPage
+        visible: false
+        anchors.fill: parent
+    }
+
     states: [
-        State {
-            name: "base state"
-
-            PropertyChanges {
-                target: playPage
-                visible: true
-            }
-
-            PropertyChanges {
-                target: connectionPage
-                visible: false
-            }
-
-            PropertyChanges {
-                target: pausePage
-                visible: false
-            }
-        },
 
         State {
             name: "Pause"
@@ -57,6 +53,16 @@ Item {
                 target: pausePage
                 visible: true
             }
+
+            PropertyChanges {
+                target: menuPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: optionPage
+                visible: false
+            }
         },
 
         State {
@@ -74,6 +80,73 @@ Item {
 
             PropertyChanges {
                 target: connectionPage
+                visible: true
+            }
+
+            PropertyChanges {
+                target: menuPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: optionPage
+                visible: false
+            }
+        },
+        State {
+            name: "Menu"
+
+            PropertyChanges {
+                target: pausePage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: connectionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: playPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: menuPage
+                visible: true
+            }
+
+            PropertyChanges {
+                target: optionPage
+                visible: false
+            }
+        },
+
+        State {
+            name: "Option"
+
+            PropertyChanges {
+                target: pausePage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: connectionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: playPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: menuPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: optionPage
                 visible: true
             }
         }
