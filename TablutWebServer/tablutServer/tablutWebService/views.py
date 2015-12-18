@@ -11,8 +11,8 @@ from django.contrib.sessions.models import Session
 from django.contrib.auth.decorators import login_required
 
 
-serverAddr = "172.20.200.190"
-#serverAddr = "172.30.1.1"
+#serverAddr = "172.20.200.190"
+serverAddr = "172.30.1.1"
 wsPort = 4000
 
 # Create your views here
@@ -35,7 +35,7 @@ def testtemplate(request, var1, vartest):
 	total = int(var1) + int(vartest)
 
 	# Retourne nombre1, nombre2 et la somme des deux au tpl
-	return render(request, 'tablutWebService/testtemplate.html', locals())
+	return render(json.dumps(request), 'tablutWebService/testtemplate.html', locals())
 
 def user_connexion(request):
 	if request.method == 'POST':
@@ -46,19 +46,19 @@ def user_connexion(request):
 			user_password = user_log["password"]
 		except:
 			resp["erreur"] = "bad format json"
-			return HttpResponse(resp, content_type = "application/json")
+			return HttpResponse(json.dumps(resp), content_type = "application/json")
 		user = authenticate(username = user_name, password = user_password)
 		if user is not None:
 			if user.is_active:
-				resp["succès"] = "connecté"
+				resp["succes"] = "connecte"
 				login(request, user)
-				return HttpResponse(resp, content_type = "application/json")
+				return HttpResponse(json.dumps(resp), content_type = "application/json")
 			else:
-				resp["erreur"] = "connect fail"
-				return HttpResponse(resp, content_type = "application/json")
+				resp["erreur"] = "erreur de connection"
+				return HttpResponse(json.dumps(resp), content_type = "application/json")
 		else:
-			resp["erreur"] = "mauvais mdp ou login"
-			return HttpResponse(resp, content_type = "application/json")
+			resp["erreur"] = "mauvais mot de passe ou login"
+			return HttpResponse(json.dumps(resp), content_type = "application/json")
 	else:
 		raise PermissionDenied
 
@@ -67,8 +67,8 @@ def user_logout(request):
 	if request.method == 'GET':
 		logout(request)
 		resp = {}
-		resp["succès"] = "deconnection"
-		return HttpResponse(resp, content_type = "application/json")
+		resp["succes"] = "deconnection"
+		return HttpResponse(json.dumps(resp), content_type = "application/json")
 	else:
 		raise PermissionDenied
 
@@ -81,10 +81,10 @@ def new_user(request):
 			user_password = new_user["password"]
 		except:
 			resp["erreur"] = "bad format json"
-			return HttpResponse(resp, content_type = "application/json")
+			return HttpResponse(json.dumps(resp), content_type = "application/json")
 		User.objects.create_user(user_email, user_email, user_password)
-		resp["succès"] = "utilisateur créé"
-		return HttpResponse(addr, content_type = "application/json")
+		resp["succes"] = "utilisateur créé"
+		return HttpResponse(json.dumps(addr), content_type = "application/json")
 
 	else:
 		raise PermissionDenied
@@ -95,7 +95,7 @@ def return_webSocketAddr(request):
 		addr["addresse"] = serverAddr
 		addr["wsport"] = wsPort
 		print addr
-		return HttpResponse(addr, content_type = "application/json")
+		return HttpResponse(json.dumps(addr), content_type = "application/json")
 	else:
 		raise PermissionDenied
 

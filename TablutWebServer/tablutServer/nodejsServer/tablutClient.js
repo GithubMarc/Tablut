@@ -1,31 +1,59 @@
 ws = null
 var WebSocket = require('ws');
 var XMLHttpRequest = require('xhr2');
+var document = require('document');
+
+var serverAddr = "172.30.1.1"
+var httpPort = "8000"
+var serverPath = "/tablutWebService/connexion"
 
 
+
+function POSTHttpTest(url, path, port, sendMessage){
+	var xmlHttp = new XMLHttpRequest();
+	var message = JSON.stringify(sendMessage);
+	xmlHttp.onreadystatechange = function() {
+	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			var myArr = JSON.parse(xmlHttp.responseText);
+			console.log(myArr);
+			var toto = xmlHttp.getAllResponseHeaders();
+			console.log(toto);
+			var tata = xmlHttp.getResponseHeader('vary');
+			console.log(tata);
+		}
+	};
+
+	console.log("http://" + url + ":" + port + path);
+	xmlHttp.open("POST", "http://"+ url + ":" + port + path, true); // false for synchronous request
+	xmlHttp.setRequestHeader("Content-type", "application/json");
+	xmlHttp.send(message);
+}
 
 /**
- * Fonction qui envoi une requete HTTP
- * Récupère au format JSON l'adresse ip et le port de connexion pour la Web Socket
- * Url pour la requete HTTP
- * Port pour la requete HTTP
- */
- function GETConnexionServer(url, port){
- 	var ipWebSocket = "";
- 	var portWebSocket = "";
+* Fonction qui envoi une requete HTTP
+* Récupère au format JSON l'adresse ip et le port de connexion pour la Web Socket
+* Url pour la requete HTTP
+* Port pour la requete HTTP
+*/
+function GETHttpRequestServer(url, path, port){
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function() {
+	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			var myArr = JSON.parse(xmlHttp.responseText);
+			Connect(myArr.addresse ,myArr.wsport);
+		}
+	};
+	xmlHttp.open( "GET", "http://" + url + path + ":" + port, true ); // false for synchronous request
+	xmlHttp.setRequestHeader('Content-Type', 'application/json');
+	xmlHttp.send();
+}
 
- 	var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", "http://"+url+":"+port+"/tablutWebService/getWebSocketAddr", true ); // false for synchronous request
-    xmlHttp.send( null );
-    console.log(xmlHttp.responseText);
-	
- }
-
- /**
-  * Création d'une websocket et tentative de connexion à une url
-  */
+/**
+* Création d'une websocket et tentative de connexion à une url
+*/
 function Connect(ipServer, portServer)
 {	
+	console.log("toto");
 	// Verifie que l'ip et le port du serveur est renseigné si non on sort de la fonction
 	if (ipServer == "" || portServer == "")	return;
 
@@ -36,7 +64,6 @@ function Connect(ipServer, portServer)
 	if(null != ws)
 	{
 		console.log("Vous etes deja connecte.");
-		return;
 	}
 	
 	try
@@ -65,7 +92,7 @@ function Connect(ipServer, portServer)
 			}
 			else
 			{
-				console.log(e.reason, "websocketerror");
+				console.log(e.reason);
 				console.log("Connexion terminee.");
 				// Efface les stacks
 				$('.stack').remove(); 
@@ -89,8 +116,8 @@ function Connect(ipServer, portServer)
 		{
 			if(e.data!="")
 			{
-				json=e.data;
-				console.log("Recu> " + e.data);
+				json=JSON.parse(e.data);
+				console.log("Recu> " + json);
 
 
 				// Reception correcte
@@ -111,8 +138,8 @@ function Connect(ipServer, portServer)
 }
 
 /**
- * Fonction qui ferme la connexion. Cela peut prendre effet à retardement
- */
+* Fonction qui ferme la connexion. Cela peut prendre effet à retardement
+*/
 function Close()
 {
 	if(null === ws)
@@ -125,8 +152,8 @@ function Close()
 }
 
 /**
- * Envoi le message à la socket vers le serveur
- */
+* Envoi le message à la socket vers le serveur
+*/
 function Send(text)
 {
 	if(null === ws)
@@ -135,9 +162,9 @@ function Send(text)
 		return;
 	}
 	// Envoi du message texte
+	console.log("Envoye> " + text);
 	text = JSON.stringify(text)
 	ws.send(text);
-	console.log("Envoye> " + text);
 }
 
 function ReadyState(int_val)
@@ -160,6 +187,4 @@ function sleep(milliseconds) {
   }
 }
 
-
-GETConnexionServer("172.30.1.1", 8000);
-Connect("172.30.1.1","4000");
+POSTHttpTest(serverAddr, serverPath, httpPort, {'login':'lhi', 'password':'123456'});
