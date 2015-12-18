@@ -20,11 +20,25 @@ function loop() {// Dès qu'un membre se connecte
 		// Si c'est un ecran
 		listWsClient.push(ws);
 		console.log("client connected !");
+		
 		// Dès qu'on reçoit un message
-		ws.on('message', function(message) {
+		ws.onmessage = function(message){ 
+		//ws.on('message', function(message) {
 			// Traitement de l'action en fonction du message
-			console.log(message)
-		});
+			var i = 0;
+
+			message.data = JSON.parse(message.data)
+			while (i < listWsClient.length) {
+				try {
+					listWsClient[i].send(JSON.stringify(message.data));
+					console.log(message.data);
+				} catch(err) {
+					listWsClient.splice(i, 1);
+					i--;
+				}
+				i++;
+			}
+		};
 
 		ws.on('open', function() {
 			console.log("connected");

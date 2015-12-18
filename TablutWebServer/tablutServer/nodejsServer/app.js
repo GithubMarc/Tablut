@@ -193,7 +193,7 @@ function initServer() {
 		// Envoi la reponse json
 		response.end(jsonResponse);
 	});
-	// Création d'une socket sur le port 9000
+	// Création d'une socket sur le port 4000
 	wss = new WebSocketServer({port: 4000});
 	console.log("Web Socket en ecoute sur le port 4000");
 }
