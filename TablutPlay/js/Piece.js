@@ -1,4 +1,4 @@
-.import "Score.js" as ScoreScript
+.import "../js/Score.js" as ScoreScript
 .import QtQuick 2.5 as ComponentScript
 
 var BLACK_COLOR = "#000000";
@@ -8,7 +8,7 @@ var BLACK_TEAM = "black";
 var RED_TEAM = "red";
 
 function createPion(container, color) {
-    var component = Qt.createComponent("Piece.qml");
+    var component = Qt.createComponent("../qml/Piece.qml");
     if (component.status == ComponentScript.Component.Ready){
         return component.createObject(container, {"color": color});
     }

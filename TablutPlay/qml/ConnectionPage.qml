@@ -4,8 +4,8 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 
-import "Connection.js" as ConnectionScript
-import "Option.js" as OptionScript
+import "../js/Connection.js" as ConnectionScript
+import "../js/Option.js" as OptionScript
 
 Item {
     ColumnLayout {

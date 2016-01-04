@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
-import "Connection.js" as ConnectionScript
+import "../js/Connection.js" as ConnectionScript
 
 Item {
     ColumnLayout {

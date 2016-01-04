@@ -1,6 +1,4 @@
-.import "../TablutWebServer/tablutServer/nodejsServer/tablutClient.js" as TablutClientScript
-
-
+.import "TablutClient.js" as TablutClientScript
 
 function checkConnection() {
     var json = {"login":loginTextField.text, "password":passwordTextField.text};
