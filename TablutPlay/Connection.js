@@ -3,7 +3,7 @@
 
 
 function checkConnection() {
-    var json = '{"login":"mda", "password":"123456"}';
-    TablutClientScript.postHttpTest("172.30.1.1", "tablutWebService/connexion", "8000", json);
+    var json = {"login":loginTextField.text, "password":passwordTextField.text};
+    TablutClientScript.postHttpRequestServer(TablutClientScript.serverAddr, TablutClientScript.serverPath, TablutClientScript.httpPort, json);
 }
 

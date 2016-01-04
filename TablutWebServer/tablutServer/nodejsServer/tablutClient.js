@@ -1,7 +1,7 @@
 var ws = null;
-var WebSocket = require('ws');
-var XMLHttpRequest = require('xhr2');
-var document = require('document');
+//var WebSocket = require('ws');
+//var XMLHttpRequest = require('xhr2');
+//var document = require('document');
 
 var serverAddr = "172.30.1.1"
 var httpPort = "8000"
@@ -19,8 +19,8 @@ function postHttpRequestServer(addr, path, port, sendMessage){
 		}
 	};
 
-	console.log("http://" + url + ":" + port + path);
-	xmlHttp.open("POST", "http://"+ url + ":" + port + path, true); // false for synchronous request
+    console.log("http://" + addr + ":" + port + path);
+    xmlHttp.open("POST", "http://"+ addr + ":" + port + path, true); // false for synchronous request
 	xmlHttp.setRequestHeader("Content-type", "application/json");
 	xmlHttp.send(message);
 }
@@ -40,7 +40,7 @@ function getHttpRequestServer(addr, path, port){
 			connectWebServer(myArr.addresse ,myArr.wsport);
 		}
 	};
-	xmlHttp.open( "GET", "http://" + url + path + ":" + port, true ); // false for synchronous request
+    xmlHttp.open( "GET", "http://" + addr + path + ":" + port, true ); // false for synchronous request
 	xmlHttp.setRequestHeader('Content-Type', 'application/json');
 	xmlHttp.send();
 }

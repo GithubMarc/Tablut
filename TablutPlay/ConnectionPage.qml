@@ -19,7 +19,7 @@ Item {
 
             id: loginTextField
             placeholderText: qsTr("Login")
-            text: qsTr("Login")
+            text: qsTr("mda")
             font.pointSize: 18
             implicitWidth: 350
             implicitHeight: 50
@@ -41,7 +41,7 @@ Item {
             implicitWidth: loginTextField.implicitWidth
             implicitHeight: loginTextField.implicitHeight
             placeholderText: qsTr("Password")
-            text: qsTr("Password")
+            text: qsTr("123456")
             font.pointSize: loginTextField.font.pointSize
             echoMode: TextInput.Password
             anchors.horizontalCenter: parent.horizontalCenter
