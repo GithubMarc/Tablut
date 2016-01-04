@@ -16,9 +16,9 @@ function postHttpTest(url, path, port, sendMessage){
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 			var myArr = JSON.parse(xmlHttp.responseText);
 			console.log(myArr);
-			if myArr 
+			return true;
 		}
-		return false
+		return false;
 	};
 
 	console.log("http://" + url + ":" + port + path);
