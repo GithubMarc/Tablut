@@ -9,16 +9,14 @@ var serverPath = "/tablutWebService/connexion"
 
 
 
-function postHttpTest(url, path, port, sendMessage){
+function postHttpTest(addr, path, port, sendMessage){
 	var xmlHttp = new XMLHttpRequest();
 	var message = JSON.stringify(sendMessage);
 	xmlHttp.onreadystatechange = function() {
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 			var myArr = JSON.parse(xmlHttp.responseText);
 			console.log(myArr);
-			return true;
 		}
-		return false;
 	};
 
 	console.log("http://" + url + ":" + port + path);
@@ -33,11 +31,10 @@ function postHttpTest(url, path, port, sendMessage){
 * Url pour la requete HTTP
 * Port pour la requete HTTP
 */
-function getHttpRequestServer(url, path, port){
+function getHttpRequestServer(addr, path, port){
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange = function() {
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-
 			var myArr = JSON.parse(xmlHttp.responseText);
 			connectWebServer(myArr.addresse ,myArr.wsport);
 		}
@@ -72,19 +69,19 @@ function connectWebServer(ipServer, portServer)
 		ws = new WebSocket(uri);
 
 
-		console.log(ReadyState(ws.readyState));
+		console.log(readyState(ws.readyState));
 		
 		// Fonction exécutée lorsque la socket est ouverte
 		ws.onopen = function()
 		{
-			console.log(ReadyState(ws.readyState));
+			console.log(readyState(ws.readyState));
 			sendWebSocket('{"enContinue": "test"}');
 		};
 
 		// Fonction exécutée lorsque la socket est fermée
 		ws.onclose = function(e)
 		{
-			console.log(ReadyState(ws.readyState));
+			console.log(readyState(ws.readyState));
 			if(e.wasClean)
 			{
 				console.log("Connexion proprement terminee.");
@@ -117,8 +114,6 @@ function connectWebServer(ipServer, portServer)
 			{
 				json=JSON.parse(e.data);
 				console.log("Recu> " + json);
-				// Reception correcte
-				return true;
 			}else
 			{
 				console.log("Une erreur est survenue.");
@@ -129,9 +124,6 @@ function connectWebServer(ipServer, portServer)
 	{	
 		console.log("WebSocketError"); // Affichage de l'erreur critique
 	}
-
-	// Erreur survenu dans la fonction
-	return false;
 }
 
 /**
@@ -142,10 +134,11 @@ function closeWebSocket()
 	if(null === ws)
 	{
 		console.log("Vous n'etes pas connecte.");
-		return;
+		return false;
 	}
 	ws.close();
-	console.log(ReadyState(ws.readyState));
+	console.log(readyState(ws.readyState));
+	return true;
 }
 
 /**
@@ -156,12 +149,13 @@ function sendWebSocket(text)
 	if(null === ws)
 	{
 		console.log("Vous n'etes pas connecte.");
-		return;
+		return false;
 	}
 	// Envoi du message texte
 	console.log("Envoye> " + text);
 	text = JSON.stringify(text)
 	ws.send(text);
+	return true;
 }
 
 function readyState(int_val)
