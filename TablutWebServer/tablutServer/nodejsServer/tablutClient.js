@@ -9,13 +9,13 @@ var serverPath = "/tablutWebService/connexion"
 
 
 
-function postHttpTest(addr, path, port, sendMessage){
+function postHttpRequestServer(addr, path, port, sendMessage){
 	var xmlHttp = new XMLHttpRequest();
 	var message = JSON.stringify(sendMessage);
 	xmlHttp.onreadystatechange = function() {
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 			var myArr = JSON.parse(xmlHttp.responseText);
-			console.log(myArr);
+			onMessageHTTP(myArr);
 		}
 	};
 
@@ -36,12 +36,38 @@ function getHttpRequestServer(addr, path, port){
 	xmlHttp.onreadystatechange = function() {
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 			var myArr = JSON.parse(xmlHttp.responseText);
+			onMessageHTTP(myArr);
 			connectWebServer(myArr.addresse ,myArr.wsport);
 		}
 	};
 	xmlHttp.open( "GET", "http://" + url + path + ":" + port, true ); // false for synchronous request
 	xmlHttp.setRequestHeader('Content-Type', 'application/json');
 	xmlHttp.send();
+}
+
+function onMessageHTTP(jsonParse){
+	console.log(jsonParse);
+	if("succes" in jsonParse)
+	{
+		switch(jsonParse["succes"])
+		{
+			case "connexion":
+				console.log(jsonParse["succes"]);
+				break;
+			case "deconnexion":
+				console.log(jsonParse["succes"]);
+				break;
+			case "utilisateur_cree":
+				console.log(jsonParse["succes"]);
+				break;
+			default:
+				console.log(jsonParse["succes"] + " erreur");
+		}
+	}
+	else
+	{
+		console.log(jsonParse["erreur"]);
+	}
 }
 
 /**
@@ -114,6 +140,7 @@ function connectWebServer(ipServer, portServer)
 			{
 				json=JSON.parse(e.data);
 				console.log("Recu> " + json);
+				onRecieveMessage(json);
 			}else
 			{
 				console.log("Une erreur est survenue.");
@@ -124,6 +151,10 @@ function connectWebServer(ipServer, portServer)
 	{	
 		console.log("WebSocketError"); // Affichage de l'erreur critique
 	}
+}
+
+function onMessageWebSocket(jsonParse){
+	console.log(jsonParse);
 }
 
 /**
