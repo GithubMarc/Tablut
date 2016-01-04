@@ -1,7 +1,9 @@
+.import "../TablutWebServer/tablutServer/nodejsServer/tablutClient.js" as TablutClientScript
+
+
+
 function checkConnection() {
-    if (loginTextField.text == qsTr("Login") && passwordTextField.text == qsTr("Password"))
-        mainForm.state = "base state";
-    else
-        alertConnection.open();
+    var json = '{"login":"mda", "password":"123456"}';
+    TablutClientScript.postHttpTest("172.30.1.1", "tablutWebService/connexion", "8000", json);
 }
 

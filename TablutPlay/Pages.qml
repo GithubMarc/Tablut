@@ -10,7 +10,7 @@ Item {
     property alias connectionPage: connectionPage
     property alias menuPage: menuPage
     property alias optionPage: optionPage
-    property alias test: test
+    //property alias test: test
 
     PlayPage {
         id: playPage
