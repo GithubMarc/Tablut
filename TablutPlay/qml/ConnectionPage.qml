@@ -8,6 +8,9 @@ import "../js/Connection.js" as ConnectionScript
 import "../js/Option.js" as OptionScript
 
 Item {
+
+    property alias alertConnection: alertConnection
+
     ColumnLayout {
         id: connectionStateLayout
         spacing: 20
