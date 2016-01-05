@@ -76,6 +76,29 @@ function onMessageHTTP(jsonParse){
 	}
 }
 
+function sendMoveToServer (status, type, tour, depart, arrivee) {
+    var json = {
+                "partie":
+                {
+                    "status": status,
+                    "type": type,
+                    "tour": tour,
+                    "action":
+                    {
+                        "depart" : depart,
+                        "arrivee": arrivee
+                    },
+                    "statistique":
+                    {
+                        "score": mainForm.playPage.score.scoreLabel.text,
+                        "temps": mainForm.playPage.timerLabel.timeLabel.text
+                    }
+                }
+               };
+
+    mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
+}
+
 function sleep(milliseconds) {
   var start = new Date().getTime();
   for (var i = 0; i < 1e7; i++) {

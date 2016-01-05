@@ -10,6 +10,7 @@ Rectangle {
     color: "transparent"
 
     property alias timer: timer
+    property alias timeLabel: timeLabel
 
     Label {
         id: timeLabel

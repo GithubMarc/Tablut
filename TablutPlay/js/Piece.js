@@ -1,4 +1,5 @@
 .import "../js/Score.js" as ScoreScript
+.import "../js/TablutClient.js" as TablutClientScript
 .import QtQuick 2.5 as ComponentScript
 
 var BLACK_COLOR = "#000000";
@@ -101,14 +102,14 @@ function movePiece(color) {
         pion = createPion(boardcase, grid.savePiece.color);
         pion.team = grid.savePiece.team;
         grid.clicked = false;
+        ScoreScript.updateScore();
+        TablutClientScript.sendMoveToServer("on going", "movement", grid.player, grid.saveIndex, index);
         grid.savePiece.destroy();
         grid.savePiece = null;
         grid.saveIndex = -1;
-        ScoreScript.updateScore();
         unhighlightedCase();
         checkCapture();
         checkWin();
-        mainForm.playPage.wsClient.sendTextMessage(JSON.stringify({"login":"mda", "password":123456}));
         if (grid.player == BLACK_TEAM) grid.player = RED_TEAM;
         else grid.player = BLACK_TEAM;
     }

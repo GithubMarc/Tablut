@@ -10,7 +10,9 @@ ColumnLayout {
     id: baseStateLayout
     spacing: 5
 
+    property alias field: field
     property alias timerLabel: timerLabel
+    property alias score: score
     property alias wsClient: wsClient
 
     RowLayout {
