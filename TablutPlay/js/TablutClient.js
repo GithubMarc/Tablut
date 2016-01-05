@@ -31,15 +31,18 @@ function postHttpRequestServer(addr, path, port, sendMessage){
 * Port pour la requete HTTP
 */
 function getHttpRequestServer(addr, path, port){
+    console.log(addr);
+    console.log(path);
+    console.log(port);
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange = function() {
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 			var myArr = JSON.parse(xmlHttp.responseText);
 			onMessageHTTP(myArr);
-			connectWebServer(myArr.addresse ,myArr.wsport);
+            //connectWebServer(myArr.addresse ,myArr.wsport);
 		}
 	};
-    xmlHttp.open( "GET", "http://" + addr + path + ":" + port, true ); // false for synchronous request
+    xmlHttp.open( "GET", "http://" + addr + ":" + port + path , true ); // false for synchronous request
 	xmlHttp.setRequestHeader('Content-Type', 'application/json');
 	xmlHttp.send();
 }
@@ -51,8 +54,7 @@ function onMessageHTTP(jsonParse){
 		switch(jsonParse["succes"])
 		{
 			case "connexion":
-				console.log(jsonParse["succes"]);
-                //mainForm.state = "base state";
+                console.log(jsonParse["succes"]);
                 wait = false;
 				break;
 			case "deconnexion":
@@ -63,6 +65,10 @@ function onMessageHTTP(jsonParse){
 				break;
 			case "webSocketAddr":
 				console.log(jsonParse["succes"]);
+                mainForm.playPage.wsClient.ipServer = jsonParse["addresse"];
+                mainForm.playPage.wsClient.portServer = jsonParse["wsport"];
+                mainForm.playPage.wsClient.active = true;
+                mainForm.state = "base state";
 				break;
 			default:
 				console.log(jsonParse["succes"] + " erreur");
