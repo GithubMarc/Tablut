@@ -31,9 +31,6 @@ function postHttpRequestServer(addr, path, port, sendMessage){
 * Port pour la requete HTTP
 */
 function getHttpRequestServer(addr, path, port){
-    console.log(addr);
-    console.log(path);
-    console.log(port);
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange = function() {
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
@@ -64,10 +61,9 @@ function onMessageHTTP(jsonParse){
 				console.log(jsonParse["succes"]);
 				break;
 			case "webSocketAddr":
-				console.log(jsonParse["succes"]);
-                mainForm.playPage.wsClient.ipServer = jsonParse["addresse"];
-                mainForm.playPage.wsClient.portServer = jsonParse["wsport"];
+                console.log(jsonParse["succes"]);
                 mainForm.playPage.wsClient.active = true;
+                mainForm.playPage.wsClient.url = "ws://" + jsonParse["addresse"] + ":" + jsonParse["wsport"];
                 mainForm.state = "base state";
 				break;
 			default:
@@ -77,136 +73,6 @@ function onMessageHTTP(jsonParse){
 	else
 	{
 		console.log(jsonParse["erreur"]);
-	}
-}
-
-/**
-* Création d'une websocket et tentative de connexion à une url
-*/
-function connectWebServer(ipServer, portServer)
-{	
-	console.log("toto");
-	// Verifie que l'ip et le port du serveur est renseigné si non on sort de la fonction
-	if (ipServer == "" || portServer == "")	return;
-
-	// Formate l'uri de connexion pour la websocket
-	var uri = "ws://"+ipServer+":"+portServer;
-
-	// Si l'objet ws n'est pas vide, c'est qu'il y a une connexion existante
-	if(null != ws)
-	{
-		console.log("Vous etes deja connecte.");
-	}
-	
-	try
-	{
-		console.log("Tentative de connexion a " + uri);
-		
-		ws = new WebSocket(uri);
-
-
-		console.log(readyState(ws.readyState));
-		
-		// Fonction exécutée lorsque la socket est ouverte
-		ws.onopen = function()
-		{
-			console.log(readyState(ws.readyState));
-			sendWebSocket('{"enContinue": "test"}');
-		};
-
-		// Fonction exécutée lorsque la socket est fermée
-		ws.onclose = function(e)
-		{
-			console.log(readyState(ws.readyState));
-			if(e.wasClean)
-			{
-				console.log("Connexion proprement terminee.");
-			}
-			else
-			{
-				console.log(e.reason);
-				console.log("Connexion terminee.");
-				// Efface les stacks
-				$('.stack').remove(); 
-				// Recharge la page
-				location.reload();
-			}
-
-			// Réinitialisation de l'objet websocket
-			ws = null;
-		};
-
-		// Fonction qui est exécutée lorsqu'une erreur se produit
-		ws.onerror = function(e)
-		{
-			console.log(e);
-			console.log("Une erreur est survenue.");
-		};
-
-		// Fonction exécutée lorsqu'un message est reçu dans la socket
-		ws.onmessage = function(e)
-		{
-			if(e.data!="")
-			{
-				json=JSON.parse(e.data);
-				console.log("Recu> " + json);
-				onRecieveMessage(json);
-			}else
-			{
-				console.log("Une erreur est survenue.");
-			}
-		};
-	}
-	catch(str)
-	{	
-		console.log("WebSocketError"); // Affichage de l'erreur critique
-	}
-}
-
-function onMessageWebSocket(jsonParse){
-	console.log(jsonParse);
-}
-
-/**
-* Fonction qui ferme la connexion. Cela peut prendre effet à retardement
-*/
-function closeWebSocket()
-{
-	if(null === ws)
-	{
-		console.log("Vous n'etes pas connecte.");
-		return false;
-	}
-	ws.close();
-	console.log(readyState(ws.readyState));
-	return true;
-}
-
-/**
-* Envoi le message à la socket vers le serveur
-*/
-function sendWebSocket(text)
-{
-	if(null === ws)
-	{
-		console.log("Vous n'etes pas connecte.");
-		return false;
-	}
-	// Envoi du message texte
-	console.log("Envoye> " + text);
-	text = JSON.stringify(text)
-	ws.send(text);
-	return true;
-}
-
-function readyState(int_val)
-{
-	switch(int_val)
-	{
-		case WebSocket.CONNECTING: return "Connexion en cours...";
-		case WebSocket.OPEN : return "Connecte !";
-		case WebSocket.CLOSING : return "Deconnexion en cours...";
-		case WebSocket.CLOSED : return "Deconnecte.";
 	}
 }
 
