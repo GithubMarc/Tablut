@@ -19,11 +19,14 @@ function loop() {// Dès qu'un membre se connecte
 		// Envoie des infos aux 			
 		// Si c'est un ecran
 		listWsClient.push(ws);
+		if (listWsClient.length() == 1)
+		{
+			ws.send({"":"","":""});	
+		}
 		console.log("client connected !");
 		
 		// Dès qu'on reçoit un message
-		ws.onmessage = function(message){ 
-		//ws.on('message', function(message) {
+		ws.onmessage = function(message){
 			// Traitement de l'action en fonction du message
 			var i = 0;
 			try {

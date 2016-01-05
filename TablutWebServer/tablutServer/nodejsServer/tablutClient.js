@@ -103,7 +103,6 @@ function connectWebServer(ipServer, portServer)
 		ws.onopen = function()
 		{
 			console.log(readyState(ws.readyState));
-			sendWebSocket('{"enContinue": "test"}');
 		};
 
 		// Fonction exécutée lorsque la socket est fermée
@@ -142,7 +141,7 @@ function connectWebServer(ipServer, portServer)
 			{
 				json=JSON.parse(e.data);
 				console.log("Recu> " + json);
-				onRecieveMessage(json);
+				onMessageWebSocket(json);
 			}else
 			{
 				console.log("Une erreur est survenue.");
@@ -160,7 +159,7 @@ function onMessageWebSocket(jsonParse){
 	//partie:turn action 
 	if('partie' in jsonParse)
 	{
-
+		console.log(JSON.stringify(jsonParse));
 	}
 	else if('message' in jsonParse)
 	{
@@ -228,6 +227,4 @@ function sleep(milliseconds) {
   }
 }
 
-
-postHttpRequestServer(serverAddr, serverPath, httpPort, {"login":"lhi", "password":"123456"});
-getHttpRequestServer(serverAddr, serverPathSocket, httpPort);
+connectWebServer("172.30.1.1", "4000");

@@ -5,12 +5,12 @@ json web socket message
 	{
 		"status":,
 		"type":,
-		"joueur":,
+		"tour":,
 		"action":,
-		"statisique":
+		"statistique":
 			{
-				"turn":,
-				"time":,
+				"score":,
+				"temps":,
 			}
 	},
 	
@@ -18,7 +18,7 @@ json web socket message
 
 	"init":
 	{
-		"team":,
+		"equipe":,
 		"joueur":
 	}
 }
