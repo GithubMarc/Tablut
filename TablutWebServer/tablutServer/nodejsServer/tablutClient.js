@@ -61,7 +61,7 @@ function onMessageHTTP(jsonParse){
 				break;
 			case "webSocketAddr":
 				console.log(jsonParse["succes"]);
-				connectWebServer(myArr["addresse"] ,myArr["wsport"]);
+				connectWebServer(jsonParse["addresse"] ,jsonParse["wsport"]);
 				break;
 			default:
 				console.log(jsonParse["succes"] + " erreur");
@@ -158,6 +158,19 @@ function connectWebServer(ipServer, portServer)
 
 function onMessageWebSocket(jsonParse){
 	console.log(jsonParse);
+	//partie:turn action 
+	if('partie' in jsonParse)
+	{
+
+	}
+	else if('message' in jsonParse)
+	{
+
+	}
+	else
+	{
+		console.log(JSON.stringify(jsonParse) + " erreur");
+	}
 }
 
 /**

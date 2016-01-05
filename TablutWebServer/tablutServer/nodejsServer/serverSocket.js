@@ -27,10 +27,11 @@ function loop() {// Dès qu'un membre se connecte
 			// Traitement de l'action en fonction du message
 			var i = 0;
 
-			message.data = JSON.parse(message.data)
+			//message.data = JSON.parse(message.data)
 			while (i < listWsClient.length) {
 				try {
-					listWsClient[i].send(JSON.stringify(message.data));
+					listWsClient[i].send(message.data);
+					//listWsClient[i].send(JSON.stringify(message.data));
 					console.log(message.data);
 				} catch(err) {
 					listWsClient.splice(i, 1);
