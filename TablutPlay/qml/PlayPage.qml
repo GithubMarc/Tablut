@@ -50,7 +50,7 @@ ColumnLayout {
         url: "ws://" + ipServer + ":" + portServer
         onStatusChanged: {
             if (wsClient.status == WebSocket.Error) console.log("Error: " + wsClient.errorString);
-            else if (wsClient.status == WebSocket.Open) wsClient.sendTextMessage("Hello World");
+            else if (wsClient.status == WebSocket.Open) wsClient.sendTextMessage(JSON.stringify({"login":"mda", "password":123456}));
         }
         onTextMessageReceived: {
             mainForm.connectionPage.alertConnection.title = qsTr("Message received");
