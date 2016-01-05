@@ -3,6 +3,7 @@ var ws = null;
 var serverAddr = "172.30.1.1"
 var httpPort = "8000"
 var serverPath = "/tablutWebService/connexion"
+var socketServerPath = "/tablutWebService/getWebSocketAddr"
 
 
 
@@ -12,7 +13,7 @@ function postHttpRequestServer(addr, path, port, sendMessage){
 	xmlHttp.onreadystatechange = function() {
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 			var myArr = JSON.parse(xmlHttp.responseText);
-			onMessageHTTP(myArr);
+            onMessageHTTP(myArr);
 		}
 	};
 
@@ -50,7 +51,7 @@ function onMessageHTTP(jsonParse){
 		{
 			case "connexion":
 				console.log(jsonParse["succes"]);
-                mainForm.state = "base state";
+                //mainForm.state = "base state";
 				break;
 			case "deconnexion":
 				console.log(jsonParse["succes"]);
