@@ -1,0 +1,24 @@
+json web socket message
+
+{
+	"partie":
+	{
+		"status":,
+		"type":,
+		"joueur":,
+		"action":,
+		"statisique":
+			{
+				"turn":,
+				"time":,
+			}
+	},
+	
+	"message":,
+
+	"init":
+	{
+		"team":,
+		"joueur":
+	}
+}

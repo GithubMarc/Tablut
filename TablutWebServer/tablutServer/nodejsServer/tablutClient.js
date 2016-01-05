@@ -1,7 +1,7 @@
 var ws = null;
-//var WebSocket = require('ws');
-//var XMLHttpRequest = require('xhr2');
-//var document = require('document');
+var WebSocket = require('ws');
+var XMLHttpRequest = require('xhr2');
+var document = require('document');
 
 var serverAddr = "172.30.1.1"
 var httpPort = "8000"
@@ -37,7 +37,6 @@ function getHttpRequestServer(addr, path, port){
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 			var myArr = JSON.parse(xmlHttp.responseText);
 			onMessageHTTP(myArr);
-			connectWebServer(myArr.addresse ,myArr.wsport);
 		}
 	};
     xmlHttp.open( "GET", "http://" + addr + path + ":" + port, true ); // false for synchronous request
@@ -59,6 +58,10 @@ function onMessageHTTP(jsonParse){
 				break;
 			case "utilisateur_cree":
 				console.log(jsonParse["succes"]);
+				break;
+			case "webSocketAddr":
+				console.log(jsonParse["succes"]);
+				connectWebServer(jsonParse["addresse"] ,jsonParse["wsport"]);
 				break;
 			default:
 				console.log(jsonParse["succes"] + " erreur");
@@ -155,6 +158,19 @@ function connectWebServer(ipServer, portServer)
 
 function onMessageWebSocket(jsonParse){
 	console.log(jsonParse);
+	//partie:turn action 
+	if('partie' in jsonParse)
+	{
+
+	}
+	else if('message' in jsonParse)
+	{
+
+	}
+	else
+	{
+		console.log(JSON.stringify(jsonParse) + " erreur");
+	}
 }
 
 /**

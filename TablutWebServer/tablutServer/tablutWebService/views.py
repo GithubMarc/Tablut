@@ -50,7 +50,7 @@ def user_connexion(request):
 		user = authenticate(username = user_name, password = user_password)
 		if user is not None:
 			if user.is_active:
-				resp["succes"] = "connecte"
+				resp["succes"] = "connexion"
 				login(request, user)
 				return HttpResponse(json.dumps(resp), content_type = "application/json")
 			else:
@@ -67,7 +67,7 @@ def user_logout(request):
 	if request.method == 'GET':
 		logout(request)
 		resp = {}
-		resp["succes"] = "deconnection"
+		resp["succes"] = "deconnexion"
 		return HttpResponse(json.dumps(resp), content_type = "application/json")
 	else:
 		raise PermissionDenied
@@ -83,7 +83,7 @@ def new_user(request):
 			resp["erreur"] = "bad format json"
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
 		User.objects.create_user(user_email, user_email, user_password)
-		resp["succes"] = "utilisateur créé"
+		resp["succes"] = "utilisateur_cree"
 		return HttpResponse(json.dumps(addr), content_type = "application/json")
 
 	else:
@@ -92,6 +92,7 @@ def new_user(request):
 def return_webSocketAddr(request):
 	if request.method == 'GET':
 		addr = {}
+		addr["succes"] = "webSocketAddr"
 		addr["addresse"] = serverAddr
 		addr["wsport"] = wsPort
 		print addr
