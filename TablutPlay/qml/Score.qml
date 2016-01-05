@@ -21,4 +21,11 @@ Rectangle {
         font.pointSize: 24
     }
 
+    MouseArea {
+        anchors.fill: parent
+        onClicked: mainForm.playPage.wsClient.active = !mainForm.playPage.wsClient.active;
+
+    }
+
+
 }
