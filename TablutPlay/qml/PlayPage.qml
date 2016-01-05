@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.1
 import QtWebSockets 1.0
 
 import "../js/Connection.js" as ConnectionScript
+import "../js/TablutClient.js" as TablutClientScript
 
 
 ColumnLayout {
@@ -43,14 +44,16 @@ ColumnLayout {
     }
 
     WebSocket {
-        property string ipServer: "172.30.1.1"
-        property int portServer: 4000
+        property string ipServer
+        property int portServer
 
         id: wsClient
         url: "ws://" + ipServer + ":" + portServer
         onStatusChanged: {
-            if (wsClient.status == WebSocket.Error) console.log("Error: " + wsClient.errorString);
-            else if (wsClient.status == WebSocket.Open) wsClient.sendTextMessage(JSON.stringify({"login":"mda", "password":123456}));
+            if (active) {
+                if (wsClient.status == WebSocket.Error) console.log("Error: " + wsClient.errorString + " | " + wsClient.url);
+                else if (wsClient.status == WebSocket.Open) wsClient.sendTextMessage(JSON.stringify({"login":"mda", "password":123456}));
+            } else if (wsClient.status == WebSocket.Close) {}
         }
         onTextMessageReceived: {
             mainForm.connectionPage.alertConnection.title = qsTr("Message received");
