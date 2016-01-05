@@ -58,6 +58,9 @@ function onMessageHTTP(jsonParse){
 			case "utilisateur_cree":
 				console.log(jsonParse["succes"]);
 				break;
+			case "webSocketAddr":
+				console.log(jsonParse["succes"]);
+				break;
 			default:
 				console.log(jsonParse["succes"] + " erreur");
 		}

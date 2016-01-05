@@ -61,7 +61,6 @@ function onMessageHTTP(jsonParse){
 				break;
 			case "webSocketAddr":
 				console.log(jsonParse["succes"]);
-				connectWebServer(jsonParse["addresse"] ,jsonParse["wsport"]);
 				break;
 			default:
 				console.log(jsonParse["succes"] + " erreur");
@@ -164,6 +163,10 @@ function onMessageWebSocket(jsonParse){
 
 	}
 	else if('message' in jsonParse)
+	{
+
+	}
+	else if('init' in jsonParse)
 	{
 
 	}
