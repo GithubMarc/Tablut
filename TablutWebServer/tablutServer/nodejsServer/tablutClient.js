@@ -6,6 +6,7 @@ var document = require('document');
 var serverAddr = "172.30.1.1"
 var httpPort = "8000"
 var serverPath = "/tablutWebService/connexion"
+var serverPathSocket = "/tablutWebService/getWebSocketAddr"
 
 
 
@@ -39,13 +40,12 @@ function getHttpRequestServer(addr, path, port){
 			onMessageHTTP(myArr);
 		}
 	};
-    xmlHttp.open( "GET", "http://" + addr + path + ":" + port, true ); // false for synchronous request
+    xmlHttp.open( "GET", "http://"+ addr + ":" + port + path, true); // false for synchronous request
 	xmlHttp.setRequestHeader('Content-Type', 'application/json');
 	xmlHttp.send();
 }
 
 function onMessageHTTP(jsonParse){
-	console.log(jsonParse);
 	if("succes" in jsonParse)
 	{
 		switch(jsonParse["succes"])
@@ -227,3 +227,7 @@ function sleep(milliseconds) {
 	}
   }
 }
+
+
+postHttpRequestServer(serverAddr, serverPath, httpPort, {"login":"lhi", "password":"123456"});
+getHttpRequestServer(serverAddr, serverPathSocket, httpPort);
