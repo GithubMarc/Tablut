@@ -9,7 +9,7 @@ Rectangle {
     border.width: 2
     color: "transparent"
 
-    property alias score: scoreLabel
+    property alias scoreLabel: scoreLabel
 
     Label {
         id:scoreLabel

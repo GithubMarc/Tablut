@@ -1,6 +1,6 @@
 function updateScore() {
     //.scoreLabel.text = ++playerScore;
-    score.score.text = ++field.scoring;
+    score.scoreLabel.text = ++field.scoring;
 }
 
 function resetScore() {

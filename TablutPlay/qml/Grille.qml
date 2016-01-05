@@ -10,6 +10,8 @@ Grid {
     rows: 9
     columns: rows
 
+    property alias board: board
+
     property Piece savePiece: null
     property Case saveCase: null
     property int saveIndex: -1
