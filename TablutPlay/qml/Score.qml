@@ -1,7 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 
-import "Score.js" as ScoreScript
+import "../js/Score.js" as ScoreScript
 
 Rectangle {
     id: scoreContainer

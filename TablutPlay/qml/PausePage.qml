@@ -2,7 +2,7 @@ import QtQuick 2.5
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.4
 
-import "Timer.js" as TimerScript
+import "../js/Timer.js" as TimerScript
 
 ColumnLayout {
     id: pauseStateLayout

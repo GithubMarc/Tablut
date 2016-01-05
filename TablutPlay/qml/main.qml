@@ -1,8 +1,9 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 
-import "Timer.js" as TimerScript
-import "Option.js" as OptionScript
+import "../js/Timer.js" as TimerScript
+import "../js/Option.js" as OptionScript
+import "../js/TablutClient.js" as TablutClientscript
 
 ApplicationWindow {
     id: applicationWindow

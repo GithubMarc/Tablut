@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 
-import "Timer.js" as TimerScript
+import "../js/Timer.js" as TimerScript
 
 Rectangle {
     id: timeContainer

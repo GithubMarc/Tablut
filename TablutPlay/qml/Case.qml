@@ -1,7 +1,7 @@
 import QtQuick 2.4
 
-import "Piece.js" as PieceScript
-import "Timer.js" as TimerScript
+import "../js/Piece.js" as PieceScript
+import "../js/Timer.js" as TimerScript
 
 Rectangle {
     id: boardcase
