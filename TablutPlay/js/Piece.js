@@ -107,7 +107,8 @@ function movePiece(color) {
         ScoreScript.updateScore();
         unhighlightedCase();
         checkCapture();
-        checkWin()
+        checkWin();
+        mainForm.playPage.wsClient.sendTextMessage(JSON.stringify({"login":"mda", "password":123456}));
         if (grid.player == BLACK_TEAM) grid.player = RED_TEAM;
         else grid.player = BLACK_TEAM;
     }
