@@ -4,6 +4,7 @@ var serverAddr = "172.30.1.1"
 var httpPort = "8000"
 var serverPath = "/tablutWebService/connexion"
 var socketServerPath = "/tablutWebService/getWebSocketAddr"
+var wait = true;
 
 
 
@@ -52,6 +53,7 @@ function onMessageHTTP(jsonParse){
 			case "connexion":
 				console.log(jsonParse["succes"]);
                 //mainForm.state = "base state";
+                wait = false;
 				break;
 			case "deconnexion":
 				console.log(jsonParse["succes"]);
