@@ -64,6 +64,14 @@ Item {
             caption: qsTr("Connection")
             onClicked: ConnectionScript.checkConnection();
         }
+
+        MenuButton {
+            id: connectionButton2
+            implicitWidth: loginTextField.implicitWidth
+            anchors.horizontalCenter: parent.horizontalCenter
+            caption: qsTr("Connection2")
+            onClicked: ConnectionScript.checkConnection2();
+        }
     }
 
     MessageDialog {
@@ -77,6 +85,7 @@ Item {
     function repaint() {
         loginTextField.borderColor = OptionScript.BORDER_BUTTON_COLOR
         passwordTextField.borderColor = OptionScript.BORDER_BUTTON_COLOR
-        connectionButton.repaint()
+        connectionButton.repaint();
+        connectionButton2.repaint();
     }
 }
