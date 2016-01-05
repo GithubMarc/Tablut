@@ -10,7 +10,7 @@ json web socket message
 		"statistique":
 			{
 				"score":,
-				"temps":,
+				"temps":
 			}
 	},
 	
