@@ -19,6 +19,6 @@ json web socket message
 	"init":
 	{
 		"equipe":,
-		"joueur":
+		"tour":
 	}
 }
