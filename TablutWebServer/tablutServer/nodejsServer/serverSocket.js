@@ -19,9 +19,38 @@ function loop() {// Dès qu'un membre se connecte
 		// Envoie des infos aux 			
 		// Si c'est un ecran
 		listWsClient.push(ws);
-		if (listWsClient.length() == 1)
+		if (listWsClient.length == 1)
 		{
-			ws.send({"":"","":""});	
+			try
+			{
+				ws.send('{"init":{"equipe":"black","tour":"black"}}');	
+			}
+			catch(err)
+			{
+				console.log("black");
+			}
+		}
+		else if (listWsClient.length == 2)
+		{
+			try
+			{
+				ws.send('{"init":{"equipe":"red","tour":"black"}}');	
+			}
+			catch(err)
+			{
+				console.log("red");
+			}
+		}
+		else
+		{
+			try
+			{
+				ws.send('{"init":{"equipe":"spectateur","tour":"black"}}');
+			}
+			catch(err)
+			{
+				console.log("spectateur");
+			}
 		}
 		console.log("client connected !");
 		

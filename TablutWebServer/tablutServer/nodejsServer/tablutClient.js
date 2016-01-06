@@ -76,8 +76,7 @@ function onMessageHTTP(jsonParse){
 * Création d'une websocket et tentative de connexion à une url
 */
 function connectWebServer(ipServer, portServer)
-{	
-	console.log("toto");
+{
 	// Verifie que l'ip et le port du serveur est renseigné si non on sort de la fonction
 	if (ipServer == "" || portServer == "")	return;
 
