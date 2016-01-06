@@ -1,5 +1,4 @@
 function updateScore() {
-    //.scoreLabel.text = ++playerScore;
     score.scoreLabel.text = ++field.scoring;
 }
 

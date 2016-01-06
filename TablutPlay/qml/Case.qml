@@ -1,6 +1,6 @@
 import QtQuick 2.4
 
-import "../js/Piece.js" as PieceScript
+import "../js/Jeu.js" as JeuScript
 import "../js/Timer.js" as TimerScript
 
 Rectangle {
@@ -15,15 +15,11 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            PieceScript.movePlayerPiece();
+            JeuScript.movePlayerPiece();
             TimerScript.startTimer();
         }
     }
 
     property Piece pion: null
-
-    function test() {
-        console.log(index);
-    }
 }
 

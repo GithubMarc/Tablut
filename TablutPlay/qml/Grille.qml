@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Dialogs 1.2
 
-import "../js/Piece.js" as PieceScript
+import "../js/Jeu.js" as JeuScript
 
 Grid {
     id: grid
@@ -16,7 +16,7 @@ Grid {
     property Case saveCase: null
     property int saveIndex: -1
     property bool clicked: false
-    property string player: PieceScript.BLACK_TEAM
+    property string player: JeuScript.BLACK_TEAM
     property int scoring: 0
 
     Repeater {
@@ -30,7 +30,6 @@ Grid {
         text: "Done !"
     }
 
-    //Component.onCompleted: test();
-    Component.onCompleted: PieceScript.initPions();
+    Component.onCompleted: JeuScript.initPions();
 }
 
