@@ -35,8 +35,8 @@ function highlightedCase() {
     var gridCaseBottom = null;
 
     while (iTop + iLeft + iRight + iBottom > 0) {
-        if (index + j * grid.rows < board.model && iBottom == 1 && (index + j * grid.rows) % grid.columns == index % grid.columns) {
-            gridCaseBottom = board.itemAt(index + j * grid.rows);
+        if (index + j * mainForm.playPage.field.rows < mainForm.playPage.field.board.model && iBottom == 1 && (index + j * mainForm.playPage.field.rows) % mainForm.playPage.field.columns == index % mainForm.playPage.field.columns) {
+            gridCaseBottom = mainForm.playPage.field.board.itemAt(index + j * mainForm.playPage.field.rows);
             if (gridCaseBottom.pion == null) {
                 gridCaseBottom.border.color = KING_COLOR;
                 gridCaseBottom.border.width = 2;
@@ -59,8 +59,8 @@ function highlightedCase() {
             iTop = 0;
         }
 
-        if (index - j >= 0 && iLeft == 1 && Math.floor((index - j) / grid.rows) == Math.floor(index / grid.rows) && iLeft == 1) {
-            gridCaseLeft = board.itemAt(index - j);
+        if (index - j >= 0 && iLeft == 1 && Math.floor((index - j) / mainForm.playPage.field.rows) == Math.floor(index / mainForm.playPage.field.rows) && iLeft == 1) {
+            gridCaseLeft = mainForm.playPage.field.board.itemAt(index - j);
             if (gridCaseLeft.pion == null) {
                 gridCaseLeft.border.color = KING_COLOR;
                 gridCaseLeft.border.width = 2;
@@ -71,8 +71,8 @@ function highlightedCase() {
             iLeft = 0;
         }
 
-        if (index + j < board.model && iRight == 1 && Math.floor((index + j) / grid.rows) == Math.floor(index / grid.rows) && iRight == 1) {
-            gridCaseRight = board.itemAt(index + j);
+        if (index + j < mainForm.playPage.field.board.model && iRight == 1 && Math.floor((index + j) / mainForm.playPage.field.rows) == Math.floor(index / mainForm.playPage.field.rows) && iRight == 1) {
+            gridCaseRight = mainForm.playPage.field.board.itemAt(index + j);
             if (gridCaseRight.pion == null) {
                 gridCaseRight.border.color = KING_COLOR;
                 gridCaseRight.border.width = 2;
@@ -87,50 +87,47 @@ function highlightedCase() {
 }
 
 function unhighlightedCase() {
-    for (var i = 0; i < board.model; i++) {
-        board.itemAt(i).border.color = BLACK_COLOR;
-        board.itemAt(i).border.width = 1;
+    for (var i = 0; i < mainForm.playPage.field.board.model; i++) {
+        mainForm.playPage.field.board.itemAt(i).border.color = BLACK_COLOR;
+        mainForm.playPage.field.board.itemAt(i).border.width = 1;
     }
 }
 
 function movePiece(color) {
 
     //First click : Selection of the piece to move
-    if (!grid.clicked && pion.color == color ) {
-        grid.clicked = true;
-        grid.savePiece = pion;
-        grid.saveIndex = index;
+    if (!mainForm.playPage.field.clicked && pion.color == color ) {
+        mainForm.playPage.field.clicked = true;
+        mainForm.playPage.field.savePiece = pion;
+        mainForm.playPage.field.saveIndex = index;
         boardcase.border.color = KING_COLOR;
         boardcase.border.width = 2;
         highlightedCase();
 
     //Second click : Selection of the destination
-    } else if (grid.clicked && checkMoveRules(grid.saveIndex, index) && grid.saveIndex != index) {
-        grid.clicked = false;
-        ScoreScript.updateScore();
-        sendMoveToServer("on going", "movement", grid.player, grid.saveIndex, index);
-        grid.saveIndex = index;
+    } else if (grid.clicked && checkMoveRules(mainForm.playPage.field.saveIndex, index) && mainForm.playPage.field.saveIndex != index) {
+        mainForm.playPage.field.clicked = false;
+        sendMoveToServer("on going", "movement", mainForm.playPage.field.playerTeam, mainForm.playPage.field.saveIndex, index);
+        mainForm.playPage.field.saveIndex = index;
         unhighlightedCase();
-        if (grid.player == BLACK_TEAM) grid.player = RED_TEAM;
-        else grid.player = BLACK_TEAM;
     }
 }
 
 function movePlayerPiece() {
-    if (pion != null && !grid.clicked && pion.team == grid.player) movePiece(pion.color);
-    else if (pion == null && grid.clicked) movePiece(grid.savePiece.color);
-    else if (grid.clicked && grid.saveIndex == index) {
+    if (pion != null && !mainForm.playPage.field.clicked && pion.team == mainForm.playPage.field.playerTeam && mainForm.playPage.field.playerTeam == mainForm.playPage.field.player) movePiece(pion.color);
+    else if (pion == null && mainForm.playPage.field.clicked) movePiece(mainForm.playPage.field.savePiece.color);
+    else if (mainForm.playPage.field.clicked && mainForm.playPage.field.saveIndex == index) {
         unhighlightedCase();
-        grid.clicked = false;
-        grid.saveIndex = -1;
+        mainForm.playPage.field.clicked = false;
+        mainForm.playPage.field.saveIndex = -1;
     }
 }
 
 function checkMoveRules(indexFrom, indexTo) {
-    var xIndexFrom = indexFrom % grid.rows;
-    var yIndexFrom = Math.floor(indexFrom / grid.rows);
-    var xIndexTo = indexTo % grid.rows;
-    var yIndexTo = Math.floor(indexTo / grid.rows);
+    var xIndexFrom = indexFrom % mainForm.playPage.field.rows;
+    var yIndexFrom = Math.floor(indexFrom / mainForm.playPage.field.rows);
+    var xIndexTo = indexTo % mainForm.playPage.field.rows;
+    var yIndexTo = Math.floor(indexTo / mainForm.playPage.field.rows);
 
     var deltaX = xIndexTo - xIndexFrom; //Vertical movement
     var deltaY = yIndexTo - yIndexFrom; //Horizontal movement
@@ -150,9 +147,9 @@ function checkMoveRules(indexFrom, indexTo) {
         // While no collision detection or not arrived
         while (i != yIndexTo) {
             i += step;
-            caseIndexToTest = i * grid.rows + xIndexFrom; //Calcul of the case's index
+            caseIndexToTest = i * mainForm.playPage.field.rows + xIndexFrom; //Calcul of the case's index
             //If there is  a piece here
-            if(board.itemAt(caseIndexToTest).pion != null) return false;
+            if(mainForm.playPage.field.board.itemAt(caseIndexToTest).pion != null) return false;
         }
         return true;
     } else if (deltaX != 0 && deltaY == 0) { //Horizontal movement
@@ -162,9 +159,9 @@ function checkMoveRules(indexFrom, indexTo) {
         // While no collision detection or not arrived
         while (i != xIndexTo) {
             i += step;
-            caseIndexToTest = i + grid.rows * yIndexFrom; //Calcul of the case's index
+            caseIndexToTest = i + mainForm.playPage.field.rows * yIndexFrom; //Calcul of the case's index
             //If there is  a piece here
-            if(board.itemAt(caseIndexToTest).pion != null) return false;
+            if(mainForm.playPage.field.board.itemAt(caseIndexToTest).pion != null) return false;
         }
         return true;
     } else return true; //No movement
@@ -178,7 +175,7 @@ function checkCaptureDirection(near, nearPlus2) {
                     && mainForm.playPage.field.board.itemAt(nearPlus2).pion.color != KING_COLOR) {
 //                mainForm.playPage.field.board.itemAt(near).pion.destroy();
 //                mainForm.playPage.field.board.itemAt(near).pion = null;
-                sendCaptureToServer("on going", "capture", mainForm.playPage.field.player, near);
+                sendCaptureToServer("on going", "capture", mainForm.playPage.field.playerTeam, near);
             }
         }
     }
@@ -267,10 +264,12 @@ function checkBlackWin() {
 }
 
 function checkWin() {
-    if (mainForm.playPage.field.player == BLACK_TEAM && checkBlackWin()) {
+    if (mainForm.playPage.field.playerTeam == BLACK_TEAM && checkBlackWin()) {
+        sendWinToServer(BLACK_TEAM);
         console.log("Black won");
         return true;
-    } else if (mainForm.playPage.field.player == RED_TEAM && checkRedWin()) {
+    } else if (mainForm.playPage.field.playerTeam == RED_TEAM && checkRedWin()) {
+        sendWinToServer(RED_TEAM);
         console.log("Red won");
         return true;
     } else return false;
@@ -294,7 +293,7 @@ function initBlackPions() {
                   ];
     var length = pions.length;
     for (var i=0; i<length; i++) {
-        board.itemAt(pions[i][1] * grid.rows + pions[i][0]).pion = createPion(board.itemAt(pions[i][1] * grid.rows + pions[i][0]), BLACK_COLOR, BLACK_TEAM);
+        mainForm.playPage.field.board.itemAt(pions[i][1] * mainForm.playPage.field.rows + pions[i][0]).pion = createPion(mainForm.playPage.field.board.itemAt(pions[i][1] * mainForm.playPage.field.rows + pions[i][0]), BLACK_COLOR, BLACK_TEAM);
     }
 
 }
@@ -308,12 +307,12 @@ function initRedPions() {
                   ];
     var length = pions.length;
     for (var i=0; i<length; i++) {
-        board.itemAt(pions[i][1] * grid.rows + pions[i][0]).pion = createPion(board.itemAt(pions[i][1] * grid.rows + pions[i][0]), RED_COLOR, RED_TEAM);
+        mainForm.playPage.field.board.itemAt(pions[i][1] * mainForm.playPage.field.rows + pions[i][0]).pion = createPion(mainForm.playPage.field.board.itemAt(pions[i][1] * mainForm.playPage.field.rows + pions[i][0]), RED_COLOR, RED_TEAM);
     }
 }
 
 function initKingPion() {
-    board.itemAt(40).pion = createPion(board.itemAt(40), KING_COLOR, RED_TEAM);
+    mainForm.playPage.field.board.itemAt(40).pion = createPion(mainForm.playPage.field.board.itemAt(40), KING_COLOR, RED_TEAM);
 }
 
 function postHttpRequestServer(addr, path, port, sendMessage){
@@ -398,7 +397,7 @@ function sendMoveToServer (status, type, tour, depart, arrivee) {
                     },
                     "statistique":
                     {
-                        "score": mainForm.playPage.score.scoreLabel.text,
+                        "score": parseInt(mainForm.playPage.score.scoreLabel.text) + 1,
                         "temps": mainForm.playPage.timerLabel.timeLabel.text
                     }
                 }
@@ -429,28 +428,64 @@ function sendCaptureToServer(status, type, tour, index) {
     mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
 }
 
+function sendWinToServer(team) {
+    var json = {
+                "partie":
+                {
+                    "status": "end",
+                    "type": "win",
+                    "tour": team,
+                    "action": "" + team + " team won the game !",
+                    "statistique":
+                    {
+                        "score": mainForm.playPage.score.scoreLabel.text,
+                        "temps": mainForm.playPage.timerLabel.timeLabel.text
+                    }
+                }
+               };
+
+    mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
+}
+
 function messageReceived(message) {
     var messageParse = JSON.parse(message);
 
-    switch (messageParse["partie"]["type"]) {
-    case "movement":
-        // Create the new pion
-        mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["arrivee"])).pion = createPion(mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["arrivee"])), mainForm.playPage.field.savePiece.color, mainForm.playPage.field.savePiece.team);
-        mainForm.playPage.field.savePiece = null;
+    switch(Object.keys(messageParse)[0]) {
 
-        // Destroy the old one
-        mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["depart"])).pion.destroy();
+        case "partie":
+            switch (messageParse["partie"]["type"]) {
+                case "movement":
+                    // Create the new pion
+                    mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["arrivee"])).pion = createPion(mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["arrivee"])), mainForm.playPage.field.savePiece.color, mainForm.playPage.field.savePiece.team);
+                    mainForm.playPage.field.savePiece = null;
 
-        checkCapture();
-        checkWin();
+                    // Destroy the old one
+                    mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["depart"])).pion.destroy();
 
-        break;
-    case "capture":
-        mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["index"])).pion.destroy();
-        mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["index"])).pion = null;
-        break;
-    default:
-        break;
+                    // Update Score
+                    mainForm.playPage.score.scoreLabel.text = messageParse["partie"]["statistique"]["score"];
+
+                    checkCapture();
+                    checkWin();
+
+                    // Change player turn
+                    if (messageParse["partie"]["tour"] == BLACK_TEAM) mainForm.playPage.field.player = RED_TEAM;
+                    else mainForm.playPage.field.player = BLACK_TEAM;
+
+                    break;
+                case "capture":
+                    mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["index"])).pion.destroy();
+                    mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["index"])).pion = null;
+                    break;
+                default:
+                    break;
+            }
+            break;
+
+        case "init":
+            mainForm.playPage.field.playerTeam = messageParse["init"]["equipe"];
+            mainForm.playPage.field.player = messageParse["init"]["tour"];
+            break;
     }
 }
 

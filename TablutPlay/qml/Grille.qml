@@ -16,7 +16,8 @@ Grid {
     property Case saveCase: null
     property int saveIndex: -1
     property bool clicked: false
-    property string player: JeuScript.BLACK_TEAM
+    property string player: ""
+    property string playerTeam: ""
     property int scoring: 0
 
     Repeater {
