@@ -513,6 +513,7 @@ function messageReceived(message) {
 
     case "pause":
         TimerScript.stopTimer();
+        mainForm.state = "Pause";
         break;
 
     case "resume":

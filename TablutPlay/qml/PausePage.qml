@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.4
 
 import "../js/Timer.js" as TimerScript
+import "../js/Jeu.js" as JeuScript
 
 ColumnLayout {
     id: pauseStateLayout
@@ -38,7 +39,7 @@ ColumnLayout {
             hoverEnabled: true
             onEntered: parent.color = "#891ca8";
             onExited: parent.color = "#888888";
-            onClicked: TimerScript.resumePart();
+            onClicked: JeuScript.sendOrderToServer("resume");
         }
     }
 
