@@ -108,7 +108,6 @@ function movePiece(color) {
     } else if (grid.clicked && checkMoveRules(mainForm.playPage.field.saveIndex, index) && mainForm.playPage.field.saveIndex != index) {
         mainForm.playPage.field.clicked = false;
         sendMoveToServer("on going", "movement", mainForm.playPage.field.playerTeam, mainForm.playPage.field.saveIndex, index);
-        mainForm.playPage.field.saveIndex = index;
         unhighlightedCase();
     }
 }
@@ -171,10 +170,8 @@ function checkCaptureDirection(near, nearPlus2) {
     if (mainForm.playPage.field.board.itemAt(near).pion !== null && mainForm.playPage.field.board.itemAt(nearPlus2).pion !== null) {
         if(mainForm.playPage.field.board.itemAt(near).pion.team != mainForm.playPage.field.board.itemAt(mainForm.playPage.field.saveIndex).pion.team && mainForm.playPage.field.board.itemAt(nearPlus2).pion.team == mainForm.playPage.field.board.itemAt(mainForm.playPage.field.saveIndex).pion.team) {
             if (mainForm.playPage.field.board.itemAt(near).pion.color != KING_COLOR
-                    && mainForm.playPage.field.board.itemAt(mainForm.playPage.field.saveIndex).pion.color != KING_COLOR
-                    && mainForm.playPage.field.board.itemAt(nearPlus2).pion.color != KING_COLOR) {
-//                mainForm.playPage.field.board.itemAt(near).pion.destroy();
-//                mainForm.playPage.field.board.itemAt(near).pion = null;
+            && mainForm.playPage.field.board.itemAt(mainForm.playPage.field.saveIndex).pion.color != KING_COLOR
+            && mainForm.playPage.field.board.itemAt(nearPlus2).pion.color != KING_COLOR) {
                 sendCaptureToServer("on going", "capture", mainForm.playPage.field.playerTeam, near);
             }
         }
@@ -456,6 +453,7 @@ function messageReceived(message) {
             switch (messageParse["partie"]["type"]) {
                 case "movement":
                     // Create the new pion
+                    mainForm.playPage.field.savePiece = mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["depart"])).pion;
                     mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["arrivee"])).pion = createPion(mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["arrivee"])), mainForm.playPage.field.savePiece.color, mainForm.playPage.field.savePiece.team);
                     mainForm.playPage.field.savePiece = null;
 
@@ -464,6 +462,9 @@ function messageReceived(message) {
 
                     // Update Score
                     mainForm.playPage.score.scoreLabel.text = messageParse["partie"]["statistique"]["score"];
+
+                    // Update saveIndex
+                    mainForm.playPage.field.saveIndex = parseInt(messageParse["partie"]["action"]["arrivee"]);
 
                     checkCapture();
                     checkWin();
