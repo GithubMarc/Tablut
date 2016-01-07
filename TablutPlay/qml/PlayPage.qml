@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.1
 import QtWebSockets 1.0
 
 import "../js/Connection.js" as ConnectionScript
-import "../js/TablutClient.js" as TablutClientScript
+import "../js/Jeu.js" as JeuScript
 
 
 ColumnLayout {
@@ -55,6 +55,7 @@ ColumnLayout {
             mainForm.connectionPage.alertConnection.title = qsTr("Message received");
             mainForm.connectionPage.alertConnection.text = qsTr(message)
             mainForm.connectionPage.alertConnection.visible = true;
+            JeuScript.messageReceived(qsTr(message));
         }
         active: false
     }

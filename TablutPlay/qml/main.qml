@@ -3,7 +3,7 @@ import QtQuick.Controls 1.4
 
 import "../js/Timer.js" as TimerScript
 import "../js/Option.js" as OptionScript
-import "../js/TablutClient.js" as TablutClientscript
+import "../js/Jeu.js" as JeuScript
 
 ApplicationWindow {
     id: applicationWindow
