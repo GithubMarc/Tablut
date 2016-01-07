@@ -127,19 +127,33 @@ def creat_match(request):
 	if request.method == 'POST':
 		try:
 			new_match = json.loads(request.body)
+			if 'id' in new_match.keys():
+				match_id = new_match["id"]
+			else:
+				match_id = None
+
 			match_name = new_match["name"]
 			match_game = new_match["game_type"]
+			match_status = new_match["status"]
+			match_player_turn = new_match["player_turn"]
+			match_stat = {}
+			match_stat = new_match["stat"]
 		except:
 			resp["erreur"] = "bad format json"
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
 
 		try:
-			new_match_reccord = match()
-			new_match_reccord.name = match_name
-			new_match_reccord.game_type = match_game
-			new_match_reccord.status = "starting"
-			new_match_reccord.save()
-			resp["succes"] = "match_cree"
+			if match_id == None:
+				match_reccord = match()
+			else:
+				match_reccord = match.objects.find(match_id)
+
+			match_reccord.name = match_name
+			match_reccord.game_type = match_game
+			match_reccord.status = match_status
+			match_reccord.player_turn = match_player_turn
+			match_reccord.save()
+			resp["succes"] = "match_a_jour"
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
 		except:
 			resp["erreur"] = "erreur lors de la creation de la partie"
