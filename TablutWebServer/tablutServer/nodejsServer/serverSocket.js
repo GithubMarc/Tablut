@@ -76,6 +76,20 @@ function loop() {// Dès qu'un membre se connecte
 			}
 		};
 
+		ws.on('close', function(){
+			var tmp = -1;
+			console.log("deconection");
+			for(var i in listWsClient)
+			{
+				if(listWsClient[i] == ws)
+				{
+					tmp = i;
+				}
+			}
+			console.log("deconnexion de " + tmp);
+			listWsClient.splice(tmp, 1);
+		});
+
 		ws.on('open', function() {
 			console.log("connected");
 		});

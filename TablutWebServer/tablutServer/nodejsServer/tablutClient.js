@@ -155,18 +155,17 @@ function connectWebServer(ipServer, portServer)
 
 function onMessageWebSocket(jsonParse){
 	console.log(jsonParse);
-	//partie:turn action 
 	if('partie' in jsonParse)
 	{
 		console.log(JSON.stringify(jsonParse));
 	}
 	else if('message' in jsonParse)
 	{
-
+		console.log(JSON.stringify(jsonParse));
 	}
 	else if('init' in jsonParse)
 	{
-
+		console.log(JSON.stringify(jsonParse));
 	}
 	else
 	{
