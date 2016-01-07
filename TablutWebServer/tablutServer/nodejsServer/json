@@ -17,7 +17,8 @@ json web socket message
 	{
 		"idPartie": ,
 		"depart": ,
-		"arrivee"
+		"arrivee": ,
+		"score":
 	}
 }
 

@@ -1,4 +1,5 @@
 .import "Score.js" as ScoreScript
+.import "Timer.js" as TimerScript
 .import QtQuick 2.5 as ComponentScript
 
 var BLACK_COLOR = "#000000";
@@ -110,6 +111,7 @@ function movePiece(color) {
     } else if (mainForm.playPage.field.clicked && checkMoveRules(mainForm.playPage.field.saveIndex, index) && mainForm.playPage.field.saveIndex != index) {
         mainForm.playPage.field.clicked = false;
         sendMoveToServer(mainForm.playPage.field.saveIndex, index);
+        sendOrderToServer("resume");
         unhighlightedCase();
     }
 }
@@ -424,28 +426,43 @@ function sendWinToServer(team) {
 }
 
 function sendOrderToServer(order) {
-    var _order = qsTr(order);
+    var json = "";
 
-    var statutPartie = "";
-    switch(_order) {
-    case "pause": statutPartie = "pause";
+    switch(order) {
+    case "pause":
+        json=
+            {
+                "pause":
+                {
+                    "idPartie": mainForm.playPage.field.idPartie,
+                    "statutPartie": "pause"
+                }
+            };
         break;
-    case "resume": statutPartie = "on going";
+    case "resume":
+        json=
+            {
+                "resume":
+                {
+                    "idPartie": mainForm.playPage.field.idPartie,
+                    "statutPartie": "on going"
+                }
+            };
         break;
-    case "quit": statutPartie = "end";
+    case "quit":
+        json=
+            {
+                "quit":
+                {
+                    "idPartie": mainForm.playPage.field.idPartie,
+                    "statutPartie": "end"
+                }
+            };
         break;
     default: break;
     }
 
-    var json=
-    {
-        _order:
-        {
-            "idPartie": mainForm.playPage.field.idPartie,
-            "statutPartie": statutPartie
-        }
-    };
-
+    mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
 }
 
 function messageReceived(message) {
@@ -470,6 +487,7 @@ function messageReceived(message) {
         mainForm.playPage.field.board.itemAt(parseInt(messageParse["depart"])).pion.destroy();
 
         // Update Score
+        ScoreScript.updateScore();
 
         // Update mainForm.playPage.field.saveIndex
         mainForm.playPage.field.saveIndex = parseInt(messageParse["arrivee"]);
@@ -490,19 +508,19 @@ function messageReceived(message) {
         break;
 
     case "win":
-
+        TimerScript.stopTimer();
         break;
 
     case "pause":
-
+        TimerScript.stopTimer();
         break;
 
     case "resume":
-
+        TimerScript.startTimer();
         break;
 
     case "quit":
-
+        TimerScript.stopTimer();
         break;
 
     default:

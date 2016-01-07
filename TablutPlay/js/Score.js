@@ -1,7 +1,7 @@
 function updateScore() {
-    score.scoreLabel.text = ++field.scoring;
+    mainForm.playPage.score.scoreLabel.text = ++mainForm.playPage.field.scoring;
 }
 
 function resetScore() {
-    field.scoring = 0;
+    mainForm.playPage.field.scoring = 0;
 }
