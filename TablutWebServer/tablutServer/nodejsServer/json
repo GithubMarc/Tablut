@@ -1,24 +1,50 @@
 json web socket message
 
 {
-	"partie":
-	{
-		"status":,
-		"type":,
-		"tour":,
-		"action":,
-		"statistique":
-			{
-				"score":,
-				"temps":
-			}
-	},
-	
-	"message":,
-
 	"init":
 	{
-		"equipe":,
-		"tour":
+		"idPartie": ,
+		"equipe": ,
+		"tour": ,
+		"statutPartie":
+	}
+
+}
+
+
+{
+	"mouvement":
+	{
+		"idPartie": ,
+		"depart": ,
+		"arrivee"
+	}
+}
+
+
+{
+	"capture":
+	{
+		"idPartie": ,
+		"index":
+	}
+}
+
+
+{
+	"win":
+	{
+		"idPartie": ,
+		"equipe": ,
+		"statutPartie": "end"
+	}
+}
+
+
+{
+	"Pause/Resume/Quit":
+	{
+		"idPartie": ,
+		"statutPartie": "pause/on going/end"
 	}
 }
