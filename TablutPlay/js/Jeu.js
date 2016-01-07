@@ -111,7 +111,7 @@ function movePiece(color) {
     } else if (mainForm.playPage.field.clicked && checkMoveRules(mainForm.playPage.field.saveIndex, index) && mainForm.playPage.field.saveIndex != index) {
         mainForm.playPage.field.clicked = false;
         sendMoveToServer(mainForm.playPage.field.saveIndex, index);
-        sendOrderToServer("resume");
+        if(mainForm.playPage.field.firstLaunch) sendOrderToServer("start");
         unhighlightedCase();
     }
 }
@@ -429,6 +429,16 @@ function sendOrderToServer(order) {
     var json = "";
 
     switch(order) {
+    case "start":
+        json=
+            {
+                "start":
+                {
+                    "idPartie": mainForm.playPage.field.idPartie,
+                    "statutPartie": "on going"
+                }
+            };
+        break;
     case "pause":
         json=
             {
@@ -503,12 +513,15 @@ function messageReceived(message) {
 
     case "capture":
         mainForm.playPage.field.board.itemAt(parseInt(messageParse["index"])).pion.destroy();
-        mainForm.playPage.field.board.itemAt(parseInt(messageParse
-                                                      ["index"])).pion = null;
+        mainForm.playPage.field.board.itemAt(parseInt(messageParse["index"])).pion = null;
         break;
 
     case "win":
         TimerScript.stopTimer();
+        break;
+
+    case "start":
+        TimerScript.startTimer();
         break;
 
     case "pause":
@@ -517,7 +530,7 @@ function messageReceived(message) {
         break;
 
     case "resume":
-        TimerScript.startTimer();
+        TimerScript.resumePart();
         break;
 
     case "quit":
