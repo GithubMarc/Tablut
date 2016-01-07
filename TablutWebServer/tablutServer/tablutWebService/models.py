@@ -23,6 +23,7 @@ class match(models.Model):
 	name = models.CharField(max_length = 100)
 	game_type = models.ForeignKey('game_type')
 	status = models.CharField(max_length = 100)
+	player_turn = models.CharField(max_length = 100)
 
 	def __str__(self):
 		return self.name

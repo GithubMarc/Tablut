@@ -34,7 +34,8 @@ function loop() {// Dès qu'un membre se connecte
 		{
 			try
 			{
-				ws.send('{"init":{"equipe":"red","tour":"black"}}');	
+				ws.send('{"init":{"equipe":"red","tour":"black", "status":"starting"}}');
+				listWsClient[0].send('{"init":{"status":"starting"}}');
 			}
 			catch(err)
 			{
