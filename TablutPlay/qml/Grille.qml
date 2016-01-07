@@ -19,6 +19,7 @@ Grid {
     property string player: ""
     property string playerTeam: ""
     property int scoring: 0
+    property int idPartie: 0
 
     Repeater {
         id: board
