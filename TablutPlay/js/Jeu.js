@@ -7,6 +7,8 @@ var KING_COLOR = "#fff000";
 var BLACK_TEAM = "black";
 var RED_TEAM = "red";
 
+var saveIndex = -1;
+
 var ws = null;
 
 var serverAddr = "172.30.1.1"
@@ -99,15 +101,15 @@ function movePiece(color) {
     if (!mainForm.playPage.field.clicked && pion.color == color ) {
         mainForm.playPage.field.clicked = true;
         mainForm.playPage.field.savePiece = pion;
-        mainForm.playPage.field.saveIndex = index;
+        saveIndex = index;
         boardcase.border.color = KING_COLOR;
         boardcase.border.width = 2;
         highlightedCase();
 
     //Second click : Selection of the destination
-    } else if (grid.clicked && checkMoveRules(mainForm.playPage.field.saveIndex, index) && mainForm.playPage.field.saveIndex != index) {
+    } else if (mainForm.playPage.field.clicked && checkMoveRules(saveIndex, index) && saveIndex != index) {
         mainForm.playPage.field.clicked = false;
-        sendMoveToServer("on going", "movement", mainForm.playPage.field.playerTeam, mainForm.playPage.field.saveIndex, index);
+        sendMoveToServer("on going", "movement", mainForm.playPage.field.playerTeam, saveIndex, index);
         unhighlightedCase();
     }
 }
@@ -115,10 +117,10 @@ function movePiece(color) {
 function movePlayerPiece() {
     if (pion != null && !mainForm.playPage.field.clicked && pion.team == mainForm.playPage.field.playerTeam && mainForm.playPage.field.playerTeam == mainForm.playPage.field.player) movePiece(pion.color);
     else if (pion == null && mainForm.playPage.field.clicked) movePiece(mainForm.playPage.field.savePiece.color);
-    else if (mainForm.playPage.field.clicked && mainForm.playPage.field.saveIndex == index) {
+    else if (mainForm.playPage.field.clicked && saveIndex == index) {
         unhighlightedCase();
         mainForm.playPage.field.clicked = false;
-        mainForm.playPage.field.saveIndex = -1;
+        saveIndex = -1;
     }
 }
 
@@ -168,9 +170,9 @@ function checkMoveRules(indexFrom, indexTo) {
 
 function checkCaptureDirection(near, nearPlus2) {
     if (mainForm.playPage.field.board.itemAt(near).pion !== null && mainForm.playPage.field.board.itemAt(nearPlus2).pion !== null) {
-        if(mainForm.playPage.field.board.itemAt(near).pion.team != mainForm.playPage.field.board.itemAt(mainForm.playPage.field.saveIndex).pion.team && mainForm.playPage.field.board.itemAt(nearPlus2).pion.team == mainForm.playPage.field.board.itemAt(mainForm.playPage.field.saveIndex).pion.team) {
+        if(mainForm.playPage.field.board.itemAt(near).pion.team != mainForm.playPage.field.board.itemAt(saveIndex).pion.team && mainForm.playPage.field.board.itemAt(nearPlus2).pion.team == mainForm.playPage.field.board.itemAt(saveIndex).pion.team) {
             if (mainForm.playPage.field.board.itemAt(near).pion.color != KING_COLOR
-            && mainForm.playPage.field.board.itemAt(mainForm.playPage.field.saveIndex).pion.color != KING_COLOR
+            && mainForm.playPage.field.board.itemAt(saveIndex).pion.color != KING_COLOR
             && mainForm.playPage.field.board.itemAt(nearPlus2).pion.color != KING_COLOR) {
                 sendCaptureToServer("on going", "capture", mainForm.playPage.field.playerTeam, near);
             }
@@ -179,7 +181,7 @@ function checkCaptureDirection(near, nearPlus2) {
 }
 
 function checkCapture() {
-    var index = mainForm.playPage.field.saveIndex;
+    var index = saveIndex;
 
     var topIndex = index - mainForm.playPage.field.rows;
     var bottomIndex = index + mainForm.playPage.field.rows;
@@ -206,9 +208,9 @@ function checkCapture() {
 }
 
 function checkRedWin() {
-    if (mainForm.playPage.field.board.itemAt(mainForm.playPage.field.saveIndex).pion.color == KING_COLOR) {
-        var line = Math.floor(mainForm.playPage.field.saveIndex / mainForm.playPage.field.rows);
-        var column = mainForm.playPage.field.saveIndex % mainForm.playPage.field.columns;
+    if (mainForm.playPage.field.board.itemAt(saveIndex).pion.color == KING_COLOR) {
+        var line = Math.floor(saveIndex / mainForm.playPage.field.rows);
+        var column = saveIndex % mainForm.playPage.field.columns;
         if (line == 0 || line == mainForm.playPage.field.rows - 1 || column == 0 || column == mainForm.playPage.field.columns - 1)
             return true
         else return false;
@@ -464,7 +466,7 @@ function messageReceived(message) {
                     mainForm.playPage.score.scoreLabel.text = messageParse["partie"]["statistique"]["score"];
 
                     // Update saveIndex
-                    mainForm.playPage.field.saveIndex = parseInt(messageParse["partie"]["action"]["arrivee"]);
+                    saveIndex = parseInt(messageParse["partie"]["action"]["arrivee"]);
 
                     checkCapture();
                     checkWin();
