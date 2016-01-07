@@ -42,7 +42,7 @@ json web socket message
 
 
 {
-	"Pause/Resume/Quit":
+	"pause/resume/quit":
 	{
 		"idPartie": ,
 		"statutPartie": "pause/on going/end"
