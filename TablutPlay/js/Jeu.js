@@ -182,30 +182,32 @@ function checkCaptureDirection(near, nearPlus2) {
     }
 }
 
-function checkCapture() {
-    var index = mainForm.playPage.field.saveIndex;
+function checkCapture(team) {
+    if(team == mainForm.playPage.field.playerTeam) {
+        var index = mainForm.playPage.field.saveIndex;
 
-    var topIndex = index - mainForm.playPage.field.rows;
-    var bottomIndex = index + mainForm.playPage.field.rows;
-    var leftIndex = index - 1;
-    var rightIndex = index + 1;
+        var topIndex = index - mainForm.playPage.field.rows;
+        var bottomIndex = index + mainForm.playPage.field.rows;
+        var leftIndex = index - 1;
+        var rightIndex = index + 1;
 
-    var topIndexPlus2 = index - 2 * mainForm.playPage.field.rows;
-    var bottomIndexPlus2 = index + 2 * mainForm.playPage.field.rows;
-    var leftIndexPlus2 = index - 2;
-    var rightIndexPlus2 = index + 2;
+        var topIndexPlus2 = index - 2 * mainForm.playPage.field.rows;
+        var bottomIndexPlus2 = index + 2 * mainForm.playPage.field.rows;
+        var leftIndexPlus2 = index - 2;
+        var rightIndexPlus2 = index + 2;
 
-    if (topIndex >= 0 && topIndexPlus2 >= 0) {
-        checkCaptureDirection(topIndex, topIndexPlus2);
-    }
-    if (bottomIndex < mainForm.playPage.field.board.model && bottomIndexPlus2 < mainForm.playPage.field.board.model) {
-        checkCaptureDirection(bottomIndex, bottomIndexPlus2);
-    }
-    if (leftIndex >= 0 && leftIndexPlus2 >= 0 && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(leftIndex / mainForm.playPage.field.rows) && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(leftIndexPlus2 / mainForm.playPage.field.rows)) {
-        checkCaptureDirection(leftIndex, leftIndexPlus2);
-    }
-    if (rightIndex < mainForm.playPage.field.board.model && rightIndexPlus2 < mainForm.playPage.field.board.model && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(rightIndex / mainForm.playPage.field.rows) && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(rightIndexPlus2 / mainForm.playPage.field.rows)) {
-        checkCaptureDirection(rightIndex, rightIndexPlus2);
+        if (topIndex >= 0 && topIndexPlus2 >= 0) {
+            checkCaptureDirection(topIndex, topIndexPlus2);
+        }
+        if (bottomIndex < mainForm.playPage.field.board.model && bottomIndexPlus2 < mainForm.playPage.field.board.model) {
+            checkCaptureDirection(bottomIndex, bottomIndexPlus2);
+        }
+        if (leftIndex >= 0 && leftIndexPlus2 >= 0 && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(leftIndex / mainForm.playPage.field.rows) && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(leftIndexPlus2 / mainForm.playPage.field.rows)) {
+            checkCaptureDirection(leftIndex, leftIndexPlus2);
+        }
+        if (rightIndex < mainForm.playPage.field.board.model && rightIndexPlus2 < mainForm.playPage.field.board.model && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(rightIndex / mainForm.playPage.field.rows) && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(rightIndexPlus2 / mainForm.playPage.field.rows)) {
+            checkCaptureDirection(rightIndex, rightIndexPlus2);
+        }
     }
 }
 
@@ -502,7 +504,7 @@ function messageReceived(message) {
         // Update mainForm.playPage.field.saveIndex
         mainForm.playPage.field.saveIndex = parseInt(messageParse["arrivee"]);
 
-        checkCapture();
+        checkCapture(mainForm.playPage.field.board.itemAt(parseInt(messageParse["arrivee"])).pion.team);
         checkWin();
 
         // Change player turn
@@ -522,6 +524,7 @@ function messageReceived(message) {
 
     case "start":
         TimerScript.startTimer();
+        mainForm.playPage.field.firstLaunch = false;
         break;
 
     case "pause":
