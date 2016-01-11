@@ -6,13 +6,15 @@ import "../js/Option.js" as OptionScript
 import "../js/Jeu.js" as JeuScript
 
 ApplicationWindow {
+    property string backgroundColor: OptionScript.BACKGROUND_COLOR
+
     id: applicationWindow
     title: qsTr("Plus qu'un jeu, un tablut")
     width: minimumWidth
     height: minimumHeight
     minimumWidth: 560
     minimumHeight: 630
-    color: OptionScript.BACKGROUND_COLOR
+    color: applicationWindow.backgroundColor
     visible: true
 
     menuBar: MenuBar {
@@ -32,7 +34,14 @@ ApplicationWindow {
 
     Pages {
         id: mainForm
-        state: "Menu"
+        state: "Connection"
         anchors.fill: parent
     }
+
+    Component.onCompleted: console.log(FileIO.getBackgroundColor("../config.txt"));
+
+//    function loadConfigFile() {
+//        var json = FileIO.readFile("../config.txt");
+//        json = JSON.parse(json);
+//    }
 }
