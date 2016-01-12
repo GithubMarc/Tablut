@@ -56,7 +56,7 @@ class time(models.Model):
 	game_time = models.DateTimeField(auto_now_add=False, auto_now=False, verbose_name="Durée de la partie", default = '', blank = True)
 
 	def __str__(self):
-		return "Score de {0}".format(self.match.name)
+		return "temps de {0}".format(self.match.name)
 
 class turn(models.Model):
 	match = models.OneToOneField('match')
@@ -64,7 +64,7 @@ class turn(models.Model):
 	team_turn = models.CharField(max_length = 100)
 
 	def __str__(self):
-		return "Score de {0}".format(self.match.name)
+		return "nombre de tour de {0}".format(self.match.name)
 
 class score(models.Model):
 	match = models.OneToOneField('match')

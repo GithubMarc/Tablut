@@ -4,14 +4,75 @@ var partieMod = require('./Partie.js');
 var listWsClient = [];
 var matchStatus = {};
 matchStatus["1"] = new partieMod("1");
-/*matchStatus["1"] = {};
-matchStatus["1"]["red"] = null;
-matchStatus["1"]["black"] = null;*/
+
+
+
+function postHttpRequestServer(addr, path, port, sendMessage){
+	var xmlHttp = new XMLHttpRequest();
+	var message = JSON.stringify(sendMessage);
+	xmlHttp.onreadystatechange = function() {
+	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			var myArr = JSON.parse(xmlHttp.responseText);
+			onMessageHTTP(myArr);
+		}
+	};
+
+	console.log("http://" + addr + ":" + port + path);
+	xmlHttp.open("POST", "http://"+ addr + ":" + port + path, true); // false for synchronous request
+	xmlHttp.setRequestHeader("Content-type", "application/json");
+	xmlHttp.send(message);
+}
+
+/**
+* Fonction qui envoi une requete HTTP
+* Récupère au format JSON l'adresse ip et le port de connexion pour la Web Socket
+* Url pour la requete HTTP
+* Port pour la requete HTTP
+*/
+function getHttpRequestServer(addr, path, port){
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function() {
+	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			var myArr = JSON.parse(xmlHttp.responseText);
+			onMessageHTTP(myArr);
+		}
+	};
+	xmlHttp.open( "GET", "http://"+ addr + ":" + port + path, true); // false for synchronous request
+	xmlHttp.setRequestHeader('Content-Type', 'application/json');
+	xmlHttp.send();
+}
+
+function onMessageHTTP(jsonParse){
+	if("succes" in jsonParse)
+	{
+		switch(jsonParse["succes"])
+		{
+			case "connexion":
+				console.log(jsonParse["succes"]);
+				break;
+			case "deconnexion":
+				console.log(jsonParse["succes"]);
+				break;
+			case "utilisateur_cree":
+				console.log(jsonParse["succes"]);
+				break;
+			case "webSocketAddr":
+				console.log(jsonParse["succes"]);
+				break;
+			default:
+				console.log(jsonParse["succes"] + " erreur");
+		}
+	}
+	else
+	{
+		console.log(jsonParse["erreur"]);
+	}
+}
 
 //launch server
 function launchSocketServer(){
-	wsServer = new WebSocketServer({port: 4000});
-	console.log("Web Socket en ecoute sur le port 4000");
+	wsServer = new WebSocketServer({port: 1337});
+	console.log("Web Socket en ecoute sur le port 1337");
 }
 
 // Boucle contenant les nouvelles connexions et les actions sur les messages
