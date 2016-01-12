@@ -5,7 +5,6 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 
 import "../js/Connection.js" as ConnectionScript
-import "../js/Option.js" as OptionScript
 
 Item {
 
@@ -18,7 +17,7 @@ Item {
 
         TextField {
 
-            property color borderColor: OptionScript.BORDER_BUTTON_COLOR
+            property color borderColor: FileIO.getColor("BORDER_BUTTON_COLOR");
 
             id: loginTextField
             placeholderText: qsTr("Login")
@@ -38,7 +37,7 @@ Item {
 
         TextField {
 
-            property color borderColor: OptionScript.BORDER_BUTTON_COLOR
+            property color borderColor: FileIO.getColor("BORDER_BUTTON_COLOR");
 
             id: passwordTextField
             implicitWidth: loginTextField.implicitWidth
@@ -83,8 +82,8 @@ Item {
     }
 
     function repaint() {
-        loginTextField.borderColor = OptionScript.BORDER_BUTTON_COLOR
-        passwordTextField.borderColor = OptionScript.BORDER_BUTTON_COLOR
+        loginTextField.borderColor = FileIO.getColor("BORDER_BUTTON_COLOR");
+        passwordTextField.borderColor = FileIO.getColor("BORDER_BUTTON_COLOR");
         connectionButton.repaint();
         connectionButton2.repaint();
     }
