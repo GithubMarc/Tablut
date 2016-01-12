@@ -123,21 +123,16 @@ def get_all_match(request):
 	else:
 		raise PermissionDenied
 
+def get_match_by_id(request):
+	#TODO
+	return True
+
 def creat_match(request):
 	if request.method == 'POST':
 		try:
 			new_match = json.loads(request.body)
-			if 'id' in new_match.keys():
-				match_id = new_match["id"]
-			else:
-				match_id = None
-
 			match_name = new_match["name"]
 			match_game = new_match["game_type"]
-			match_status = new_match["status"]
-			match_player_turn = new_match["player_turn"]
-			match_stat = {}
-			match_stat = new_match["stat"]
 		except:
 			resp["erreur"] = "bad format json"
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
@@ -150,7 +145,8 @@ def creat_match(request):
 
 			match_reccord.name = match_name
 			match_reccord.game_type = match_game
-			match_reccord.status = match_status
+			match_reccord.status = "starting"
+			#if
 			match_reccord.player_turn = match_player_turn
 			match_reccord.save()
 			resp["succes"] = "match_a_jour"
@@ -161,3 +157,7 @@ def creat_match(request):
 
 	else:
 		raise PermissionDenied
+
+def update_match(request):
+	#TODO
+	return True
