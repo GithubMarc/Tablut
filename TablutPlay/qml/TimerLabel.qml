@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 
 import "../js/Timer.js" as TimerScript
+import "../js/Jeu.js" as JeuScript
 
 Rectangle {
     id: timeContainer
@@ -35,8 +36,7 @@ Rectangle {
         anchors.fill: parent
         onClicked: {
             if(timer.running == true) {
-                TimerScript.stopTimer();
-                mainForm.state = "Pause";
+                JeuScript.sendOrderToServer("pause");
             }
         }
     }

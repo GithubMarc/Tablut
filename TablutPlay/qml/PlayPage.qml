@@ -52,9 +52,6 @@ ColumnLayout {
             console.log("" + status);
         }
         onTextMessageReceived: {
-            mainForm.connectionPage.alertConnection.title = qsTr("Message received");
-            mainForm.connectionPage.alertConnection.text = qsTr(message)
-            mainForm.connectionPage.alertConnection.visible = true;
             JeuScript.messageReceived(qsTr(message));
         }
         active: false

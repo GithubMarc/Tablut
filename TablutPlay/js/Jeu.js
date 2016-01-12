@@ -1,4 +1,5 @@
 .import "Score.js" as ScoreScript
+.import "Timer.js" as TimerScript
 .import QtQuick 2.5 as ComponentScript
 
 var BLACK_COLOR = "#000000";
@@ -18,7 +19,9 @@ var wait = true;
 function createPion(container, color, team) {
     var component = Qt.createComponent("../qml/Piece.qml");
     if (component.status == ComponentScript.Component.Ready){
-        return component.createObject(container, {"color": color, "width": 0.9 * mainForm.playPage.field.width / mainForm.playPage.field.columns, "height": 0.9 * mainForm.playPage.field.height / mainForm.playPage.field.rows, "team": team});
+        var width = 0.9 * mainForm.playPage.field.width / mainForm.playPage.field.columns;
+        var height = 0.9 * mainForm.playPage.field.height / mainForm.playPage.field.rows;
+        return component.createObject(container, {"color": color, "width": width, "height": height, "team": team});
     }
 }
 
@@ -105,9 +108,10 @@ function movePiece(color) {
         highlightedCase();
 
     //Second click : Selection of the destination
-    } else if (grid.clicked && checkMoveRules(mainForm.playPage.field.saveIndex, index) && mainForm.playPage.field.saveIndex != index) {
+    } else if (mainForm.playPage.field.clicked && checkMoveRules(mainForm.playPage.field.saveIndex, index) && mainForm.playPage.field.saveIndex != index) {
         mainForm.playPage.field.clicked = false;
-        sendMoveToServer("on going", "movement", mainForm.playPage.field.playerTeam, mainForm.playPage.field.saveIndex, index);
+        sendMoveToServer(mainForm.playPage.field.saveIndex, index);
+        if(mainForm.playPage.field.firstLaunch) sendOrderToServer("start");
         unhighlightedCase();
     }
 }
@@ -172,36 +176,38 @@ function checkCaptureDirection(near, nearPlus2) {
             if (mainForm.playPage.field.board.itemAt(near).pion.color != KING_COLOR
             && mainForm.playPage.field.board.itemAt(mainForm.playPage.field.saveIndex).pion.color != KING_COLOR
             && mainForm.playPage.field.board.itemAt(nearPlus2).pion.color != KING_COLOR) {
-                sendCaptureToServer("on going", "capture", mainForm.playPage.field.playerTeam, near);
+                sendCaptureToServer(near);
             }
         }
     }
 }
 
-function checkCapture() {
-    var index = mainForm.playPage.field.saveIndex;
+function checkCapture(team) {
+    if(team == mainForm.playPage.field.playerTeam) {
+        var index = mainForm.playPage.field.saveIndex;
 
-    var topIndex = index - mainForm.playPage.field.rows;
-    var bottomIndex = index + mainForm.playPage.field.rows;
-    var leftIndex = index - 1;
-    var rightIndex = index + 1;
+        var topIndex = index - mainForm.playPage.field.rows;
+        var bottomIndex = index + mainForm.playPage.field.rows;
+        var leftIndex = index - 1;
+        var rightIndex = index + 1;
 
-    var topIndexPlus2 = index - 2 * mainForm.playPage.field.rows;
-    var bottomIndexPlus2 = index + 2 * mainForm.playPage.field.rows;
-    var leftIndexPlus2 = index - 2;
-    var rightIndexPlus2 = index + 2;
+        var topIndexPlus2 = index - 2 * mainForm.playPage.field.rows;
+        var bottomIndexPlus2 = index + 2 * mainForm.playPage.field.rows;
+        var leftIndexPlus2 = index - 2;
+        var rightIndexPlus2 = index + 2;
 
-    if (topIndex >= 0 && topIndexPlus2 >= 0) {
-        checkCaptureDirection(topIndex, topIndexPlus2);
-    }
-    if (bottomIndex < mainForm.playPage.field.board.model && bottomIndexPlus2 < mainForm.playPage.field.board.model) {
-        checkCaptureDirection(bottomIndex, bottomIndexPlus2);
-    }
-    if (leftIndex >= 0 && leftIndexPlus2 >= 0 && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(leftIndex / mainForm.playPage.field.rows) && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(leftIndexPlus2 / mainForm.playPage.field.rows)) {
-        checkCaptureDirection(leftIndex, leftIndexPlus2);
-    }
-    if (rightIndex < mainForm.playPage.field.board.model && rightIndexPlus2 < mainForm.playPage.field.board.model && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(rightIndex / mainForm.playPage.field.rows) && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(rightIndexPlus2 / mainForm.playPage.field.rows)) {
-        checkCaptureDirection(rightIndex, rightIndexPlus2);
+        if (topIndex >= 0 && topIndexPlus2 >= 0) {
+            checkCaptureDirection(topIndex, topIndexPlus2);
+        }
+        if (bottomIndex < mainForm.playPage.field.board.model && bottomIndexPlus2 < mainForm.playPage.field.board.model) {
+            checkCaptureDirection(bottomIndex, bottomIndexPlus2);
+        }
+        if (leftIndex >= 0 && leftIndexPlus2 >= 0 && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(leftIndex / mainForm.playPage.field.rows) && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(leftIndexPlus2 / mainForm.playPage.field.rows)) {
+            checkCaptureDirection(leftIndex, leftIndexPlus2);
+        }
+        if (rightIndex < mainForm.playPage.field.board.model && rightIndexPlus2 < mainForm.playPage.field.board.model && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(rightIndex / mainForm.playPage.field.rows) && Math.floor(index / mainForm.playPage.field.rows) == Math.floor(rightIndexPlus2 / mainForm.playPage.field.rows)) {
+            checkCaptureDirection(rightIndex, rightIndexPlus2);
+        }
     }
 }
 
@@ -380,113 +386,162 @@ function onMessageHTTP(jsonParse){
     }
 }
 
-function sendMoveToServer (status, type, tour, depart, arrivee) {
-    var json = {
-                "partie":
-                {
-                    "status": status,
-                    "type": type,
-                    "tour": tour,
-                    "action":
-                    {
-                        "depart" : depart,
-                        "arrivee": arrivee
-                    },
-                    "statistique":
-                    {
-                        "score": parseInt(mainForm.playPage.score.scoreLabel.text) + 1,
-                        "temps": mainForm.playPage.timerLabel.timeLabel.text
-                    }
-                }
-               };
+function sendMoveToServer (depart, arrivee) {
+    var json =
+    {
+        "mouvement":
+        {
+            "idPartie": mainForm.playPage.field.idPartie,
+            "depart": depart,
+            "arrivee": arrivee
+        }
+    };
 
     mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
 }
 
-function sendCaptureToServer(status, type, tour, index) {
-    var json = {
-                "partie":
-                {
-                    "status": status,
-                    "type": type,
-                    "tour": tour,
-                    "action":
-                    {
-                        "index" : index
-                    },
-                    "statistique":
-                    {
-                        "score": mainForm.playPage.score.scoreLabel.text,
-                        "temps": mainForm.playPage.timerLabel.timeLabel.text
-                    }
-                }
-               };
+function sendCaptureToServer(index) {
+    var json =
+    {
+        "capture":
+        {
+            "status": mainForm.playPage.field.idPartie,
+            "index": index
+        }
+    };
 
     mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
 }
 
 function sendWinToServer(team) {
-    var json = {
-                "partie":
+    var json =
+    {
+        "win":
+        {
+            "idPartie": mainForm.playPage.field.idPartie,
+            "equipe": "" + team,
+            "statutPartie": "end"
+        }
+    };
+
+    mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
+}
+
+function sendOrderToServer(order) {
+    var json = "";
+
+    switch(order) {
+    case "start":
+        json=
+            {
+                "start":
                 {
-                    "status": "end",
-                    "type": "win",
-                    "tour": team,
-                    "action": "" + team + " team won the game !",
-                    "statistique":
-                    {
-                        "score": mainForm.playPage.score.scoreLabel.text,
-                        "temps": mainForm.playPage.timerLabel.timeLabel.text
-                    }
+                    "idPartie": mainForm.playPage.field.idPartie,
+                    "statutPartie": "on going"
                 }
-               };
+            };
+        break;
+    case "pause":
+        json=
+            {
+                "pause":
+                {
+                    "idPartie": mainForm.playPage.field.idPartie,
+                    "statutPartie": "pause"
+                }
+            };
+        break;
+    case "resume":
+        json=
+            {
+                "resume":
+                {
+                    "idPartie": mainForm.playPage.field.idPartie,
+                    "statutPartie": "on going"
+                }
+            };
+        break;
+    case "quit":
+        json=
+            {
+                "quit":
+                {
+                    "idPartie": mainForm.playPage.field.idPartie,
+                    "statutPartie": "end"
+                }
+            };
+        break;
+    default: break;
+    }
 
     mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
 }
 
 function messageReceived(message) {
     var messageParse = JSON.parse(message);
+    var key = Object.keys(messageParse)[0];
+    messageParse = messageParse[key];
 
-    switch(Object.keys(messageParse)[0]) {
+    switch(key) {
+    case "init":
+        mainForm.playPage.field.idPartie = messageParse["idPartie"];
+        mainForm.playPage.field.playerTeam = messageParse["equipe"];
+        mainForm.playPage.field.player = messageParse["tour"];
+        break;
 
-        case "partie":
-            switch (messageParse["partie"]["type"]) {
-                case "movement":
-                    // Create the new pion
-                    mainForm.playPage.field.savePiece = mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["depart"])).pion;
-                    mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["arrivee"])).pion = createPion(mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["arrivee"])), mainForm.playPage.field.savePiece.color, mainForm.playPage.field.savePiece.team);
-                    mainForm.playPage.field.savePiece = null;
+    case "mouvement":
+        // Create the new pion
+        mainForm.playPage.field.savePiece = mainForm.playPage.field.board.itemAt(parseInt(messageParse["depart"])).pion;
+        mainForm.playPage.field.board.itemAt(parseInt(messageParse["arrivee"])).pion = createPion(mainForm.playPage.field.board.itemAt(parseInt(messageParse["arrivee"])), mainForm.playPage.field.savePiece.color, mainForm.playPage.field.savePiece.team);
+        mainForm.playPage.field.savePiece = null;
 
-                    // Destroy the old one
-                    mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["depart"])).pion.destroy();
+        // Destroy the old one
+        mainForm.playPage.field.board.itemAt(parseInt(messageParse["depart"])).pion.destroy();
 
-                    // Update Score
-                    mainForm.playPage.score.scoreLabel.text = messageParse["partie"]["statistique"]["score"];
+        // Update Score
+        ScoreScript.updateScore();
 
-                    // Update saveIndex
-                    mainForm.playPage.field.saveIndex = parseInt(messageParse["partie"]["action"]["arrivee"]);
+        // Update mainForm.playPage.field.saveIndex
+        mainForm.playPage.field.saveIndex = parseInt(messageParse["arrivee"]);
 
-                    checkCapture();
-                    checkWin();
+        checkCapture(mainForm.playPage.field.board.itemAt(parseInt(messageParse["arrivee"])).pion.team);
+        checkWin();
 
-                    // Change player turn
-                    if (messageParse["partie"]["tour"] == BLACK_TEAM) mainForm.playPage.field.player = RED_TEAM;
-                    else mainForm.playPage.field.player = BLACK_TEAM;
+        // Change player turn
+        if (mainForm.playPage.field.player == BLACK_TEAM) mainForm.playPage.field.player = RED_TEAM;
+        else mainForm.playPage.field.player = BLACK_TEAM;
 
-                    break;
-                case "capture":
-                    mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["index"])).pion.destroy();
-                    mainForm.playPage.field.board.itemAt(parseInt(messageParse["partie"]["action"]["index"])).pion = null;
-                    break;
-                default:
-                    break;
-            }
-            break;
+        break;
 
-        case "init":
-            mainForm.playPage.field.playerTeam = messageParse["init"]["equipe"];
-            mainForm.playPage.field.player = messageParse["init"]["tour"];
-            break;
+    case "capture":
+        mainForm.playPage.field.board.itemAt(parseInt(messageParse["index"])).pion.destroy();
+        mainForm.playPage.field.board.itemAt(parseInt(messageParse["index"])).pion = null;
+        break;
+
+    case "win":
+        TimerScript.stopTimer();
+        break;
+
+    case "start":
+        TimerScript.startTimer();
+        mainForm.playPage.field.firstLaunch = false;
+        break;
+
+    case "pause":
+        TimerScript.stopTimer();
+        mainForm.state = "Pause";
+        break;
+
+    case "resume":
+        TimerScript.resumePart();
+        break;
+
+    case "quit":
+        TimerScript.stopTimer();
+        break;
+
+    default:
+        break;
     }
 }
 

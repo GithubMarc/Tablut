@@ -1,24 +1,62 @@
 json web socket message
 
 {
-	"partie":
-	{
-		"status":,
-		"type":,
-		"tour":,
-		"action":,
-		"statistique":
-			{
-				"score":,
-				"temps":
-			}
-	},
-	
-	"message":,
-
 	"init":
 	{
-		"equipe":,
-		"tour":
+		"idPartie": ,
+		"equipe": ,
+		"tour": ,
+		"statutPartie":
+	}
+
+}
+
+
+{
+	"mouvement":
+	{
+		"idPartie": ,
+		"depart": ,
+		"arrivee": ,
+		"score":	
+	}
+}
+
+
+{
+	"capture":
+	{
+		"idPartie": ,
+		"index":
+	}
+}
+
+
+{
+	"win":
+	{
+		"idPartie": ,
+		"equipe": ,
+		"statutPartie": "end"
+	}
+}
+
+
+{
+	"pause/resume/quit":
+	{
+		"idPartie": ,
+		"statutPartie": "pause/on going/end"
+	}
+}
+
+{
+    "option":
+    {
+    	"BACKGROUND_COLOR": "#ffdc73",
+	    "INSIDE_BUTTON_COLOR": "#c77900",
+	    "BORDER_BUTTON_COLOR": "#744000",
+	    "FONT_BUTTON_COLOR": "#ffffff",
+	    "FONT_FAMILY": "britannic bold"
 	}
 }
