@@ -1,12 +1,12 @@
 // Recupere la librairie webSocket
 var WebSocketServer = require('ws').Server;
+var XMLHttpRequest = require('xhr2');
 var partieMod = require('./Partie.js');
 var listWsClient = [];
 var matchStatus = {};
 matchStatus["1"] = new partieMod("1");
-/*matchStatus["1"] = {};
-matchStatus["1"]["red"] = null;
-matchStatus["1"]["black"] = null;*/
+var httpAddr = "172.30.1.1"
+var httpPort = "8000"
 
 //launch server
 function launchSocketServer(){
@@ -30,23 +30,8 @@ function loop() {// Dès qu'un membre se connecte
 		// Dès qu'on reçoit un message
 		ws.onmessage = function(message){
 			// Traitement de l'action en fonction du message
-			var i = 0;
-			try {
-				message.data = JSON.parse(message.data)
-				while (i < listWsClient.length) {
-					try {
-						//listWsClient[i].send(message.data);
-						listWsClient[i].send(JSON.stringify(message.data));
-						console.log(message.data);
-					} catch(err) {
-						listWsClient.splice(i, 1);
-						i--;
-					}
-					i++;
-				}
-			} catch(err) {
-				console.log("json error " + message.data)
-			}
+			var new_message = JSON.parse(message.data);
+			messageReceived(new_message);
 		};
 
 		ws.on('close', function(){
@@ -79,6 +64,34 @@ function loop() {// Dès qu'un membre se connecte
 	});
 }
 
+function messageReceived(messageJson)
+{
+	// Traitement de l'action en fonction du message
+	var i = 0;
+	try 
+	{
+		while (i < listWsClient.length)
+		{
+			try
+			{
+				listWsClient[i].send(JSON.stringify(messageJson));
+				console.log(messageJson);
+				if (!("message" in messageJson))
+				{
+					postHttpRequestServer(httpAddr, httpPort, "/tablutWebService/updateMatch", messageJson);
+				}
+			}
+			catch(err)
+			{
+				listWsClient.splice(i, 1);
+				i--;
+			}
+			i++;
+		}
+	} catch(err) {
+		console.log("json error " + message.data)
+	}
+}
 
 function playerInit(ws)
 {
@@ -123,6 +136,59 @@ function playerInit(ws)
 	}
 }
 
+function postHttpRequestServer(addr, port, path, sendMessage){
+	var xmlHttp = new XMLHttpRequest();
+	var message = JSON.stringify(sendMessage);
+	xmlHttp.onreadystatechange = function() {
+	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			var myArr = JSON.parse(xmlHttp.responseText);
+			onMessageHTTP(myArr);
+		}
+	};
+
+	xmlHttp.open("POST", "http://"+ addr + ":" + port + path, true); // false for synchronous request
+	xmlHttp.setRequestHeader("Content-type", "application/json");
+	xmlHttp.send(message);
+}
+
+/**
+* Fonction qui envoi une requete HTTP
+* Récupère au format JSON l'adresse ip et le port de connexion pour la Web Socket
+* Url pour la requete HTTP
+* Port pour la requete HTTP
+*/
+function getHttpRequestServer(addr, port, path){
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function() {
+	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+			var myArr = JSON.parse(xmlHttp.responseText);
+			onMessageHTTP(myArr);
+		}
+	};
+	xmlHttp.open( "GET", "http://"+ addr + ":" + port + path, true); // false for synchronous request
+	xmlHttp.setRequestHeader('Content-Type', 'application/json');
+	xmlHttp.send();
+}
+
+function onMessageHTTP(jsonParse)
+{
+	if("succes" in jsonParse)
+	{
+		switch(jsonParse["succes"])
+		{
+			case "":
+				console.log(jsonParse["succes"]);
+				break;
+			case "deconnexion":
+				console.log(jsonParse["succes"]);
+				break;
+		}
+	}
+	else
+	{
+		console.log(jsonParse["erreur"]);
+	}
+}
 
 launchSocketServer()
 

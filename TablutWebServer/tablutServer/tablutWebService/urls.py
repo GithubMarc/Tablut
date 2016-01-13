@@ -12,5 +12,6 @@ urlpatterns = patterns('tablutWebService.views',
 	url(r'^allMatch', 'get_all_match'),
 	url(r'^newMatch', 'creat_match'),
 	url(r'^match', 'get_match_by_id'),
-	url(r'^match', 'update_match'),
+	url(r'^updateMatch', 'update_match'),
+	url(r'^reset', 'reset_match'),
 )
