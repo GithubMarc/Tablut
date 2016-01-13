@@ -10,7 +10,6 @@ Item {
     property alias connectionPage: connectionPage
     property alias menuPage: menuPage
     property alias optionPage: optionPage
-    //property alias test: test
 
     PlayPage {
         id: playPage
@@ -160,7 +159,7 @@ Item {
         }
     ]
 
-    transitions: [
+    /*transitions: [
 
         Transition {
             from: "Menu"
@@ -181,5 +180,5 @@ Item {
                 }
             }
         }
-    ]
+    ]*/
 }

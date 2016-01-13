@@ -2,15 +2,13 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
-import "../js/Option.js" as OptionScript
-
 Button {
 
-    property color backgroundColor: OptionScript.INSIDE_BUTTON_COLOR
-    property color backgroundBorderColor: OptionScript.BORDER_BUTTON_COLOR
-    property string fontFamily: OptionScript.FONT_FAMILY
-    property color labelBorderColor: OptionScript.BORDER_BUTTON_COLOR
-    property color labelColor: OptionScript.FONT_BUTTON_COLOR
+    property color backgroundColor: FileIO.getColor("INSIDE_BUTTON_COLOR");
+    property color backgroundBorderColor: FileIO.getColor("BORDER_BUTTON_COLOR");
+    property string fontFamily: FileIO.getColor("FONT_FAMILY");
+    property color labelBorderColor: FileIO.getColor("BORDER_BUTTON_COLOR");
+    property color labelColor: FileIO.getColor("FONT_BUTTON_COLOR");
 
     property string caption: ""
 
@@ -36,11 +34,11 @@ Button {
     }
 
     function repaint() {
-        backgroundColor = OptionScript.INSIDE_BUTTON_COLOR;
-        backgroundBorderColor = OptionScript.BORDER_BUTTON_COLOR;
-        fontFamily = OptionScript.FONT_FAMILY;
-        labelBorderColor = OptionScript.BORDER_BUTTON_COLOR;
-        labelColor = OptionScript.FONT_BUTTON_COLOR;
+        backgroundColor = FileIO.getColor("INSIDE_BUTTON_COLOR");
+        backgroundBorderColor = FileIO.getColor("BORDER_BUTTON_COLOR");
+        fontFamily = FileIO.getColor("FONT_FAMILY");
+        labelBorderColor = FileIO.getColor("BORDER_BUTTON_COLOR");
+        labelColor = FileIO.getColor("FONT_BUTTON_COLOR");
     }
 }
 

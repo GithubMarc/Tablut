@@ -4,9 +4,9 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 
-import "../js/Option.js" as OptionScript
-
 Item {
+    id: mainItem
+
     Button {
         id: previous
         x: 0
@@ -18,17 +18,65 @@ Item {
         }
     }
 
+    RowLayout {
+        anchors.bottom: colorOption.top
+        anchors.bottomMargin: 20
+        anchors.left: colorOption.left
+        anchors.right: colorOption.right
+
+        Label {
+            id: chooseFile
+            text: qsTr("Choose file...")
+            font.pointSize: 10
+            color: "#000000"
+        }
+
+        TextField {
+            id: path
+            height: 30
+            text: FileIO.getPath();
+            implicitWidth: colorOption.implicitWidth - chooseFile.implicitWidth - browse.implicitWidth - 10
+            anchors.left: chooseFile.right
+        }
+
+        Button {
+            id: browse
+            text: qsTr("Browse")
+            onClicked: browseFile.visible = true;
+        }
+    }
+
+    FileDialog {
+        id: browseFile
+        title: qsTr("Please select a config file")
+        folder: "../config"
+        nameFilters: "Config files (*.config)"
+        visible: false
+
+        onAccepted: {
+            path.text = browseFile.fileUrl;
+            openConfigFile();
+        }
+
+        function openConfigFile() {
+            FileIO.setPath((path.text).substr(8));
+            mainItem.repaint();
+        }
+    }
+
     GridLayout {
+        id: colorOption
         anchors.centerIn: parent
         columns: 2
         columnSpacing: 30
         rowSpacing: 20
+        visible: true
 
         Label {
             text: qsTr("Background")
             color: "#000000"
             font.pointSize: 22
-            font.family: OptionScript.FONT_FAMILY
+            font.family: FileIO.getColor("FONT_FAMILY");
             anchors.left: parent.left
             anchors.leftMargin: 0
         }
@@ -41,6 +89,7 @@ Item {
             anchors.rightMargin: 0
 
             onClicked: {
+                colorDialog.color = FileIO.getColor("BACKGROUND_COLOR");
                 colorDialog.idSelector = 0;
                 colorDialog.visible = true;
             }
@@ -50,7 +99,7 @@ Item {
             text: qsTr("Inside Button")
             color: "#000000"
             font.pointSize: 22
-            font.family: OptionScript.FONT_FAMILY
+            font.family: FileIO.getColor("FONT_FAMILY");
             anchors.left: parent.left
             anchors.leftMargin: 0
         }
@@ -59,7 +108,7 @@ Item {
             id: insideButtonColorSelector
             width: 170
             height: 50
-            color: OptionScript.INSIDE_BUTTON_COLOR
+            color: FileIO.getColor("INSIDE_BUTTON_COLOR");
             border.color: "#000000"
             border.width : 3
             anchors.right: parent.right
@@ -79,7 +128,7 @@ Item {
             text: qsTr("Border Button")
             color: "#000000"
             font.pointSize: 22
-            font.family: OptionScript.FONT_FAMILY
+            font.family: FileIO.getColor("FONT_FAMILY");
             anchors.left: parent.left
             anchors.leftMargin: 0
         }
@@ -88,7 +137,7 @@ Item {
             id: borderButtonColorSelector
             width: 170
             height: 50
-            color: OptionScript.BORDER_BUTTON_COLOR
+            color: FileIO.getColor("BORDER_BUTTON_COLOR");
             border.color: "#000000"
             border.width : 3
             anchors.right: parent.right
@@ -103,24 +152,46 @@ Item {
                 }
             }
         }
+    }
 
-        Item{}
+    RowLayout {
+        id: buttonChoice
+        anchors.top: colorOption.bottom
+        anchors.topMargin: 20
+        anchors.right: colorOption.right
+        anchors.left: colorOption.left
+
+        MenuButton {
+            id: defaultPath
+            caption: qsTr("default")
+            implicitWidth: 95
+            anchors.left: parent.left
+
+            onClicked: {
+                if(path.text != "") FileIO.setDefaultPath(path.text);
+            }
+        }
 
         MenuButton {
             id: defaultValuesButton
             caption: qsTr("Reset")
             implicitWidth: 85
             anchors.right: parent.right
-            anchors.rightMargin: 0
 
             onClicked: {
-                OptionScript.setDefaultValues()
-                backgroundButtonColorSelector.repaint();
-                defaultValuesButton.repaint();
-                insideButtonColorSelector.color = OptionScript.INSIDE_BUTTON_COLOR;
-                borderButtonColorSelector.color = OptionScript.BORDER_BUTTON_COLOR;
+                FileIO.setDefaultColor();
+                mainItem.repaint();
             }
         }
+    }
+
+    function repaint() {
+        backgroundButtonColorSelector.repaint();
+        defaultValuesButton.repaint();
+        defaultPath.repaint();
+        applicationWindow.color = FileIO.getColor("BACKGROUND_COLOR");
+        insideButtonColorSelector.color = FileIO.getColor("INSIDE_BUTTON_COLOR");
+        borderButtonColorSelector.color = FileIO.getColor("BORDER_BUTTON_COLOR");
     }
 
     ColorDialog {
@@ -132,28 +203,22 @@ Item {
         visible: false
         onAccepted: refreshColor();
 
-
         function refreshColor() {
-            switch (idSelector) {
+            switch (colorDialog.idSelector) {
             case 0:
-                OptionScript.BACKGROUND_COLOR = colorDialog.color;
-                applicationWindow.color = colorDialog.color;
+                FileIO.setColor("BACKGROUND_COLOR", colorDialog.color);
             break;
             case 1:
-                OptionScript.INSIDE_BUTTON_COLOR = colorDialog.color;
-                insideButtonColorSelector.color = colorDialog.color;
-                backgroundButtonColorSelector.repaint();
-                defaultValuesButton.repaint();
+                FileIO.setColor("INSIDE_BUTTON_COLOR", colorDialog.color);
             break;
             case 2:
-                OptionScript.BORDER_BUTTON_COLOR = colorDialog.color;
-                borderButtonColorSelector.color = colorDialog.color;
-                backgroundButtonColorSelector.repaint();
-                defaultValuesButton.repaint();
+                FileIO.setColor("BORDER_BUTTON_COLOR", colorDialog.color);
             break;
             default:
             break;
             }
+
+            mainItem.repaint();
         }
     }
 }

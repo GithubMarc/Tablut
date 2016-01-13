@@ -2,11 +2,10 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 
 import "../js/Timer.js" as TimerScript
-import "../js/Option.js" as OptionScript
 import "../js/Jeu.js" as JeuScript
 
 ApplicationWindow {
-    property string backgroundColor: OptionScript.BACKGROUND_COLOR
+    property string backgroundColor: FileIO.getColor("BACKGROUND_COLOR");
 
     id: applicationWindow
     title: qsTr("Plus qu'un jeu, un tablut")
@@ -34,14 +33,7 @@ ApplicationWindow {
 
     Pages {
         id: mainForm
-        state: "Connection"
+        state: "Menu"
         anchors.fill: parent
     }
-
-    Component.onCompleted: console.log(FileIO.getBackgroundColor("../config.txt"));
-
-//    function loadConfigFile() {
-//        var json = FileIO.readFile("../config.txt");
-//        json = JSON.parse(json);
-//    }
 }
