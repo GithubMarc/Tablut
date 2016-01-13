@@ -125,7 +125,21 @@ def get_all_match(request):
 
 def get_match_by_id(request):
 	#TODO
-	return True
+	file_reccord = open("tablutWebService/board/board_game10.json", "w")
+	file_reccord.write(json.dumps({"plateau":[None,None,None,"black","black","red"]}))
+	file_reccord.close()
+	resp = {}
+	resp["erreur"] = "erreur lors de la creation de la partie"
+	return HttpResponse(json.dumps(resp), content_type = "application/json")
+
+def reset_match(request):
+	#TODO
+	file_reccord = open("tablutWebService/board/board_game10.json", "w")
+	file_reccord.write(json.dumps({"plateau":[None,None,None,"black","black","red"]}))
+	file_reccord.close()
+	resp = {}
+	resp["erreur"] = "erreur lors de la creation de la partie"
+	return HttpResponse(json.dumps(resp), content_type = "application/json")
 
 def creat_match(request):
 	if request.method == 'POST':
@@ -136,20 +150,22 @@ def creat_match(request):
 		except:
 			resp["erreur"] = "bad format json"
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
-
 		try:
-			if match_id == None:
-				match_reccord = match()
-			else:
-				match_reccord = match.objects.find(match_id)
-
+			match_reccord = match()
 			match_reccord.name = match_name
 			match_reccord.game_type = match_game
 			match_reccord.status = "starting"
-			#if
-			match_reccord.player_turn = match_player_turn
-			match_reccord.save()
-			resp["succes"] = "match_a_jour"
+			if match_game == "Tablut":
+				match_reccord.player_turn = match_player_turn
+				match_reccord.save()
+
+				file_reccord = open("tablutWebService/board/board_game"+str(match_reccord.id)+".json", "w")
+				file_reccord.write(json.dumps({"plateau":[None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]}))
+				file_reccord.close()
+
+				resp["succes"] = "match_cree"
+			else:
+				resp["erreur"] = "le jeu souhaite n'existe pas"
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
 		except:
 			resp["erreur"] = "erreur lors de la creation de la partie"
@@ -160,4 +176,58 @@ def creat_match(request):
 
 def update_match(request):
 	#TODO
-	return True
+	if request.method == 'POST':
+		try:
+			action = json.loads(request.body)
+		except:
+			resp["erreur"] = "bad format json"
+			return HttpResponse(json.dumps(resp), content_type = "application/json")
+		resp = {}
+		if 'mouvement' in action.keys():
+			move = action["mouvement"]
+			file_reccord = open("tablutWebService/board/board_game"+str(move["idPartie"])+".json", "r+")
+			board = json.load(file_reccord)
+			file_reccord.seek(0)
+			file_reccord.truncate()
+			tmpcolor = board["plateau"][move["depart"]]
+			board["plateau"][move["arrivee"]] = tmpcolor
+			board["plateau"][move["depart"]] = None
+			file_reccord.write(json.dumps(board))
+			file_reccord.close()
+
+			match_to_update = match.objects.get(id = move["idPartie"])
+			if match_to_update.game_type.label == "Tablut":
+				if match_to_update.player_turn == "red":
+					match_to_update.player_turn = "black"
+					match_to_update.save()
+				else:
+					match_to_update.player_turn = "red"
+					match_to_update.save()
+
+		elif 'capture' in action.keys():
+			cap = action["capture"]
+			file_reccord = open("tablutWebService/board/board_game"+str(cap["idPartie"])+".json", "r+")
+			board = json.load(file_reccord)
+			file_reccord.seek(0)
+			file_reccord.truncate()
+			board["plateau"][cap["index"]] = None
+			file_reccord.write(json.dumps(board))
+			file_reccord.close()
+
+		elif 'win' in action.keys():
+			print "toto"
+		elif 'pause' in action.keys():
+			print "toto"
+		elif 'resume' in action.keys():
+			print "toto"
+		elif 'quit' in action.keys():
+			print "toto"
+		else:
+			resp["erreur"] = "ordre non existant"		
+			return HttpResponse(json.dumps(resp), content_type = "application/json")
+
+		resp["succes"] = "match_update"		
+		return HttpResponse(json.dumps(resp), content_type = "application/json")
+
+	else:
+		raise PermissionDenied
