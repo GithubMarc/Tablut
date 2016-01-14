@@ -125,12 +125,23 @@ def get_all_match(request):
 
 def get_match_by_id(request):
 	#TODO
-	file_reccord = open("tablutWebService/board/board_game10.json", "w")
-	file_reccord.write(json.dumps({"plateau":[None,None,None,"black","black","red"]}))
-	file_reccord.close()
-	resp = {}
-	resp["erreur"] = "erreur lors de la creation de la partie"
-	return HttpResponse(json.dumps(resp), content_type = "application/json")
+	if request.method == 'GET':
+		resp = {}
+		board_file = open("tablutWebService/board/board_game"+str(10)+".json", "r")
+		board = json.load(board_file)
+		board_file.close()
+		match_init = match.objects.get(id = 1)
+		resp["init"] = {}
+		resp_init = {}
+		resp_init["statusPartie"] = match_init.status
+		resp_init["tour"] = match_init.player_turn
+		resp_init["plateau"] = board
+		resp["init"] = resp_init
+		return HttpResponse(json.dumps(resp), content_type = "application/json")
+
+	else:
+		raise PermissionDenied
+	print "toto"
 
 def reset_match(request):
 	#TODO
@@ -170,12 +181,10 @@ def creat_match(request):
 		except:
 			resp["erreur"] = "erreur lors de la creation de la partie"
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
-
 	else:
 		raise PermissionDenied
 
 def update_match(request):
-	#TODO
 	if request.method == 'POST':
 		try:
 			action = json.loads(request.body)
@@ -215,13 +224,27 @@ def update_match(request):
 			file_reccord.close()
 
 		elif 'win' in action.keys():
-			print "toto"
+			win = action["win"]
+			match_to_update = match.objects.get(id = win["idPartie"])
+			match_to_update.status = win["statusPartie"]
+			match_to_update.player_turn = win["equipe"]
+
 		elif 'pause' in action.keys():
-			print "toto"
+			pause = action["pause"]
+			match_to_update = match.objects.get(id = pause["idPartie"])
+			match_to_update.status = pause["statusPartie"]
+
 		elif 'resume' in action.keys():
-			print "toto"
+			resume = action["resume"]
+			match_to_update = match.objects.get(id = resume["idPartie"])
+			match_to_update.status = resume["statusPartie"]
+
 		elif 'quit' in action.keys():
-			print "toto"
+			quit = action["quit"]
+			match_to_update = match.objects.get(id = quit["idPartie"])
+			match_to_update.status = quit["statusPartie"]
+			match_reccord.player_turn = None
+
 		else:
 			resp["erreur"] = "ordre non existant"		
 			return HttpResponse(json.dumps(resp), content_type = "application/json")

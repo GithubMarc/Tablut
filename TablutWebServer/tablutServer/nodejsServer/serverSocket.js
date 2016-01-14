@@ -172,17 +172,9 @@ function getHttpRequestServer(addr, port, path){
 
 function onMessageHTTP(jsonParse)
 {
-	if("succes" in jsonParse)
+	if("init" in jsonParse)
 	{
-		switch(jsonParse["succes"])
-		{
-			case "":
-				console.log(jsonParse["succes"]);
-				break;
-			case "deconnexion":
-				console.log(jsonParse["succes"]);
-				break;
-		}
+
 	}
 	else
 	{
