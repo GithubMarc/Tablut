@@ -1,8 +1,10 @@
 #include "fileio.h"
+#include <iostream>
+#include <fstream>
+#include <QJsonObject>
+#include <QPair>
 #include <QFile>
 #include <QTextStream>
-#include <QJsonObject>
-#include <QJsonDocument>
 #include <QDebug>
 
 FileIO::FileIO()
@@ -27,7 +29,7 @@ QString FileIO::getDefaultPath() {
         QTextStream stream(&file);
 
         saveStream = stream.readAll();
-        saveStream = saveStream.mid(8);
+        //qDebug() << saveStream;
     }
     return saveStream;
 }
@@ -61,8 +63,6 @@ void FileIO::setColor(QString colorLabel, QString color){
 
         file.resize(0);
         file.write(jDoc.toJson());
-
-        file.close();
     }
 
     return;
@@ -115,6 +115,41 @@ void FileIO::setDefaultColor() {
     }
 
     return;
+}
+
+bool FileIO::createNewConfigFile(QString name) {
+    std::ifstream f("../config/" + name.toStdString() + ".config");
+
+    if (!f.good()) {
+        std::ofstream outfile ("../config/" + name.toStdString() + ".config");
+        outfile << this->defaultObject.toJson().toStdString() << std::endl;
+        outfile.close();
+        f.close();
+        return true;
+    } else {
+        f.close();
+        return false;
+    }
+}
+
+QJsonDocument FileIO::getDefaultDocument() {
+    QJsonDocument jDoc;
+    QJsonObject optionColor
+    {
+        {"BACKGROUND_COLOR", "#ffdc73"},
+        {"BORDER_BUTTON_COLOR", "#744000"},
+        {"FONT_BUTTON_COLOR", "#ffffff"},
+        {"FONT_FAMILY", "britannic bold"},
+        {"INSIDE_BUTTON_COLOR", "#c77900"}
+    };
+
+    QJsonObject option
+    {
+        {"option", optionColor}
+    };
+
+    jDoc.setObject(option);
+    return jDoc;
 }
 
 FileIO::~FileIO()

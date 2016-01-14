@@ -7,6 +7,8 @@ import QtQuick.Dialogs 1.2
 Item {
     id: mainItem
 
+    property alias fileOption: fileOption
+
     Button {
         id: previous
         x: 0
@@ -18,11 +20,26 @@ Item {
         }
     }
 
+    Button {
+        id: newConfigFile
+        text: qsTr("New Config")
+        anchors.bottom: fileOption.top
+        anchors.margins: 10
+        anchors.right: fileOption.right
+        anchors.rightMargin: 0
+
+        onClicked: mainForm.state = "New Config"
+    }
+
     RowLayout {
+        id: fileOption
         anchors.bottom: colorOption.top
         anchors.bottomMargin: 20
         anchors.left: colorOption.left
+        anchors.leftMargin: 0
         anchors.right: colorOption.right
+        anchors.rightMargin: 0
+        spacing: 0
 
         Label {
             id: chooseFile
@@ -35,7 +52,7 @@ Item {
             id: path
             height: 30
             text: FileIO.getPath();
-            implicitWidth: colorOption.implicitWidth - chooseFile.implicitWidth - browse.implicitWidth - 10
+            implicitWidth: colorOption.implicitWidth - chooseFile.implicitWidth - browse.implicitWidth - 3
             anchors.left: chooseFile.right
         }
 
@@ -43,24 +60,25 @@ Item {
             id: browse
             text: qsTr("Browse")
             onClicked: browseFile.visible = true;
-        }
-    }
 
-    FileDialog {
-        id: browseFile
-        title: qsTr("Please select a config file")
-        folder: "../config"
-        nameFilters: "Config files (*.config)"
-        visible: false
+            FileDialog {
+                id: browseFile
+                title: qsTr("Please select a config file")
+                folder: "../config"
+                nameFilters: "Config files (*.config)"
+                visible: false
 
-        onAccepted: {
-            path.text = browseFile.fileUrl;
-            openConfigFile();
-        }
+                onAccepted: {
+                    var temp = browseFile.fileUrl.toString();
+                    path.text = temp.substring(8);
+                    openConfigFile();
+                }
 
-        function openConfigFile() {
-            FileIO.setPath((path.text).substr(8));
-            mainItem.repaint();
+                function openConfigFile() {
+                    FileIO.setPath(path.text);
+                    mainItem.repaint();
+                }
+            }
         }
     }
 
@@ -152,6 +170,35 @@ Item {
                 }
             }
         }
+
+        Label {
+            text: qsTr("Font Button")
+            color: "#000000"
+            font.pointSize: 22
+            font.family: FileIO.getColor("FONT_FAMILY");
+            anchors.left: parent.left
+            anchors.leftMargin: 0
+        }
+
+        Rectangle {
+            id: fontButtonColorSelector
+            width: 170
+            height: 50
+            color: FileIO.getColor("FONT_BUTTON_COLOR");
+            border.color: "#000000"
+            border.width : 3
+            anchors.right: parent.right
+            anchors.rightMargin: 0
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    colorDialog.color = fontButtonColorSelector.color
+                    colorDialog.idSelector = 3;
+                    colorDialog.visible = true;
+                }
+            }
+        }
     }
 
     RowLayout {
@@ -192,6 +239,7 @@ Item {
         applicationWindow.color = FileIO.getColor("BACKGROUND_COLOR");
         insideButtonColorSelector.color = FileIO.getColor("INSIDE_BUTTON_COLOR");
         borderButtonColorSelector.color = FileIO.getColor("BORDER_BUTTON_COLOR");
+        fontButtonColorSelector.color = FileIO.getColor("FONT_BUTTON_COLOR");
     }
 
     ColorDialog {
@@ -213,6 +261,9 @@ Item {
             break;
             case 2:
                 FileIO.setColor("BORDER_BUTTON_COLOR", colorDialog.color);
+            break;
+            case 3:
+                FileIO.setColor("FONT_BUTTON_COLOR", colorDialog.color);
             break;
             default:
             break;

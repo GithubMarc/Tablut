@@ -41,6 +41,12 @@ Item {
         anchors.fill: parent
     }
 
+    NewConfigPage {
+        id: newConfigPage
+        visible: false
+        anchors.fill: parent
+    }
+
     states: [
 
         State {
@@ -68,6 +74,11 @@ Item {
 
             PropertyChanges {
                 target: optionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: newConfigPage
                 visible: false
             }
         },
@@ -99,6 +110,11 @@ Item {
                 target: optionPage
                 visible: false
             }
+
+            PropertyChanges {
+                target: newConfigPage
+                visible: false
+            }
         },
         State {
             name: "Menu"
@@ -125,6 +141,11 @@ Item {
 
             PropertyChanges {
                 target: optionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: newConfigPage
                 visible: false
             }
         },
@@ -156,26 +177,67 @@ Item {
                 target: optionPage
                 visible: true
             }
+
+            PropertyChanges {
+                target: newConfigPage
+                visible: false
+            }
+        },
+
+        State {
+            name: "New Config"
+
+            PropertyChanges {
+                target: playPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: connectionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: pausePage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: menuPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: optionPage
+                visible: true
+                opacity: 0.1
+                enabled: false
+            }
+
+            PropertyChanges {
+                target: newConfigPage
+                visible: true
+            }
         }
     ]
 
     /*transitions: [
 
         Transition {
-            from: "Menu"
-            to: "Option"
+            from: "Option"
+            to: "New Config"
 
             SequentialAnimation {
                 PropertyAnimation {
-                    target: menuPage
+                    target: optionPage
                     property: "opacity"
-                    to: 0
+                    to: 0.2
                     duration: 2000
                 }
                 PropertyAnimation {
-                    target: optionPage
+                    target: newConfigPage
                     property: "opacity"
-                    to: 1
+                    to: 1.0
                     duration: 2000
                 }
             }
