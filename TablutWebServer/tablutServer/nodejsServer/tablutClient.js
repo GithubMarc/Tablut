@@ -166,7 +166,6 @@ function onMessageWebSocket(jsonParse){
 	else if('init' in jsonParse)
 	{
 		console.log(JSON.stringify(jsonParse));
-		ws.send('{"capture":{"idPartie":10, "index":4, "arrivee":0, "score":10}}')
 	}
 	else
 	{
@@ -226,4 +225,4 @@ function sleep(milliseconds) {
   }
 }
 
-connectWebServer("172.30.1.1", "8080");
+connectWebServer("172.30.1.1", "4000");

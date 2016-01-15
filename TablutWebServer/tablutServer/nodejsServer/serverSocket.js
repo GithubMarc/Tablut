@@ -97,42 +97,55 @@ function playerInit(ws)
 {
 
 	listWsClient.push(ws);
+	getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/match", ws);
+}
 
-	//reprendre quand amélioration TAG LHI
-	if (matchStatus["1"].black == null)
+function onMessageHTTP(jsonParse, ws)
+{
+	if("init" in jsonParse)
 	{
-		try
+		//reprendre quand amélioration TAG LHI
+		if (matchStatus["1"].black == null)
 		{
-			matchStatus["1"].black = ws
-			ws.send('{"init":{"idPartie":1, "equipe":"black", "tour":"black", "statutPartie":"starting"}}');	
+			try
+			{
+				matchStatus["1"].black = ws
+				jsonParse["init"]["equipe"] = "black";
+			}
+			catch(err)
+			{
+				console.log("black");
+			}
 		}
-		catch(err)
+		else if (matchStatus["1"].red == null)
 		{
-			console.log("black");
+			try
+			{
+				matchStatus["1"].red = ws
+				jsonParse["init"]["equipe"] = "red";
+			}
+			catch(err)
+			{
+				console.log("red");
+			}
 		}
-	}
-	else if (matchStatus["1"].red == null)
-	{
-		try
+		else
 		{
-			matchStatus["1"].red = ws
-			ws.send('{"init":{"idPartie":1, "equipe":"red", "tour":"black", "statutPartie":"starting"}}');
+			try
+			{
+				jsonParse["init"]["equipe"] = "spectateur";
+			}
+			catch(err)
+			{
+				console.log("spectateur");
+			}
 		}
-		catch(err)
-		{
-			console.log("red");
-		}
+		console.log(jsonParse);
+		ws.send(JSON.stringify(jsonParse));
 	}
 	else
 	{
-		try
-		{
-			ws.send('{"init":{"idPartie":1, "equipe":"spectateur", "tour":"black", "statutPartie":"starting"}}');
-		}
-		catch(err)
-		{
-			console.log("spectateur");
-		}
+		console.log(jsonParse["erreur"]);
 	}
 }
 
@@ -157,37 +170,18 @@ function postHttpRequestServer(addr, port, path, sendMessage){
 * Url pour la requete HTTP
 * Port pour la requete HTTP
 */
-function getHttpRequestServer(addr, port, path){
+function getHttpRequestServer(addr, port, path, ws)
+{
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange = function() {
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 			var myArr = JSON.parse(xmlHttp.responseText);
-			onMessageHTTP(myArr);
+			onMessageHTTP(myArr, ws);
 		}
 	};
 	xmlHttp.open( "GET", "http://"+ addr + ":" + port + path, true); // false for synchronous request
 	xmlHttp.setRequestHeader('Content-Type', 'application/json');
 	xmlHttp.send();
-}
-
-function onMessageHTTP(jsonParse)
-{
-	if("succes" in jsonParse)
-	{
-		switch(jsonParse["succes"])
-		{
-			case "":
-				console.log(jsonParse["succes"]);
-				break;
-			case "deconnexion":
-				console.log(jsonParse["succes"]);
-				break;
-		}
-	}
-	else
-	{
-		console.log(jsonParse["erreur"]);
-	}
 }
 
 launchSocketServer()
