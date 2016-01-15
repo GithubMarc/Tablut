@@ -6,11 +6,10 @@ import QtQuick.Dialogs 1.2
 Rectangle {
     color: "#d0000000"
 
-    Button {
+    PreviousButton {
         id: previous
-        x: 0
-        y: 0
-        text: "Previous"
+        anchors.left: parent.left
+        anchors.top: parent.top
         onClicked: {
             mainForm.state = "Option";
             mainForm.menuPage.repaint();

@@ -319,6 +319,7 @@ function initKingPion() {
 
 function postHttpRequestServer(addr, path, port, sendMessage){
     var xmlHttp = new XMLHttpRequest();
+    mainForm.connectionPage.connectionInformation.visible = true;
     var message = JSON.stringify(sendMessage);
     xmlHttp.onreadystatechange = function() {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
@@ -510,7 +511,6 @@ function messageReceived(message) {
         // Change player turn
         if (mainForm.playPage.field.player == BLACK_TEAM) mainForm.playPage.field.player = RED_TEAM;
         else mainForm.playPage.field.player = BLACK_TEAM;
-
         break;
 
     case "capture":
