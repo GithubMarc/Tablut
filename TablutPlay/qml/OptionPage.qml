@@ -28,251 +28,199 @@ ColumnLayout {
         Layout.fillHeight: true
         Layout.fillWidth: true
 
-        ListView {
-            width: 200; height: 400
-
-            FolderListModel {
-                id: folderModel
-                folder: "../config"
-                nameFilters: ["*.config"]
-            }
-
-            Component {
-                id: fileDelegate
-                Text { text: fileBaseName }
-            }
-
-            model: folderModel
-            delegate: fileDelegate
-        }
-
-        /*FolderListModel {
-            id: folderModel
+        FolderListModel {
+            id: folderModel2
             folder: "../config"
             nameFilters: ["*.config"]
 
             Component.onCompleted: {
-                var temp = folderModel.get(0, "fileBaseName");
-                console.log(typeof temp);
+                comboBox.isActive = true;
+                comboBox.currentIndex = -1;
             }
         }
 
-        ComboBox {
-            model: ListModel {
-                id: cbItems
-            }
-            width: 200
-            //onCurrentIndexChanged: console.debug(cbItems.get(currentIndex).text + ", " + cbItems.get(currentIndex).color + ", " + cbItems.get(currentIndex).path)
-        }
+        ColumnLayout {
+            anchors.centerIn: parent
+            spacing: 20
 
-        /*Button {
-            id: newConfigFile
-            text: qsTr("New Config")
-            anchors.bottom: fileOption.top
-            anchors.margins: 10
-            anchors.right: fileOption.right
-            anchors.rightMargin: 0
+            ComboBox {
+                property bool isActive: false
 
-            onClicked: mainForm.state = "New Config"
-        }
-
-        RowLayout {
-            id: fileOption
-            anchors.bottom: colorOption.top
-            anchors.bottomMargin: 20
-            anchors.left: colorOption.left
-            anchors.leftMargin: 0
-            anchors.right: colorOption.right
-            anchors.rightMargin: 0
-            spacing: 0
-
-            Label {
-                id: chooseFile
-                text: qsTr("Choose file...")
-                font.pointSize: 10
-                color: "#000000"
-            }
-
-            TextField {
-                id: path
-                height: 30
-                text: FileIO.getPath();
-                implicitWidth: colorOption.implicitWidth - chooseFile.implicitWidth - browse.implicitWidth - 3
-                anchors.left: chooseFile.right
-            }
-
-            Button {
-                id: browse
-                text: qsTr("Browse")
-                onClicked: browseFile.visible = true;
-
-                FileDialog {
-                    id: browseFile
-                    title: qsTr("Please select a config file")
-                    folder: "../config"
-                    nameFilters: "Config files (*.config)"
-                    visible: false
-
-                    onAccepted: {
-                        var temp = browseFile.fileUrl.toString();
-                        path.text = temp.substring(8);
-                        openConfigFile();
+                id: comboBox
+                model: folderModel2
+                implicitWidth: 200
+                textRole: "fileBaseName"
+                onCurrentIndexChanged: {
+                    if (isActive && currentIndex != -1) {
+                        loadConfig(folderModel2.get(currentIndex, "filePath"));
                     }
+                }
 
-                    function openConfigFile() {
-                        FileIO.setPath(path.text);
+                Layout.alignment: Qt.AlignCenter
+
+                function loadConfig(path) {
+                    FileIO.setPath(path);
+                    mainItem.repaint();
+                }
+            }
+
+            GridLayout {
+                id: colorOption
+                Layout.alignment: Qt.AlignCenter
+                columns: 2
+                columnSpacing: 30
+                rowSpacing: 20
+                visible: true
+
+                Label {
+                    text: qsTr("Background")
+                    color: "#000000"
+                    font.pointSize: 22
+                    font.family: FileIO.getColor("FONT_FAMILY");
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
+                }
+
+                MenuButton {
+                    id: backgroundButtonColorSelector
+                    caption: qsTr("Select Color")
+                    implicitWidth: 170
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+
+                    onClicked: {
+                        colorDialog.color = FileIO.getColor("BACKGROUND_COLOR");
+                        colorDialog.idSelector = 0;
+                        colorDialog.visible = true;
+                    }
+                }
+
+                Label {
+                    text: qsTr("Inside Button")
+                    color: "#000000"
+                    font.pointSize: 22
+                    font.family: FileIO.getColor("FONT_FAMILY");
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
+                }
+
+                Rectangle {
+                    id: insideButtonColorSelector
+                    width: 170
+                    height: 50
+                    color: FileIO.getColor("INSIDE_BUTTON_COLOR");
+                    border.color: "#000000"
+                    border.width : 3
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            colorDialog.color = insideButtonColorSelector.color
+                            colorDialog.idSelector = 1;
+                            colorDialog.visible = true;
+                        }
+                    }
+                }
+
+                Label {
+                    text: qsTr("Border Button")
+                    color: "#000000"
+                    font.pointSize: 22
+                    font.family: FileIO.getColor("FONT_FAMILY");
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
+                }
+
+                Rectangle {
+                    id: borderButtonColorSelector
+                    width: 170
+                    height: 50
+                    color: FileIO.getColor("BORDER_BUTTON_COLOR");
+                    border.color: "#000000"
+                    border.width : 3
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            colorDialog.color = borderButtonColorSelector.color
+                            colorDialog.idSelector = 2;
+                            colorDialog.visible = true;
+                        }
+                    }
+                }
+
+                Label {
+                    text: qsTr("Font Button")
+                    color: "#000000"
+                    font.pointSize: 22
+                    font.family: FileIO.getColor("FONT_FAMILY");
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
+                }
+
+                Rectangle {
+                    id: fontButtonColorSelector
+                    width: 170
+                    height: 50
+                    color: FileIO.getColor("FONT_BUTTON_COLOR");
+                    border.color: "#000000"
+                    border.width : 3
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            colorDialog.color = fontButtonColorSelector.color
+                            colorDialog.idSelector = 3;
+                            colorDialog.visible = true;
+                        }
+                    }
+                }
+            }
+
+            RowLayout {
+                id: buttonChoice
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                MenuButton {
+                    id: defaultPath
+                    caption: qsTr("default")
+                    implicitWidth: 95
+                    Layout.alignment: Qt.AlignLeft
+
+                    onClicked: {
+                        FileIO.setDefaultPath(folderModel2.get(comboBox.currentIndex, "filePath"));
+                    }
+                }
+
+                MenuButton {
+                    id: newConfigButton
+                    caption: qsTr("New")
+                    implicitWidth: 85
+                    Layout.alignment: Qt.AlignCenter
+
+                    onClicked: {
+                        FileIO.setDefaultColor();
                         mainItem.repaint();
                     }
                 }
-            }
-        }*/
 
-        GridLayout {
-            id: colorOption
-            anchors.centerIn: parent
-            columns: 2
-            columnSpacing: 30
-            rowSpacing: 20
-            visible: true
+                MenuButton {
+                    id: defaultValuesButton
+                    caption: qsTr("Reset")
+                    implicitWidth: 85
+                    Layout.alignment: Qt.AlignRight
 
-            Label {
-                text: qsTr("Background")
-                color: "#000000"
-                font.pointSize: 22
-                font.family: FileIO.getColor("FONT_FAMILY");
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-            }
-
-            MenuButton {
-                id: backgroundButtonColorSelector
-                caption: qsTr("Select Color")
-                implicitWidth: 170
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-
-                onClicked: {
-                    colorDialog.color = FileIO.getColor("BACKGROUND_COLOR");
-                    colorDialog.idSelector = 0;
-                    colorDialog.visible = true;
-                }
-            }
-
-            Label {
-                text: qsTr("Inside Button")
-                color: "#000000"
-                font.pointSize: 22
-                font.family: FileIO.getColor("FONT_FAMILY");
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-            }
-
-            Rectangle {
-                id: insideButtonColorSelector
-                width: 170
-                height: 50
-                color: FileIO.getColor("INSIDE_BUTTON_COLOR");
-                border.color: "#000000"
-                border.width : 3
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-
-                MouseArea {
-                    anchors.fill: parent
                     onClicked: {
-                        colorDialog.color = insideButtonColorSelector.color
-                        colorDialog.idSelector = 1;
-                        colorDialog.visible = true;
+                        FileIO.setDefaultColor();
+                        mainItem.repaint();
                     }
-                }
-            }
-
-            Label {
-                text: qsTr("Border Button")
-                color: "#000000"
-                font.pointSize: 22
-                font.family: FileIO.getColor("FONT_FAMILY");
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-            }
-
-            Rectangle {
-                id: borderButtonColorSelector
-                width: 170
-                height: 50
-                color: FileIO.getColor("BORDER_BUTTON_COLOR");
-                border.color: "#000000"
-                border.width : 3
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        colorDialog.color = borderButtonColorSelector.color
-                        colorDialog.idSelector = 2;
-                        colorDialog.visible = true;
-                    }
-                }
-            }
-
-            Label {
-                text: qsTr("Font Button")
-                color: "#000000"
-                font.pointSize: 22
-                font.family: FileIO.getColor("FONT_FAMILY");
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-            }
-
-            Rectangle {
-                id: fontButtonColorSelector
-                width: 170
-                height: 50
-                color: FileIO.getColor("FONT_BUTTON_COLOR");
-                border.color: "#000000"
-                border.width : 3
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        colorDialog.color = fontButtonColorSelector.color
-                        colorDialog.idSelector = 3;
-                        colorDialog.visible = true;
-                    }
-                }
-            }
-        }
-
-        RowLayout {
-            id: buttonChoice
-            anchors.top: colorOption.bottom
-            anchors.topMargin: 20
-            anchors.right: colorOption.right
-            anchors.left: colorOption.left
-
-            MenuButton {
-                id: defaultPath
-                caption: qsTr("default")
-                implicitWidth: 95
-                anchors.left: parent.left
-
-                onClicked: {
-                    if(path.text != "") FileIO.setDefaultPath(path.text);
-                }
-            }
-
-            MenuButton {
-                id: defaultValuesButton
-                caption: qsTr("Reset")
-                implicitWidth: 85
-                anchors.right: parent.right
-
-                onClicked: {
-                    FileIO.setDefaultColor();
-                    mainItem.repaint();
                 }
             }
         }

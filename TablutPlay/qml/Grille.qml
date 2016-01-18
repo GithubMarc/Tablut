@@ -32,7 +32,5 @@ Grid {
         id: messageDialog
         text: "Done !"
     }
-
-    Component.onCompleted: JeuScript.initPions();
 }
 

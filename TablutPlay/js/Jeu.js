@@ -488,6 +488,7 @@ function messageReceived(message) {
         mainForm.playPage.field.idPartie = messageParse["idPartie"];
         mainForm.playPage.field.playerTeam = messageParse["equipe"];
         mainForm.playPage.field.player = messageParse["tour"];
+        drawField(messageParse["plateau"]);
         break;
 
     case "mouvement":
@@ -552,4 +553,19 @@ function sleep(milliseconds) {
       break;
     }
   }
+}
+
+function drawField(jsonField) {
+    for (var i in jsonField) {
+        switch (jsonField[i]) {
+        case "black": mainForm.playPage.field.board.itemAt(i).pion = createPion(mainForm.playPage.field.board.itemAt(i), BLACK_COLOR, BLACK_TEAM);
+            break;
+        case "red": mainForm.playPage.field.board.itemAt(i).pion = createPion(mainForm.playPage.field.board.itemAt(i), RED_COLOR, RED_TEAM);
+            break;
+        case "king": mainForm.playPage.field.board.itemAt(i).pion = createPion(mainForm.playPage.field.board.itemAt(i), KING_COLOR, RED_TEAM);
+            break;
+        default:
+            break;
+        }
+    }
 }
