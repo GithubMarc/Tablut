@@ -8,7 +8,7 @@ import Qt.labs.folderlistmodel 2.1
 ColumnLayout {
     id: mainItem
 
-    //property alias fileOption: fileOption
+    property alias comboBox: comboBox
 
     Banner {
         id: banner
@@ -29,7 +29,7 @@ ColumnLayout {
         Layout.fillWidth: true
 
         FolderListModel {
-            id: folderModel2
+            id: folderModel
             folder: "../config"
             nameFilters: ["*.config"]
 
@@ -45,14 +45,45 @@ ColumnLayout {
 
             ComboBox {
                 property bool isActive: false
+                property string backgroundColor: FileIO.getColor("BACKGROUND_COLOR")
+                property string backgroundBorderColor: FileIO.getColor("BORDER_BUTTON_COLOR")
 
                 id: comboBox
-                model: folderModel2
-                implicitWidth: 200
+                model: folderModel
+
                 textRole: "fileBaseName"
+
                 onCurrentIndexChanged: {
                     if (isActive && currentIndex != -1) {
-                        loadConfig(folderModel2.get(currentIndex, "filePath"));
+                        loadConfig(folderModel.get(currentIndex, "filePath"));
+                    }
+                }
+                style: ComboBoxStyle {
+                    background: Rectangle {
+                        color: comboBox.backgroundColor
+                        radius: 5
+                        implicitWidth: 200
+                        implicitHeight: 25
+                        border.color: comboBox.backgroundBorderColor
+                        border.width: 3
+
+                        Image {
+                            source: "../icon/dropDownIcon.png"
+                            width: 5
+                            height: 5
+                            fillMode: Image.PreserveAspectFit
+                            asynchronous: true
+                            anchors.right: parent.right
+                            anchors.rightMargin: 6
+                            anchors.bottom: parent.bottom
+                            anchors.bottomMargin: 6
+                        }
+                    }
+
+                    label: Text {
+                        font.family: "Courier"
+                        color: "#000000"
+                        text: comboBox.currentText
                     }
                 }
 
@@ -61,6 +92,11 @@ ColumnLayout {
                 function loadConfig(path) {
                     FileIO.setPath(path);
                     mainItem.repaint();
+                }
+
+                function repaint() {
+                    comboBox.backgroundColor = FileIO.getColor("BACKGROUND_COLOR");
+                    comboBox.backgroundBorderColor = FileIO.getColor("BORDER_BUTTON_COLOR");
                 }
             }
 
@@ -77,16 +113,14 @@ ColumnLayout {
                     color: "#000000"
                     font.pointSize: 22
                     font.family: FileIO.getColor("FONT_FAMILY");
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
+                    Layout.alignment: Qt.AlignLeft
                 }
 
                 MenuButton {
                     id: backgroundButtonColorSelector
                     caption: qsTr("Select Color")
                     implicitWidth: 170
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
+                    Layout.alignment: Qt.AlignRight
 
                     onClicked: {
                         colorDialog.color = FileIO.getColor("BACKGROUND_COLOR");
@@ -100,8 +134,7 @@ ColumnLayout {
                     color: "#000000"
                     font.pointSize: 22
                     font.family: FileIO.getColor("FONT_FAMILY");
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
+                    Layout.alignment: Qt.AlignLeft
                 }
 
                 Rectangle {
@@ -111,8 +144,7 @@ ColumnLayout {
                     color: FileIO.getColor("INSIDE_BUTTON_COLOR");
                     border.color: "#000000"
                     border.width : 3
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
+                    Layout.alignment: Qt.AlignRight
 
                     MouseArea {
                         anchors.fill: parent
@@ -129,8 +161,7 @@ ColumnLayout {
                     color: "#000000"
                     font.pointSize: 22
                     font.family: FileIO.getColor("FONT_FAMILY");
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
+                    Layout.alignment: Qt.AlignLeft
                 }
 
                 Rectangle {
@@ -140,8 +171,7 @@ ColumnLayout {
                     color: FileIO.getColor("BORDER_BUTTON_COLOR");
                     border.color: "#000000"
                     border.width : 3
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
+                    Layout.alignment: Qt.AlignRight
 
                     MouseArea {
                         anchors.fill: parent
@@ -158,8 +188,7 @@ ColumnLayout {
                     color: "#000000"
                     font.pointSize: 22
                     font.family: FileIO.getColor("FONT_FAMILY");
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
+                    Layout.alignment: Qt.AlignLeft
                 }
 
                 Rectangle {
@@ -169,8 +198,7 @@ ColumnLayout {
                     color: FileIO.getColor("FONT_BUTTON_COLOR");
                     border.color: "#000000"
                     border.width : 3
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
+                    Layout.alignment: Qt.AlignRight
 
                     MouseArea {
                         anchors.fill: parent
@@ -183,19 +211,18 @@ ColumnLayout {
                 }
             }
 
-            RowLayout {
-                id: buttonChoice
-                Layout.fillHeight: true
+            Item {
                 Layout.fillWidth: true
 
                 MenuButton {
                     id: defaultPath
                     caption: qsTr("default")
                     implicitWidth: 95
-                    Layout.alignment: Qt.AlignLeft
+                    anchors.left: parent.left
+                    anchors.leftMargin: 0
 
                     onClicked: {
-                        FileIO.setDefaultPath(folderModel2.get(comboBox.currentIndex, "filePath"));
+                        FileIO.setDefaultPath(folderModel.get(comboBox.currentIndex, "filePath"));
                     }
                 }
 
@@ -203,11 +230,11 @@ ColumnLayout {
                     id: newConfigButton
                     caption: qsTr("New")
                     implicitWidth: 85
-                    Layout.alignment: Qt.AlignCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
 
                     onClicked: {
-                        FileIO.setDefaultColor();
-                        mainItem.repaint();
+                        //mainForm.state = "New Config";
+                        comboBox.currentIndex = 0;
                     }
                 }
 
@@ -215,7 +242,8 @@ ColumnLayout {
                     id: defaultValuesButton
                     caption: qsTr("Reset")
                     implicitWidth: 85
-                    Layout.alignment: Qt.AlignRight
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
 
                     onClicked: {
                         FileIO.setDefaultColor();
@@ -227,9 +255,12 @@ ColumnLayout {
     }
 
     function repaint() {
+        banner.repaint();
+        comboBox.repaint();
         backgroundButtonColorSelector.repaint();
         defaultValuesButton.repaint();
         defaultPath.repaint();
+        newConfigButton.repaint();
         applicationWindow.color = FileIO.getColor("BACKGROUND_COLOR");
         insideButtonColorSelector.color = FileIO.getColor("INSIDE_BUTTON_COLOR");
         borderButtonColorSelector.color = FileIO.getColor("BORDER_BUTTON_COLOR");
