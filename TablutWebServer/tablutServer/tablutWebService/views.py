@@ -123,19 +123,20 @@ def get_all_match(request):
 	else:
 		raise PermissionDenied
 
-def get_match_by_id(request):
+def get_match_by_id(request, idPartie):
 	#TODO
 	if request.method == 'GET':
 		resp = {}
-		board_file = open("tablutWebService/board/board_game"+str(10)+".json", "r")
+		board_file = open("tablutWebService/board/board_game"+ idPartie +".json", "r")
 		board = json.load(board_file)
 		board_file.close()
-		match_init = match.objects.get(id = 1)
+		match_init = match.objects.get(id = int(idPartie))
 		resp["init"] = {}
 		resp_init = {}
 		resp_init["statusPartie"] = match_init.status
 		resp_init["tour"] = match_init.player_turn
-		resp_init["plateau"] = board
+		resp_init["idPartie"] = int(idPartie)
+		resp_init["plateau"] = board["plateau"]
 		resp["init"] = resp_init
 		return HttpResponse(json.dumps(resp), content_type = "application/json")
 
@@ -143,13 +144,26 @@ def get_match_by_id(request):
 		raise PermissionDenied
 	print "toto"
 
-def reset_match(request):
+def reset_match(request, idPartie):
 	#TODO
-	file_reccord = open("tablutWebService/board/board_game10.json", "w")
-	file_reccord.write(json.dumps({"plateau":[None,None,None,"black","black","red"]}))
-	file_reccord.close()
-	resp = {}
-	resp["erreur"] = "erreur lors de la creation de la partie"
+	if request.method == 'GET':
+		resp = {}
+		resp["send"] = {}
+		resp["send"]["init"] = {}
+		resp["send"]["init"]["idPartie"] = idPartie
+		resp["send"]["init"]["plateau"] = [None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]
+		file_reccord = open("tablutWebService/board/board_game"+ idPartie +".json", "w")
+		file_reccord.write(json.dumps({"plateau":[None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]}))
+		file_reccord.close()
+		match_to_reset = match.objects.get(id = idPartie)
+		resp["send"]["init"]["statusPartie"] = "starting"
+		match_to_reset.status = "starting"
+		resp["send"]["init"]["tour"] = "black"
+		match_to_reset.player_turn = "black"
+		match_to_reset.save()
+		resp["succes"] = "reset"
+	else:
+		raise PermissionDenied
 	return HttpResponse(json.dumps(resp), content_type = "application/json")
 
 def creat_match(request):
@@ -162,14 +176,19 @@ def creat_match(request):
 			resp["erreur"] = "bad format json"
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
 		try:
+			resp = {}
+			resp["send"] = {}
+			resp["send"]["init"] = {}
 			match_reccord = match()
 			match_reccord.name = match_name
 			match_reccord.game_type = match_game
 			match_reccord.status = "starting"
+			resp["send"]["init"]["statusPartie"] = "starting"
 			if match_game == "Tablut":
-				match_reccord.player_turn = match_player_turn
+				match_reccord.player_turn = "black"
 				match_reccord.save()
-
+				resp["send"]["init"]["plateau"] = [None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]
+				resp["send"]["init"]["idPartie"] = match_reccord.id
 				file_reccord = open("tablutWebService/board/board_game"+str(match_reccord.id)+".json", "w")
 				file_reccord.write(json.dumps({"plateau":[None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]}))
 				file_reccord.close()
@@ -244,6 +263,11 @@ def update_match(request):
 			match_to_update = match.objects.get(id = quit["idPartie"])
 			match_to_update.status = quit["statusPartie"]
 			match_reccord.player_turn = None
+
+		elif 'start' in action.keys():
+			start = action["start"]
+			match_to_update = match.objects.get(id = start["idPartie"])
+			match_to_update.status = start["statusPartie"]
 
 		else:
 			resp["erreur"] = "ordre non existant"		

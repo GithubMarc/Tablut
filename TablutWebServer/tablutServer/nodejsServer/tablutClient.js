@@ -141,7 +141,8 @@ function connectWebServer(ipServer, portServer)
 				json=JSON.parse(e.data);
 				console.log("Recu> " + json);
 				onMessageWebSocket(json);
-			}else
+			}
+			else
 			{
 				console.log("Une erreur est survenue.");
 			}

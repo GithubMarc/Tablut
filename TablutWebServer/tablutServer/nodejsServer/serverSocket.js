@@ -24,7 +24,7 @@ function loop() {// Dès qu'un membre se connecte
 		// sauvegarde de la
 		// Envoie des infos aux
 		// Si c'est un ecran
-		playerInit(ws);
+		playerConnection(ws);
 		console.log("client connected !");
 		
 		// Dès qu'on reçoit un message
@@ -53,7 +53,16 @@ function loop() {// Dès qu'un membre se connecte
 			{
 				matchStatus["1"].red = null
 			}
-
+			else
+			{
+				for(var j in listWsClient)
+				{
+					if(matchStatus["1"].viewers_list[j] == ws)
+					{
+						matchStatus["1"].viewers_list.splice(j, 1)
+					}
+				}
+			}
 			console.log("deconnexion de " + tmp);
 			listWsClient.splice(tmp, 1);
 		});
@@ -72,19 +81,15 @@ function messageReceived(messageJson)
 	{
 		while (i < listWsClient.length)
 		{
-			try
+			console.log(messageJson);
+			if('restart' in messageJson)
+			{
+				getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/reset/1", null);
+			}
+			else if (!("message" in messageJson || 'restart' in messageJson))
 			{
 				listWsClient[i].send(JSON.stringify(messageJson));
-				console.log(messageJson);
-				if (!("message" in messageJson))
-				{
-					postHttpRequestServer(httpAddr, httpPort, "/tablutWebService/updateMatch", messageJson);
-				}
-			}
-			catch(err)
-			{
-				listWsClient.splice(i, 1);
-				i--;
+				postHttpRequestServer(httpAddr, httpPort, "/tablutWebService/updateMatch", messageJson, null);
 			}
 			i++;
 		}
@@ -93,55 +98,64 @@ function messageReceived(messageJson)
 	}
 }
 
-function playerInit(ws)
+function playerConnection(ws)
 {
-
+	var id = "1"
 	listWsClient.push(ws);
-	getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/match", ws);
+	console.log("connected client");
+	if (matchStatus["1"].black == null)
+	{
+		try
+		{
+			matchStatus["1"].black = ws
+		}
+		catch(err)
+		{
+			console.log("black");
+		}
+	}
+	else if (matchStatus["1"].red == null)
+	{
+		try
+		{
+			matchStatus["1"].red = ws
+		}
+		catch(err)
+		{
+			console.log("red");
+		}
+	}
+	else
+	{
+		try
+		{
+			matchStatus["1"].viewers_list.push(ws);
+		}
+		catch(err)
+		{
+			console.log("spectateur");
+		}
+	}
+	getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/match/" + id, ws);
 }
 
 function onMessageHTTP(jsonParse, ws)
 {
 	if("init" in jsonParse)
 	{
-		//reprendre quand amélioration TAG LHI
-		if (matchStatus["1"].black == null)
+		playerInit(jsonParse, ws);
+	}
+	else if("succes" in jsonParse)
+	{
+		if(jsonParse["succes"] == "reset")
 		{
-			try
-			{
-				matchStatus["1"].black = ws
-				jsonParse["init"]["equipe"] = "black";
-			}
-			catch(err)
-			{
-				console.log("black");
+			for(var i in listWsClient)
+			{	
+				console.log(jsonParse);
+				console.log(jsonParse["send"]);
+				//playerInit(jsonParse["send"], listWsClient[i]);
 			}
 		}
-		else if (matchStatus["1"].red == null)
-		{
-			try
-			{
-				matchStatus["1"].red = ws
-				jsonParse["init"]["equipe"] = "red";
-			}
-			catch(err)
-			{
-				console.log("red");
-			}
-		}
-		else
-		{
-			try
-			{
-				jsonParse["init"]["equipe"] = "spectateur";
-			}
-			catch(err)
-			{
-				console.log("spectateur");
-			}
-		}
-		console.log(jsonParse);
-		ws.send(JSON.stringify(jsonParse));
 	}
 	else
 	{
@@ -149,13 +163,52 @@ function onMessageHTTP(jsonParse, ws)
 	}
 }
 
-function postHttpRequestServer(addr, port, path, sendMessage){
+function playerInit(jsonParse, ws)
+{
+	//reprendre quand amélioration TAG LHI
+	if (matchStatus["1"].black == ws)
+	{
+		try
+		{
+			jsonParse["init"]["equipe"] = "black";
+		}
+		catch(err)
+		{
+			console.log("black");
+		}
+	}
+	else if (matchStatus["1"].red == ws)
+	{
+		try
+		{
+			jsonParse["init"]["equipe"] = "red";
+		}
+		catch(err)
+		{
+			console.log("red");
+		}
+	}
+	else
+	{
+		try
+		{
+			jsonParse["init"]["equipe"] = "spectateur";
+		}
+		catch(err)
+		{
+			console.log("spectateur");
+		}
+	}
+	ws.send(JSON.stringify(jsonParse));
+}
+
+function postHttpRequestServer(addr, port, path, sendMessage, ws){
 	var xmlHttp = new XMLHttpRequest();
 	var message = JSON.stringify(sendMessage);
 	xmlHttp.onreadystatechange = function() {
 	if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
 			var myArr = JSON.parse(xmlHttp.responseText);
-			onMessageHTTP(myArr);
+			onMessageHTTP(myArr, ws);
 		}
 	};
 
