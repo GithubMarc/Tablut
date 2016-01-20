@@ -43,60 +43,138 @@ ColumnLayout {
             anchors.centerIn: parent
             spacing: 20
 
-            ComboBox {
-                property bool isActive: false
-                property string backgroundColor: FileIO.getColor("BACKGROUND_COLOR")
-                property string backgroundBorderColor: FileIO.getColor("BORDER_BUTTON_COLOR")
+            Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
 
-                id: comboBox
-                model: folderModel
+                ComboBox {
+                    property bool isActive: false
+                    property string backgroundColor: FileIO.getColor("BACKGROUND_COLOR")
+                    property string backgroundBorderColor: FileIO.getColor("BORDER_BUTTON_COLOR")
+                    property string menuColor: FileIO.getColor("INSIDE_BUTTON_COLOR")
+                    property string menuFontColor: FileIO.getColor("FONT_BUTTON_COLOR")
 
-                textRole: "fileBaseName"
+                    id: comboBox
+                    model: folderModel
 
-                onCurrentIndexChanged: {
-                    if (isActive && currentIndex != -1) {
-                        loadConfig(folderModel.get(currentIndex, "filePath"));
-                    }
-                }
-                style: ComboBoxStyle {
-                    background: Rectangle {
-                        color: comboBox.backgroundColor
-                        radius: 5
-                        implicitWidth: 200
-                        implicitHeight: 25
-                        border.color: comboBox.backgroundBorderColor
-                        border.width: 3
+                    textRole: "fileBaseName"
 
-                        Image {
-                            source: "../icon/dropDownIcon.png"
-                            width: 5
-                            height: 5
-                            fillMode: Image.PreserveAspectFit
-                            asynchronous: true
-                            anchors.right: parent.right
-                            anchors.rightMargin: 6
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: 6
+                    onCurrentIndexChanged: {
+                        if (isActive && currentIndex != -1) {
+                            loadConfig(folderModel.get(currentIndex, "filePath"));
                         }
                     }
+                    style: ComboBoxStyle {
+                        background: Rectangle {
+                            color: comboBox.backgroundColor
+                            radius: 5
+                            implicitWidth: 200
+                            implicitHeight: 25
+                            border.color: comboBox.backgroundBorderColor
+                            border.width: 3
 
-                    label: Text {
-                        font.family: "Courier"
-                        color: "#000000"
-                        text: comboBox.currentText
+                            Image {
+                                source: "../icon/dropDownIcon.png"
+                                width: 5
+                                height: 5
+                                fillMode: Image.PreserveAspectFit
+                                asynchronous: true
+                                anchors.right: parent.right
+                                anchors.rightMargin: 6
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 6
+                            }
+                        }
+
+                        label: Text {
+                            font.family: "Courier"
+                            color: "#000000"
+                            text: comboBox.currentText
+                        }
+
+                        selectedTextColor: comboBox.menuFontColor
+                        selectionColor: comboBox.menuColor
+                    }
+
+                    anchors.centerIn: parent
+
+                    function loadConfig(path) {
+                        FileIO.setPath(path);
+                        mainItem.repaint();
+                    }
+
+                    function repaint() {
+                        comboBox.backgroundColor = FileIO.getColor("BACKGROUND_COLOR");
+                        comboBox.backgroundBorderColor = FileIO.getColor("BORDER_BUTTON_COLOR");
+                        comboBox.menuColor = FileIO.getColor("INSIDE_BUTTON_COLOR");
+                        comboBox.menuFontColor = FileIO.getColor("FONT_BUTTON_COLOR");
                     }
                 }
 
-                Layout.alignment: Qt.AlignCenter
+                MenuButton {
+                    id: newConfigButton
+                    implicitWidth: 26
+                    implicitHeight: 26
 
-                function loadConfig(path) {
-                    FileIO.setPath(path);
-                    mainItem.repaint();
+                    Image {
+                        source: "../icon/plus.png"
+                        width: 20
+                        height: 20
+                        fillMode: Image.PreserveAspectFit
+                        asynchronous: true
+                        anchors.centerIn: parent
+                    }
+
+                    onClicked: mainForm.state = "New Config";
+
+                    anchors.left: comboBox.right
+                    anchors.leftMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
                 }
 
-                function repaint() {
-                    comboBox.backgroundColor = FileIO.getColor("BACKGROUND_COLOR");
-                    comboBox.backgroundBorderColor = FileIO.getColor("BORDER_BUTTON_COLOR");
+                MenuButton {
+                    id: deleteConfigButton
+                    implicitWidth: 26
+                    implicitHeight: 26
+
+                    Image {
+                        source: "../icon/moins.png"
+                        width: 20
+                        height: 20
+                        fillMode: Image.PreserveAspectFit
+                        asynchronous: true
+                        anchors.centerIn: parent
+                    }
+
+                    onClicked: deleteFile(folderModel.get(comboBox.currentIndex, "filePath"));
+
+                    anchors.left: newConfigButton.right
+                    anchors.leftMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    MessageDialog {
+                        id: removeError
+                        icon: StandardIcon.Warning
+                        title: qsTr("An error occured")
+                    }
+
+                    function deleteFile(path) {
+                        if(comboBox.currentIndex != -1 && comboBox.count > 1) {
+                            switch(FileIO.removeFile(path)) {
+                            case FileIO.getRemoveError():
+                                removeError.text = qsTr("There is an error on the path");
+                                removeError.visible = true;
+                                break;
+                            case FileIO.getRemoveErrorDefaultFile():
+                                removeError.text = qsTr("The file you selected is the default file");
+                                removeError.visible = true;
+                                break;
+                            default:
+                                comboBox.currentIndex = -1;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -106,7 +184,7 @@ ColumnLayout {
                 columns: 2
                 columnSpacing: 30
                 rowSpacing: 20
-                visible: true
+                opacity: comboBox.currentIndex == -1 ? 0.0 : 1.0
 
                 Label {
                     text: qsTr("Background")
@@ -227,18 +305,6 @@ ColumnLayout {
                 }
 
                 MenuButton {
-                    id: newConfigButton
-                    caption: qsTr("New")
-                    implicitWidth: 85
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    onClicked: {
-                        //mainForm.state = "New Config";
-                        comboBox.currentIndex = 0;
-                    }
-                }
-
-                MenuButton {
                     id: defaultValuesButton
                     caption: qsTr("Reset")
                     implicitWidth: 85
@@ -257,10 +323,11 @@ ColumnLayout {
     function repaint() {
         banner.repaint();
         comboBox.repaint();
+        newConfigButton.repaint();
+        deleteConfigButton.repaint();
         backgroundButtonColorSelector.repaint();
         defaultValuesButton.repaint();
         defaultPath.repaint();
-        newConfigButton.repaint();
         applicationWindow.color = FileIO.getColor("BACKGROUND_COLOR");
         insideButtonColorSelector.color = FileIO.getColor("INSIDE_BUTTON_COLOR");
         borderButtonColorSelector.color = FileIO.getColor("BORDER_BUTTON_COLOR");
@@ -298,6 +365,3 @@ ColumnLayout {
         }
     }
 }
-
-
-

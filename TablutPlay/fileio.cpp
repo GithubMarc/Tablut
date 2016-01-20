@@ -1,4 +1,5 @@
 #include "fileio.h"
+#include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <QJsonObject>
@@ -10,6 +11,25 @@
 FileIO::FileIO()
 {
 
+}
+
+int FileIO::removeFile(QString path) {
+    if (path != getDefaultPath()) {
+        if (remove(path.toStdString().c_str()) == 0) return this->REMOVE_SUCCESSFULL;
+        else return this->REMOVE_ERROR;
+    } else return this->REMOVE_ERROR_DEFAULT_FILE;
+}
+
+int FileIO::getRemoveErrorDefaultFile() {
+    return this->REMOVE_ERROR_DEFAULT_FILE;
+}
+
+int FileIO::getRemoveError() {
+    return this->REMOVE_ERROR;
+}
+
+int FileIO::getRemoveSuccess() {
+    return this->REMOVE_SUCCESSFULL;
 }
 
 void FileIO::setPath(QString path) {
