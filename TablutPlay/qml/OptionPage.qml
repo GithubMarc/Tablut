@@ -185,6 +185,7 @@ ColumnLayout {
                 columnSpacing: 30
                 rowSpacing: 20
                 opacity: comboBox.currentIndex == -1 ? 0.0 : 1.0
+                enabled: comboBox.currentIndex == -1 ? false : true
 
                 Label {
                     text: qsTr("Background")
