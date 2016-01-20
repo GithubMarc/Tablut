@@ -6,11 +6,10 @@ import QtQuick.Dialogs 1.2
 Rectangle {
     color: "#d0000000"
 
-    Button {
+    PreviousButton {
         id: previous
-        x: 0
-        y: 0
-        text: "Previous"
+        anchors.left: parent.left
+        anchors.top: parent.top
         onClicked: {
             mainForm.state = "Option";
             mainForm.menuPage.repaint();
@@ -18,17 +17,14 @@ Rectangle {
     }
 
     ColumnLayout {
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.centerIn: parent
 
         Label {
             id: chooseName
             text: qsTr("Please enter a new config file's name")
             font.pointSize: 18
             color: "#ffffff"
-            anchors.left: parent.left
-            anchors.leftMargin: 0
+            Layout.alignment: Qt.AlignLeft
         }
 
         TextField {
@@ -36,16 +32,14 @@ Rectangle {
             implicitWidth: 450
             implicitHeight: 45
             font.pointSize: 18
-            anchors.left: parent.left
-            anchors.leftMargin: 0
+            Layout.alignment: Qt.AlignLeft
         }
 
         Button {
             id: save
             text: qsTr("Save")
             implicitHeight: 35
-            anchors.right: parent.right
-            anchors.rightMargin: 0
+            Layout.alignment: Qt.AlignRight
 
             onClicked: {
                 if (fileName.text != "") {
@@ -57,7 +51,7 @@ Rectangle {
             MessageDialog {
                 id: textAlredayExists
                 title: qsTr("File already exists")
-                text: qsTr("The file name you entered already exists. please enter a new name and try again.")
+                text: qsTr("The file name you entered already exists. Please enter a new name and try again.")
                 icon: StandardIcon.Warning
                 visible: false
 

@@ -29,7 +29,6 @@ QString FileIO::getDefaultPath() {
         QTextStream stream(&file);
 
         saveStream = stream.readAll();
-        //qDebug() << saveStream;
     }
     return saveStream;
 }

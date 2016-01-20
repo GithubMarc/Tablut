@@ -3,38 +3,58 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
-import "../js/Connection.js" as ConnectionScript
 
-Item {
-    ColumnLayout {
-        id: connectionStateLayout
-        spacing: 20
-        anchors.centerIn: parent
+ColumnLayout {
+    anchors.fill: parent
+    spacing: 5
 
-        MenuButton {
-            id: onlineButton
-            caption: qsTr("Online")
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: {
-                mainForm.connectionPage.repaint();
-                mainForm.state = "Connection";
+    Banner {
+        id: banner
+        title: qsTr("Menu")
+        anchors.top: parent.top
+        anchors.topMargin: 0
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        Layout.fillWidth: true
+        isPreviousButtonVisible: false
+    }
+
+    Item {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+
+        ColumnLayout {
+            id: menuStateLayout
+            spacing: 20
+            anchors.centerIn: parent
+
+
+            MenuButton {
+                id: onlineButton
+                caption: qsTr("Online")
+                Layout.alignment: Qt.AlignCenter
+                onClicked: {
+                    mainForm.connectionPage.repaint();
+                    mainForm.state = "Connection";
+                }
             }
-        }
 
-        MenuButton {
-            id: offlineButton
-            caption: qsTr("Offline")
-            anchors.horizontalCenter: parent.horizontalCenter
-            onClicked: mainForm.state = "base state";
-        }
+            MenuButton {
+                id: offlineButton
+                caption: qsTr("Offline")
+                Layout.alignment: Qt.AlignCenter
+                enabled: false
+                onClicked: mainForm.state = "base state";
+            }
 
-        MenuButton {
-            id: optionButton
-            caption: qsTr("Option")
-            anchors.horizontalCenter: parent.horizontalCenter
+            MenuButton {
+                id: optionButton
+                caption: qsTr("Option")
+                Layout.alignment: Qt.AlignCenter
 
-            onClicked: {
-                mainForm.state = "Option";
+                onClicked: {
+                    mainForm.state = "Option";
+                }
             }
         }
     }
@@ -43,5 +63,6 @@ Item {
         onlineButton.repaint();
         offlineButton.repaint();
         optionButton.repaint();
+        banner.repaint();
     }
 }

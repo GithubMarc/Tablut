@@ -14,25 +14,25 @@ Item {
     PlayPage {
         id: playPage
         visible: true
-        anchors.centerIn: parent
+        anchors.fill: parent
     }
 
     PausePage {
         id: pausePage
         visible: false
-        anchors.centerIn: parent
+        anchors.fill: parent
     }
 
     ConnectionPage {
         id: connectionPage
         visible: false
-        anchors.centerIn: parent
+        anchors.fill: parent
     }
 
     MenuPage {
         id: menuPage
         visible: false
-        anchors.centerIn: parent
+        anchors.fill: parent
     }
 
     OptionPage {
