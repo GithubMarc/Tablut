@@ -603,7 +603,7 @@ function drawField(jsonField) {
             break;
         case "king": mainForm.playPage.field.board.itemAt(i).pion = createPion(mainForm.playPage.field.board.itemAt(i), KING_COLOR, RED_TEAM);
             break;
-        default:
+        default: mainForm.playPage.field.board.itemAt(i).pion = null;
             break;
         }
     }
