@@ -79,11 +79,25 @@ function messageReceived(messageJson)
 	var i = 0;
 	try 
 	{
+		if ('end' in messageJson && messageJson['end'] == "switch team")
+		{
+			var tmpred = matchStatus["1"].red;
+			matchStatus["1"].red = matchStatus["1"].black;
+			matchStatus["1"].black = tmpred;
+		}
 		while (i < listWsClient.length)
 		{
 			console.log(messageJson);
-			if('restart' in messageJson)
+			if('end' in messageJson)
 			{
+				if(messageJson['end'] == "new game" || messageJson['end'] == "switch team")
+				{
+					getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/reset/1", null);
+				}
+				else if (messageJson['end'] == "menu")
+				{
+					listWsClient[i].send(JSON.stringify(messageJson));
+				}
 				getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/reset/1", null);
 			}
 			else if (!("message" in messageJson || 'restart' in messageJson))
@@ -153,7 +167,7 @@ function onMessageHTTP(jsonParse, ws)
 			{	
 				console.log(jsonParse);
 				console.log(jsonParse["send"]);
-				//playerInit(jsonParse["send"], listWsClient[i]);
+				playerInit(jsonParse["send"], listWsClient[i]);
 			}
 		}
 	}
