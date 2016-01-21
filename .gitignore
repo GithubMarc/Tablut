@@ -1,5 +1,5 @@
-/TablutPlay/build-TablutPlay-Desktop_Qt_5_5_1_MinGW_32bit-Debug
-/TablutPlay/build-TablutPlay-Desktop_Qt_5_5_1_GCC_64bit-Debug
+/TablutPlay/config/
+/TablutPlay/build-*
 /TablutPlay/TablutPlay.*
 /TablutPlay/deployment.pri
 /TablutPlay/qml.qrc
