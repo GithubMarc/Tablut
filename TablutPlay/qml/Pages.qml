@@ -14,7 +14,7 @@ Item {
 
     PlayPage {
         id: playPage
-        visible: false
+        visible: true
         anchors.fill: parent
     }
 

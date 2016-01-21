@@ -472,8 +472,18 @@ function sendOrderToServer(order) {
                 }
             };
         break;
+
     default: break;
     }
+
+    mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
+}
+
+function sendEndGameOption(option) {
+    var json =
+        {
+            "end": option
+        };
 
     mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
 }
@@ -485,6 +495,7 @@ function messageReceived(message) {
 
     switch(key) {
     case "init":
+        mainForm.state = "base state"
         mainForm.playPage.field.idPartie = messageParse["idPartie"];
         mainForm.playPage.field.playerTeam = messageParse["equipe"];
         mainForm.playPage.field.player = messageParse["tour"];
@@ -525,7 +536,7 @@ function messageReceived(message) {
         case "red":
             if("red" == mainForm.playPage.field.playerTeam) {
                 mainForm.endPage.endStateLabel = qsTr("Victoire");
-                mainForm.endPage.endSentenceLabel = qsTr("votre roi est sauf");
+                mainForm.endPage.endSentenceLabel = qsTr("Votre roi est sauf");
             } else {
                 mainForm.endPage.endStateLabel = qsTr("Défaite");
                 mainForm.endPage.endSentenceLabel = qsTr("Le roi a réussi à vous échappez");
@@ -545,6 +556,10 @@ function messageReceived(message) {
         }
 
         mainForm.state = "End";
+        break;
+
+    case "end":
+        if(messageParse == "menu") mainForm.state = "Menu";
         break;
 
     case "start":

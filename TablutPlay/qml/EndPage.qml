@@ -3,6 +3,8 @@ import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.2
 
+import "../js/Jeu.js" as JeuScript
+
 Rectangle {
     color: "#d0000000"
 
@@ -39,6 +41,8 @@ Rectangle {
                 implicitHeight: 35
                 anchors.left: parent.left
                 anchors.leftMargin: 0
+
+                onClicked: JeuScript.sendEndGameOption("new game");
             }
 
             Button {
@@ -46,14 +50,18 @@ Rectangle {
                 text: qsTr("Switch Team")
                 implicitHeight: 35
                 anchors.horizontalCenter: parent.horizontalCenter
+
+                onClicked: JeuScript.sendEndGameOption("switch team");
             }
 
             Button {
-                id: quit
-                text: qsTr("Quit")
+                id: menu
+                text: qsTr("Menu")
                 implicitHeight: 35
                 anchors.right: parent.right
                 anchors.rightMargin: 0
+
+                onClicked: JeuScript.sendEndGameOption("menu");
             }
         }
     }

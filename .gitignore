@@ -1,6 +1,6 @@
+/TablutPlay/config/
 /TablutPlay/build-*
 /TablutPlay/TablutPlay.*
 /TablutPlay/deployment.pri
 /TablutPlay/qml.qrc
 /TablutPlay/icon/*.xcf
-/TablutPlay/config/
