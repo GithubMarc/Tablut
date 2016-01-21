@@ -510,6 +510,7 @@ function messageReceived(message) {
 
         // Destroy the old one
         mainForm.playPage.field.board.itemAt(parseInt(messageParse["depart"])).pion.destroy();
+        mainForm.playPage.field.board.itemAt(parseInt(messageParse["depart"])).pion = null;
 
         // Update Score
         ScoreScript.updateScore();
@@ -596,6 +597,12 @@ function sleep(milliseconds) {
 
 function drawField(jsonField) {
     for (var i in jsonField) {
+
+        if(mainForm.playPage.field.board.itemAt(i).pion != null) {
+            mainForm.playPage.field.board.itemAt(i).pion.destroy();
+            mainForm.playPage.field.board.itemAt(i).pion = null;
+        }
+
         switch (jsonField[i]) {
         case "black": mainForm.playPage.field.board.itemAt(i).pion = createPion(mainForm.playPage.field.board.itemAt(i), BLACK_COLOR, BLACK_TEAM);
             break;
@@ -604,10 +611,6 @@ function drawField(jsonField) {
         case "king": mainForm.playPage.field.board.itemAt(i).pion = createPion(mainForm.playPage.field.board.itemAt(i), KING_COLOR, RED_TEAM);
             break;
         default:
-            if(mainForm.playPage.field.board.itemAt(i).pion != null) {
-                mainForm.playPage.field.board.itemAt(i).pion.destroy();
-                mainForm.playPage.field.board.itemAt(i).pion = null;
-            }
             break;
         }
     }
