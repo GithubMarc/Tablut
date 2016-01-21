@@ -11,6 +11,13 @@ Item {
     property alias menuPage: menuPage
     property alias optionPage: optionPage
     property alias endPage: endPage
+    property alias gameSelectionPage: gameSelectionPage
+
+    GameSelectionPage {
+        id: gameSelectionPage
+        visible: false
+        anchors.fill: parent
+    }
 
     PlayPage {
         id: playPage
@@ -60,6 +67,11 @@ Item {
             name: "Pause"
 
             PropertyChanges {
+              target: gameSelectionPage
+              visible: false
+            }
+
+            PropertyChanges {
                 target: playPage
                 visible: false
             }
@@ -99,6 +111,11 @@ Item {
             name: "Connection"
 
             PropertyChanges {
+              target: gameSelectionPage
+              visible: false
+            }
+
+            PropertyChanges {
                 target: playPage
                 visible: false
             }
@@ -135,6 +152,11 @@ Item {
         },
         State {
             name: "Menu"
+
+            PropertyChanges {
+              target: gameSelectionPage
+              visible: false
+            }
 
             PropertyChanges {
                 target: pausePage
@@ -176,6 +198,11 @@ Item {
             name: "Option"
 
             PropertyChanges {
+              target: gameSelectionPage
+              visible: false
+            }
+
+            PropertyChanges {
                 target: pausePage
                 visible: false
             }
@@ -213,6 +240,11 @@ Item {
 
         State {
             name: "New Config"
+
+            PropertyChanges {
+              target: gameSelectionPage
+              visible: false
+            }
 
             PropertyChanges {
                 target: playPage
@@ -256,6 +288,11 @@ Item {
             name: "End"
 
             PropertyChanges {
+              target: gameSelectionPage
+              visible: false
+            }
+
+            PropertyChanges {
                 target: playPage
                 visible: true
                 opacity: 0.1
@@ -290,6 +327,50 @@ Item {
             PropertyChanges {
                 target: endPage
                 visible: true
+            }
+        },
+
+        State {
+            name: "Game"
+
+            PropertyChanges {
+              target: gameSelectionPage
+              visible: true
+            }
+
+            PropertyChanges {
+                target: playPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: connectionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: pausePage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: menuPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: optionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: newConfigPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: endPage
+                visible: false
             }
         }
     ]
