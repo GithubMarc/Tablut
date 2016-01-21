@@ -10,10 +10,11 @@ Item {
     property alias connectionPage: connectionPage
     property alias menuPage: menuPage
     property alias optionPage: optionPage
+    property alias endPage: endPage
 
     PlayPage {
         id: playPage
-        visible: true
+        visible: false
         anchors.fill: parent
     }
 
@@ -43,6 +44,12 @@ Item {
 
     NewConfigPage {
         id: newConfigPage
+        visible: false
+        anchors.fill: parent
+    }
+
+    EndPage {
+        id: endPage
         visible: false
         anchors.fill: parent
     }
@@ -81,6 +88,11 @@ Item {
                 target: newConfigPage
                 visible: false
             }
+
+            PropertyChanges {
+                target: endPage
+                visible: false
+            }
         },
 
         State {
@@ -115,6 +127,11 @@ Item {
                 target: newConfigPage
                 visible: false
             }
+
+            PropertyChanges {
+                target: endPage
+                visible: false
+            }
         },
         State {
             name: "Menu"
@@ -146,6 +163,11 @@ Item {
 
             PropertyChanges {
                 target: newConfigPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: endPage
                 visible: false
             }
         },
@@ -182,6 +204,11 @@ Item {
                 target: newConfigPage
                 visible: false
             }
+
+            PropertyChanges {
+                target: endPage
+                visible: false
+            }
         },
 
         State {
@@ -216,6 +243,52 @@ Item {
 
             PropertyChanges {
                 target: newConfigPage
+                visible: true
+            }
+
+            PropertyChanges {
+                target: endPage
+                visible: false
+            }
+        },
+
+        State {
+            name: "End"
+
+            PropertyChanges {
+                target: playPage
+                visible: true
+                opacity: 0.1
+                enabled: false
+            }
+
+            PropertyChanges {
+                target: connectionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: pausePage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: menuPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: optionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: newConfigPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: endPage
                 visible: true
             }
         }

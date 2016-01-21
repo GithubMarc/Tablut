@@ -521,6 +521,30 @@ function messageReceived(message) {
 
     case "win":
         TimerScript.stopTimer();
+        switch(messageParse["equipe"]) {
+        case "red":
+            if("red" == mainForm.playPage.field.playerTeam) {
+                mainForm.endPage.endStateLabel = qsTr("Victoire");
+                mainForm.endPage.endSentenceLabel = qsTr("votre roi est sauf");
+            } else {
+                mainForm.endPage.endStateLabel = qsTr("Défaite");
+                mainForm.endPage.endSentenceLabel = qsTr("Le roi a réussi à vous échappez");
+            }
+            break;
+        case "black":
+            if("black" == mainForm.playPage.field.playerTeam) {
+                mainForm.endPage.endStateLabel = qsTr("Victoire");
+                mainForm.endPage.endSentenceLabel = qsTr("Vous avez réussi à capturer le roi");
+            } else {
+                mainForm.endPage.endStateLabel = qsTr("Défaite");
+                mainForm.endPage.endSentenceLabel = qsTr("Vous avez laissé votre roi être capturé");
+            }
+            break;
+        default:
+            break;
+        }
+
+        mainForm.state = "End";
         break;
 
     case "start":
