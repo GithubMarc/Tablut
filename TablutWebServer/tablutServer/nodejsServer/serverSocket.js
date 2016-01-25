@@ -4,7 +4,6 @@ var XMLHttpRequest = require('xhr2');
 var partieMod = require('./Partie.js');
 var listWsClient = [];
 var matchStatus = {};
-matchStatus["1"] = new partieMod("1");
 var httpAddr = "172.30.1.1"
 var httpPort = "8000"
 
@@ -31,7 +30,7 @@ function loop() {// Dès qu'un membre se connecte
 		ws.onmessage = function(message){
 			// Traitement de l'action en fonction du message
 			var new_message = JSON.parse(message.data);
-			messageReceived(new_message);
+			messageReceived(new_message, ws);
 		};
 
 		ws.on('close', function(){
@@ -45,21 +44,24 @@ function loop() {// Dès qu'un membre se connecte
 			}
 
 			//reprendre quand amélioration TAG LHI
-			if(matchStatus["1"].black == ws)
+			for(var k in matchStatus[j])
 			{
-				matchStatus["1"].black = null
-			}
-			else if(matchStatus["1"].red == ws)
-			{
-				matchStatus["1"].red = null
-			}
-			else
-			{
-				for(var j in listWsClient)
+				if(matchStatus[k].black == ws)
 				{
-					if(matchStatus["1"].viewers_list[j] == ws)
+					matchStatus[k].black = null
+				}
+				else if(matchStatus[k].red == ws)
+				{
+					matchStatus[k].red = null
+				}
+				else
+				{
+					for(var j in listWsClient)
 					{
-						matchStatus["1"].viewers_list.splice(j, 1)
+						if(matchStatus[k].viewers_list[j] == ws)
+						{
+							matchStatus[k].viewers_list.splice(j, 1)
+						}
 					}
 				}
 			}
@@ -73,70 +75,109 @@ function loop() {// Dès qu'un membre se connecte
 	});
 }
 
-function messageReceived(messageJson)
+function messageReceived(messageJson, ws)
 {
 	// Traitement de l'action en fonction du message
 	var i = 0;
 	try 
 	{
-		while (i < listWsClient.length)
+		console.log(messageJson);
+		if('end' in messageJson)
 		{
-			console.log(messageJson);
-			if('restart' in messageJson)
+			if(messageJson['end'] == "new game" || messageJson['end'] == "switch team")
 			{
-				getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/reset/1", null);
+				if ('end' in messageJson && messageJson['end'] == "switch team")
+				{
+					var tmpred = matchStatus[messageJson["idPartie"].toString()].red;
+					matchStatus[messageJson["idPartie"].toString()].red = matchStatus[messageJson["idPartie"].toString()].black;
+					matchStatus[messageJson["idPartie"].toString()].black = tmpred;
+				}
+				getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/reset/"+messageJson["idPartie"].toString(), null);
 			}
-			else if (!("message" in messageJson || 'restart' in messageJson))
+			else if (messageJson['end'] == "menu")
 			{
-				listWsClient[i].send(JSON.stringify(messageJson));
-				postHttpRequestServer(httpAddr, httpPort, "/tablutWebService/updateMatch", messageJson, null);
+				sendToAll(messageJson);
+				getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/reset1/"+messageJson["idPartie"].toString(), null);
 			}
-			i++;
 		}
-	} catch(err) {
-		console.log("json error " + message.data)
+		else if ('connexion' in messageJson) 
+		{
+
+			if(messageJson['connexion'].toString() in matchStatus)
+			{
+				if (matchStatus[messageJson['connexion'].toString()].black == null)
+				{
+					matchStatus[messageJson['connexion'].toString()].black = ws;
+				}
+				else if (matchStatus[messageJson['connexion'].toString()].red == null)
+				{
+					matchStatus[messageJson['connexion'].toString()].red = ws;
+				}
+				else
+				{
+					matchStatus[messageJson['connexion'].toString()].viewers_list.push(ws);
+				}
+			}
+			else
+			{
+				matchStatus[messageJson['connexion'].toString()] = new partieMod(messageJson['connexion']);
+				matchStatus[messageJson['connexion'].toString()].black = ws;
+			}
+			getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/match/" + messageJson['connexion'], ws);
+
+		}
+		else if (!("message" in messageJson || 'end' in messageJson || 'connexion' in messageJson))
+		{
+			var idPartie = 0
+			for(var i in messageJson)
+			{
+				if('idPartie' in messageJson[i])
+				{
+					idPartie = messageJson[i]['idPartie']
+				}
+			}
+			sendToAll(messageJson, idPartie);
+			postHttpRequestServer(httpAddr, httpPort, "/tablutWebService/updateMatch", messageJson, null);
+		}
+	}
+	catch(err) 
+	{
+		console.log(err);
+		console.log("json error " + JSON.stringify(messageJson));
+	}
+}
+
+function sendToAll(jsonParse, idPartie)
+{
+	if(idPartie == false)
+	{
+		for(var i in listWsClient)
+		{
+			listWsClient[i].send(JSON.stringify(jsonParse));
+		}
+	}
+	else
+	{
+		if(matchStatus[idPartie.toString()].black != null)
+		{
+			matchStatus[idPartie.toString()].black.send(JSON.stringify(jsonParse));
+		}
+		if(matchStatus[idPartie.toString()].red != null)
+		{
+			matchStatus[idPartie.toString()].red.send(JSON.stringify(jsonParse));
+		}
+		for(var i in matchStatus[idPartie.toString()].viewers_list)
+		{
+			matchStatus[idPartie.toString()].viewers_list[i].send(JSON.stringify(jsonParse));
+		}
 	}
 }
 
 function playerConnection(ws)
 {
-	var id = "1"
 	listWsClient.push(ws);
 	console.log("connected client");
-	if (matchStatus["1"].black == null)
-	{
-		try
-		{
-			matchStatus["1"].black = ws
-		}
-		catch(err)
-		{
-			console.log("black");
-		}
-	}
-	else if (matchStatus["1"].red == null)
-	{
-		try
-		{
-			matchStatus["1"].red = ws
-		}
-		catch(err)
-		{
-			console.log("red");
-		}
-	}
-	else
-	{
-		try
-		{
-			matchStatus["1"].viewers_list.push(ws);
-		}
-		catch(err)
-		{
-			console.log("spectateur");
-		}
-	}
-	getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/match/" + id, ws);
+	ws.send(JSON.stringify({"succes":"connexion"}));
 }
 
 function onMessageHTTP(jsonParse, ws)
@@ -153,7 +194,7 @@ function onMessageHTTP(jsonParse, ws)
 			{	
 				console.log(jsonParse);
 				console.log(jsonParse["send"]);
-				//playerInit(jsonParse["send"], listWsClient[i]);
+				playerInit(jsonParse["send"], listWsClient[i]);
 			}
 		}
 	}
@@ -166,7 +207,7 @@ function onMessageHTTP(jsonParse, ws)
 function playerInit(jsonParse, ws)
 {
 	//reprendre quand amélioration TAG LHI
-	if (matchStatus["1"].black == ws)
+	if (matchStatus[jsonParse["init"]["idPartie"].toString()].black == ws)
 	{
 		try
 		{
@@ -177,7 +218,7 @@ function playerInit(jsonParse, ws)
 			console.log("black");
 		}
 	}
-	else if (matchStatus["1"].red == ws)
+	else if (matchStatus[jsonParse["init"]["idPartie"].toString()].red == ws)
 	{
 		try
 		{
@@ -217,12 +258,6 @@ function postHttpRequestServer(addr, port, path, sendMessage, ws){
 	xmlHttp.send(message);
 }
 
-/**
-* Fonction qui envoi une requete HTTP
-* Récupère au format JSON l'adresse ip et le port de connexion pour la Web Socket
-* Url pour la requete HTTP
-* Port pour la requete HTTP
-*/
 function getHttpRequestServer(addr, port, path, ws)
 {
 	var xmlHttp = new XMLHttpRequest();

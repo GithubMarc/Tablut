@@ -16,7 +16,10 @@ serverAddr = "172.30.1.1"
 wsPort = 4000
 
 # Create your views here
-def testbase(request):
+def testbase(request, toto):
+	if 0 != False:
+		print False
+
 	if request.method == 'GET':
 		print request
 		print request.method
@@ -30,12 +33,6 @@ def testbase(request):
 	text = json.dumps({"toto":"tata","id":1})
 	return HttpResponse(text, content_type = "application/json")
 	# curl -i -X DELETE -H "Content-Type : application/json" http://172.31.1.121:1337/locations/3
-
-def testtemplate(request, var1, vartest):
-	total = int(var1) + int(vartest)
-
-	# Retourne nombre1, nombre2 et la somme des deux au tpl
-	return render(json.dumps(request), 'tablutWebService/testtemplate.html', locals())
 
 def user_connexion(request):
 	if request.method == 'POST':
@@ -102,19 +99,29 @@ def return_webSocketAddr(request):
 
 def get_all_match(request):
 	if request.method == 'GET':
-
 		try:
 			match_list = {}
 			match_list["succes"] = "match_list"
-			match_list["list"] = []
-			bdd_list = match.objects.all()
+			match_list["liste"] = []
+			bdd_list = match.objects.exclude(status = "end")
 			for each_match in bdd_list:
 				match_data = {}
-				match_data["id"] = each_match.id
-				match_data["name"] = each_match.name
-				match_data["game_type"] = each_match.game_type
-				match_data["status"] =  each_match.status
-				match_list["list"].append(match_data)
+				match_data["idPartie"] = each_match.id
+				match_data["nom"] = each_match.name
+				match_data["typeJeu"] = each_match.game_type.label
+				match_data["statusPartie"] =  each_match.status
+
+				try:
+					file_reccord = open("tablutWebService/board/board_game"+ str(each_match.id) +".json", "r")
+					board = json.load(file_reccord)
+					file_reccord.close()
+				except:
+					board = {}
+					board["plateau"] = []
+
+				match_data["plateau"] = board["plateau"]
+
+				match_list["liste"].append(match_data)
 		except:
 			match_list = {}
 			match_list["erreur"] = "erreur du chargment de la liste des matchs."
@@ -124,7 +131,6 @@ def get_all_match(request):
 		raise PermissionDenied
 
 def get_match_by_id(request, idPartie):
-	#TODO
 	if request.method == 'GET':
 		resp = {}
 		board_file = open("tablutWebService/board/board_game"+ idPartie +".json", "r")
@@ -145,7 +151,6 @@ def get_match_by_id(request, idPartie):
 	print "toto"
 
 def reset_match(request, idPartie):
-	#TODO
 	if request.method == 'GET':
 		resp = {}
 		resp["send"] = {}
@@ -166,7 +171,20 @@ def reset_match(request, idPartie):
 		raise PermissionDenied
 	return HttpResponse(json.dumps(resp), content_type = "application/json")
 
-def creat_match(request):
+def reset_match1(request, idPartie):
+	#TODO
+	if request.method == 'GET':
+		file_reccord = open("tablutWebService/board/board_game1.json", "w")
+		file_reccord.write(json.dumps({"plateau":[None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]}))
+		file_reccord.close()
+		match_to_reset = match.objects.get(id = idPartie)
+		match_to_reset.status = "starting"
+		match_to_reset.player_turn = "black"
+		match_to_reset.save()
+	else:
+		raise PermissionDenied
+
+def creat_match(request, idPartie = False):
 	if request.method == 'POST':
 		try:
 			new_match = json.loads(request.body)
@@ -177,26 +195,33 @@ def creat_match(request):
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
 		try:
 			resp = {}
-			resp["send"] = {}
-			resp["send"]["init"] = {}
 			match_reccord = match()
 			match_reccord.name = match_name
 			match_reccord.game_type = match_game
 			match_reccord.status = "starting"
-			resp["send"]["init"]["statusPartie"] = "starting"
 			if match_game == "Tablut":
 				match_reccord.player_turn = "black"
 				match_reccord.save()
-				resp["send"]["init"]["plateau"] = [None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]
-				resp["send"]["init"]["idPartie"] = match_reccord.id
 				file_reccord = open("tablutWebService/board/board_game"+str(match_reccord.id)+".json", "w")
 				file_reccord.write(json.dumps({"plateau":[None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]}))
 				file_reccord.close()
 
+				if(idPartie != False):
+					resp["send"] = {}
+					resp["send"]["init"] = {}
+					resp["send"]["init"]["plateau"] = [None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]
+					resp["send"]["init"]["idPartie"] = match_reccord.id
+					resp["send"]["init"]["statusPartie"] = "starting"
+					resp["send"]["init"]["tour"] = "black"
+				else:
+					resp["idPartie"] = match_reccord.id
+				
 				resp["succes"] = "match_cree"
 			else:
 				resp["erreur"] = "le jeu souhaite n'existe pas"
+
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
+
 		except:
 			resp["erreur"] = "erreur lors de la creation de la partie"
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
@@ -217,9 +242,13 @@ def update_match(request):
 			board = json.load(file_reccord)
 			file_reccord.seek(0)
 			file_reccord.truncate()
-			tmpcolor = board["plateau"][move["depart"]]
-			board["plateau"][move["arrivee"]] = tmpcolor
+			boardCopy = board["plateau"][:]
+			print boardCopy
+			print board["plateau"]
+			board["plateau"][move["arrivee"]] = boardCopy[move["depart"]]
 			board["plateau"][move["depart"]] = None
+			print boardCopy
+			print board["plateau"]
 			file_reccord.write(json.dumps(board))
 			file_reccord.close()
 
