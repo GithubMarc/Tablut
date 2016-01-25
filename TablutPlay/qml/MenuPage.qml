@@ -5,7 +5,6 @@ import QtQuick.Controls.Styles 1.4
 
 
 ColumnLayout {
-    anchors.fill: parent
     spacing: 5
 
     Banner {

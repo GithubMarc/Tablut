@@ -33,7 +33,7 @@ ApplicationWindow {
 
     Pages {
         id: mainForm
-        state: "Menu"
+        state: "Game"
         anchors.fill: parent
     }
 }
