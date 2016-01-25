@@ -25,7 +25,10 @@ Grid {
     Repeater {
         id: board
         model: parent.rows * parent.columns
-        delegate: Case {}
+        delegate: Case {
+            width: grid.width / grid.columns
+            height: grid.height / grid.rows
+        }
     }
 
     MessageDialog {

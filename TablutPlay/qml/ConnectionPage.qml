@@ -10,6 +10,8 @@ ColumnLayout {
 
     property alias alertConnection: alertConnection
     property alias connectionInformation: connectionInformation
+    property alias loginTextField: loginTextField
+    property alias passwordTextField: passwordTextField
 
     Banner {
         id: banner
@@ -78,15 +80,7 @@ ColumnLayout {
                 implicitWidth: loginTextField.implicitWidth
                 anchors.horizontalCenter: parent.horizontalCenter
                 caption: qsTr("Connection")
-                onClicked: ConnectionScript.checkConnection();
-            }
-
-            MenuButton {
-                id: connectionButton2
-                implicitWidth: loginTextField.implicitWidth
-                anchors.horizontalCenter: parent.horizontalCenter
-                caption: qsTr("Connection2")
-                onClicked: ConnectionScript.checkConnection2();
+                onClicked: ConnectionScript.checkConnectionHTTP();
             }
         }
 
@@ -110,6 +104,8 @@ ColumnLayout {
             text: "Your login or your password may be wrong. Please try again."
             icon: StandardIcon.Critical
             visible: false
+
+            onAccepted: connectionInformation.visible = false;
         }
     }
 
@@ -117,6 +113,5 @@ ColumnLayout {
         loginTextField.borderColor = FileIO.getColor("BORDER_BUTTON_COLOR");
         passwordTextField.borderColor = FileIO.getColor("BORDER_BUTTON_COLOR");
         connectionButton.repaint();
-        connectionButton2.repaint();
     }
 }
