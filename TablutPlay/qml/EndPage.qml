@@ -12,6 +12,7 @@ Rectangle {
     property string endSentenceLabel: "Le roi est sauf"
 
     ColumnLayout {
+        id: labelContainer
         anchors.centerIn: parent
         spacing: 30
 
@@ -30,39 +31,42 @@ Rectangle {
             color: "#ffffff"
             Layout.alignment: Qt.AlignCenter
         }
+    }
 
-        Item {
-            Layout.fillHeight: true
-            Layout.fillWidth: true
+    Item {
+        width: 200
+        height: 35
+        anchors.top: labelContainer.bottom
+        anchors.topMargin: labelContainer.spacing
+        anchors.horizontalCenter: parent.horizontalCenter
 
-            Button {
-                id: newGameSameTeam
-                text: qsTr("New Game")
-                implicitHeight: 35
-                anchors.left: parent.left
-                anchors.leftMargin: 0
+        Button {
+            id: newGameSameTeam
+            text: qsTr("New Game")
+            implicitHeight: 35
+            anchors.left: parent.left
+            anchors.leftMargin: 0
 
-                onClicked: JeuScript.sendEndGameOption("new game");
-            }
+            onClicked: JeuScript.sendEndGameOption("new game");
+        }
 
-            Button {
-                id: newGameSwitchTeam
-                text: qsTr("Switch Team")
-                implicitHeight: 35
-                anchors.horizontalCenter: parent.horizontalCenter
+        Button {
+            id: newGameSwitchTeam
+            text: qsTr("Switch Team")
+            implicitHeight: 35
+            anchors.horizontalCenter: parent.horizontalCenter
 
-                onClicked: JeuScript.sendEndGameOption("switch team");
-            }
+            onClicked: JeuScript.sendEndGameOption("switch team");
+        }
 
-            Button {
-                id: menu
-                text: qsTr("Menu")
-                implicitHeight: 35
-                anchors.right: parent.right
-                anchors.rightMargin: 0
+        Button {
+            id: menu
+            text: qsTr("Menu")
+            implicitHeight: 35
+            anchors.right: parent.right
+            anchors.rightMargin: 0
 
-                onClicked: JeuScript.sendEndGameOption("menu");
-            }
+            onClicked: JeuScript.sendEndGameOption("menu");
         }
     }
 }
