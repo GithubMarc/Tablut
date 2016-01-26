@@ -44,7 +44,7 @@ function loop() {// Dès qu'un membre se connecte
 			}
 
 			//reprendre quand amélioration TAG LHI
-			for(var k in matchStatus[j])
+			for(var k in matchStatus)
 			{
 				if(matchStatus[k].black == ws)
 				{
@@ -56,7 +56,7 @@ function loop() {// Dès qu'un membre se connecte
 				}
 				else
 				{
-					for(var j in listWsClient)
+					for(var j in matchStatus[k].viewers_list)
 					{
 						if(matchStatus[k].viewers_list[j] == ws)
 						{
@@ -92,7 +92,7 @@ function messageReceived(messageJson, ws)
 					matchStatus[messageJson["idPartie"].toString()].red = matchStatus[messageJson["idPartie"].toString()].black;
 					matchStatus[messageJson["idPartie"].toString()].black = tmpred;
 				}
-				getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/nameMatch/"+messageJson["idPartie"].toString(), null);
+				getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/matchName/"+messageJson["idPartie"].toString(), null);
 			}
 			else if (messageJson['end'] == "menu")
 			{
@@ -189,8 +189,8 @@ function onMessageHTTP(jsonParse, ws)
 	else if ("nomMatch" in jsonParse)
 	{
 		var messageJson = {};
-		messageJson["name"] = jsonParse["nomMatch"]["nom"]
-		messageJson["gameType"] = jsonParse["nomMatch"]["typeMatch"]
+		messageJson["name"] = jsonParse["nomMatch"]["nom"];
+		messageJson["gameType"] = jsonParse["nomMatch"]["typeMatch"];
 		postHttpRequestServer(httpAddr, httpPort, "/tablutWebService/newMatch/"+jsonParse["nomMatch"]["idPartie"], messageJson, jsonParse["nomMatch"]["idPartie"]);
 	}
 	else if("succes" in jsonParse)
