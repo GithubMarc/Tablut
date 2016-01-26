@@ -92,7 +92,7 @@ function messageReceived(messageJson, ws)
 					matchStatus[messageJson["idPartie"].toString()].red = matchStatus[messageJson["idPartie"].toString()].black;
 					matchStatus[messageJson["idPartie"].toString()].black = tmpred;
 				}
-				getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/reset/"+messageJson["idPartie"].toString(), null);
+				getHttpRequestServer(httpAddr, httpPort, "/tablutWebService/nameMatch/"+messageJson["idPartie"].toString(), null);
 			}
 			else if (messageJson['end'] == "menu")
 			{
@@ -186,16 +186,23 @@ function onMessageHTTP(jsonParse, ws)
 	{
 		playerInit(jsonParse, ws);
 	}
+	else if ("nomMatch" in jsonParse)
+	{
+		var messageJson = {};
+		messageJson["name"] = jsonParse["nomMatch"]["nom"]
+		messageJson["gameType"] = jsonParse["nomMatch"]["typeMatch"]
+		postHttpRequestServer(httpAddr, httpPort, "/tablutWebService/newMatch/"+jsonParse["nomMatch"]["idPartie"], messageJson, jsonParse["nomMatch"]["idPartie"]);
+	}
 	else if("succes" in jsonParse)
 	{
 		if(jsonParse["succes"] == "reset")
 		{
-			for(var i in listWsClient)
-			{	
-				console.log(jsonParse);
-				console.log(jsonParse["send"]);
-				playerInit(jsonParse["send"], listWsClient[i]);
-			}
+			matchStatus[jsonParse["send"]["init"]["idPartie"].toString()] = partieMod(jsonParse["send"]["init"]["idPartie"]);
+			matchStatus[jsonParse["send"]["init"]["idPartie"].toString()].black = matchStatus[ws.toString()].black;
+			matchStatus[jsonParse["send"]["init"]["idPartie"].toString()].red = matchStatus[ws.toString()].red;
+			matchStatus[jsonParse["send"]["init"]["idPartie"].toString()].viewers_list = matchStatus[ws.toString()].viewers_list;
+			delete matchStatus[ws.toString()];
+			sendToAll(jsonParse["send"], jsonParse["send"]["init"]["idPartie"]);
 		}
 	}
 	else
