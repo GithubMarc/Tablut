@@ -109,7 +109,7 @@ def get_all_match(request):
 				match_data["idPartie"] = each_match.id
 				match_data["nom"] = each_match.name
 				match_data["typeJeu"] = each_match.game_type.label
-				match_data["statusPartie"] =  each_match.status
+				match_data["statutPartie"] =  each_match.status
 
 				try:
 					file_reccord = open("tablutWebService/board/board_game"+ str(each_match.id) +".json", "r")
@@ -139,7 +139,7 @@ def get_match_by_id(request, idPartie):
 		match_init = match.objects.get(id = int(idPartie))
 		resp["init"] = {}
 		resp_init = {}
-		resp_init["statusPartie"] = match_init.status
+		resp_init["statutPartie"] = match_init.status
 		resp_init["tour"] = match_init.player_turn
 		resp_init["idPartie"] = int(idPartie)
 		resp_init["plateau"] = board["plateau"]
@@ -155,10 +155,10 @@ def get_match_name(request, idPartie):
 		match_init = match.objects.get(id = int(idPartie))
 		resp["nomMatch"] = {}
 		resp_name = {}
-		resp_name["typeMatch"] = match_init.game_type
+		resp_name["typeMatch"] = match_init.game_type.label
 		resp_name["nom"] = match_init.name
 		resp_name["idPartie"] = idPartie
-		resp["nomMatch"] = resp_init
+		resp["nomMatch"] = resp_name
 		return HttpResponse(json.dumps(resp), content_type = "application/json")
 	else:
 		raise PermissionDenied
@@ -175,7 +175,7 @@ def reset_match(request, idPartie):
 		file_reccord.write(json.dumps({"plateau":[None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]}))
 		file_reccord.close()
 		match_to_reset = match.objects.get(id = idPartie)
-		resp["send"]["init"]["statusPartie"] = "starting"
+		resp["send"]["init"]["statutPartie"] = "starting"
 		match_to_reset.status = "starting"
 		resp["send"]["init"]["tour"] = "black"
 		match_to_reset.player_turn = "black"
@@ -205,14 +205,19 @@ def creat_match(request, idPartie = False):
 			match_name = new_match["name"]
 			match_game = new_match["game_type"]
 		except:
+			resp = {}
 			resp["erreur"] = "bad format json"
 			return HttpResponse(json.dumps(resp), content_type = "application/json")
 		try:
 			resp = {}
 			match_reccord = match()
+			print "match"
 			match_reccord.name = match_name
-			match_reccord.game_type = match_game
+			print "name"
+			match_reccord.game_type = game_type.objects.get(label = match_game)
+			print "games"
 			match_reccord.status = "starting"
+			print "status"
 			if match_game == "Tablut":
 				match_reccord.player_turn = "black"
 				match_reccord.save()
@@ -225,7 +230,7 @@ def creat_match(request, idPartie = False):
 					resp["send"]["init"] = {}
 					resp["send"]["init"]["plateau"] = [None,None,None,"black","black","black",None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,None,"red",None,None,None,None,"black",None,None,None,"red",None,None,None,"black","black","black","red","red","king","red","red","black","black","black",None,None,None,"red",None,None,None,"black",None,None,None,None,"red",None,None,None,None,None,None,None,None,"black",None,None,None,None,None,None,None,"black","black","black",None,None,None]
 					resp["send"]["init"]["idPartie"] = match_reccord.id
-					resp["send"]["init"]["statusPartie"] = "starting"
+					resp["send"]["init"]["statutPartie"] = "starting"
 					resp["send"]["init"]["tour"] = "black"
 				else:
 					resp["idPartie"] = match_reccord.id
@@ -257,12 +262,8 @@ def update_match(request):
 			file_reccord.seek(0)
 			file_reccord.truncate()
 			boardCopy = board["plateau"][:]
-			print boardCopy
-			print board["plateau"]
 			board["plateau"][move["arrivee"]] = boardCopy[move["depart"]]
 			board["plateau"][move["depart"]] = None
-			print boardCopy
-			print board["plateau"]
 			file_reccord.write(json.dumps(board))
 			file_reccord.close()
 
@@ -287,30 +288,36 @@ def update_match(request):
 
 		elif 'win' in action.keys():
 			win = action["win"]
+			print win
 			match_to_update = match.objects.get(id = win["idPartie"])
-			match_to_update.status = win["statusPartie"]
+			match_to_update.status = win["statutPartie"]
 			match_to_update.player_turn = win["equipe"]
+			match_to_update.save()
 
 		elif 'pause' in action.keys():
 			pause = action["pause"]
 			match_to_update = match.objects.get(id = pause["idPartie"])
-			match_to_update.status = pause["statusPartie"]
+			match_to_update.status = pause["statutPartie"]
+			match_to_update.save()
 
 		elif 'resume' in action.keys():
 			resume = action["resume"]
 			match_to_update = match.objects.get(id = resume["idPartie"])
-			match_to_update.status = resume["statusPartie"]
+			match_to_update.status = resume["statutPartie"]
+			match_to_update.save()
 
 		elif 'quit' in action.keys():
 			quit = action["quit"]
 			match_to_update = match.objects.get(id = quit["idPartie"])
-			match_to_update.status = quit["statusPartie"]
+			match_to_update.status = quit["statutPartie"]
 			match_reccord.player_turn = None
+			match_to_update.save()
 
 		elif 'start' in action.keys():
 			start = action["start"]
 			match_to_update = match.objects.get(id = start["idPartie"])
-			match_to_update.status = start["statusPartie"]
+			match_to_update.status = start["statutPartie"]
+			match_to_update.save()
 
 		else:
 			resp["erreur"] = "ordre non existant"		
