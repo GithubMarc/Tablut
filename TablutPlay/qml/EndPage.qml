@@ -34,7 +34,7 @@ Rectangle {
     }
 
     Item {
-        width: 200
+        width: 300
         height: 35
         anchors.top: labelContainer.bottom
         anchors.topMargin: labelContainer.spacing
