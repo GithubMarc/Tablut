@@ -16,12 +16,13 @@ var httpPort = "8000"
 var serverPath = "/tablutWebService/connexion"
 var socketServerPath = "/tablutWebService/getWebSocketAddr"
 var listGridPath = "/tablutWebService/allMatch"
+var createGamePath = "/tablutWebService/newMatch"
 
 function createPion(container, color, team) {
     var component = Qt.createComponent("../qml/Piece.qml");
     if (component.status == ComponentScript.Component.Ready){
         var width = 0.9 * container.width;
-        return component.createObject(container, {"color": color, "width": width, "height": width, "team": team});
+        return component.createObject(container, {"color": color, "width": width, "height": width, "team": team, "anchors.centerIn": container});
     }
 }
 
@@ -347,7 +348,6 @@ function getHttpRequestServer(addr, path, port){
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             var myArr = JSON.parse(xmlHttp.responseText);
             onMessageHTTP(myArr);
-            //connectWebServer(myArr.addresse ,myArr.wsport);
         }
     };
     xmlHttp.open( "GET", "http://" + addr + ":" + port + path , true ); // false for synchronous request
@@ -356,7 +356,7 @@ function getHttpRequestServer(addr, path, port){
 }
 
 function onMessageHTTP(jsonParse){
-    console.log(JSON.stringify(jsonParse));
+    //console.log(JSON.stringify(jsonParse));
     if("succes" in jsonParse)
     {
         switch(jsonParse["succes"])
@@ -380,13 +380,17 @@ function onMessageHTTP(jsonParse){
                 break;
             case "match_list":
                 GameSelectionScript.clearPage();
+                GameSelectionScript.createNewGrid(mainForm.gameSelectionPage.gridContainer);
                 for(var game in jsonParse["liste"]) {
                     mainForm.gameSelectionPage.listGameSelection.push(GameSelectionScript.createGrid(mainForm.gameSelectionPage.gridContainer));
                     mainForm.gameSelectionPage.listGameSelection[game].nom = jsonParse["liste"][game]["nom"];
-                    mainForm.gameSelectionPage.listGameSelection[game].statut = jsonParse["liste"][game]["statusPartie"];
+                    mainForm.gameSelectionPage.listGameSelection[game].statut = jsonParse["liste"][game]["statutPartie"];
                     mainForm.gameSelectionPage.listGameSelection[game].idPartie = jsonParse["liste"][game]["idPartie"];
                     drawField(mainForm.gameSelectionPage.listGameSelection[game], jsonParse["liste"][game]["plateau"])
                 }
+                break;
+            case "match_cree":
+                checkConnectionWebSocket(jsonParse["idPartie"]);
                 break;
             default:
                 console.log(jsonParse["succes"] + " erreur");
@@ -632,4 +636,25 @@ function drawField(container, jsonField) {
             break;
         }
     }
+}
+
+function sendGameCreation(name, gameType) {
+    var json =
+        {
+            "name": name,
+            "game_type": gameType
+        };
+
+    console.log(JSON.stringify(json));
+    postHttpRequestServer(serverAddr, createGamePath, httpPort, json);
+}
+
+function checkConnectionHTTP() {
+    var json = {"login":mainForm.connectionPage.loginTextField.text, "password":mainForm.connectionPage.passwordTextField.text};
+    postHttpRequestServer(serverAddr, serverPath, httpPort, json);
+}
+
+function checkConnectionWebSocket(idPartie) {
+    mainForm.playPage.wsClient.idPartie = idPartie;
+    getHttpRequestServer(serverAddr, socketServerPath, httpPort);
 }

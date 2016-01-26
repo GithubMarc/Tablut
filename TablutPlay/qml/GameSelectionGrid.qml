@@ -2,7 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 
-import "../js/Connection.js" as ConnectionScript
+import "../js/Jeu.js" as JeuScript
 
 Rectangle {
     id: mainItem
@@ -42,25 +42,29 @@ Rectangle {
 
 
             Label {
+                id: nomLabel
                 text: qsTr("nom:")
                 font.pointSize: parent.fontSize
                 Layout.alignment: Qt.AlignCenter
             }
 
             Label {
-                text: qsTr(nom)
+                id: nomText
+                text: mainItem.nom
                 font.pointSize: parent.fontSize
                 Layout.alignment: Qt.AlignCenter
             }
 
             Label {
+                id: statutLabel
                 text: qsTr("statut:")
                 font.pointSize: parent.fontSize
                 Layout.alignment: Qt.AlignCenter
             }
 
             Label {
-                text: qsTr(statut)
+                id: statutText
+                text: qsTr(mainItem.statut)
                 font.pointSize: parent.fontSize
                 Layout.alignment: Qt.AlignCenter
             }
@@ -69,6 +73,6 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: ConnectionScript.checkConnectionWebSocket(mainItem.idPartie);
+        onClicked: JeuScript.checkConnectionWebSocket(mainItem.idPartie);
     }
 }

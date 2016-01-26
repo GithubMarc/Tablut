@@ -42,7 +42,7 @@ ColumnLayout {
         id: field
         width: Math.min(applicationWindow.width, applicationWindow.height - timerLabel.height - 100)
         height: width
-        anchors.horizontalCenter: parent.horizontalCenter
+        Layout.alignment: Qt.AlignHCenter
     }
 
     WebSocket {

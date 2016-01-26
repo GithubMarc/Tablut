@@ -1,4 +1,5 @@
 import QtQuick 2.5
+import QtQuick.Dialogs 1.2
 
 Rectangle {
     id: mainItem
@@ -21,11 +22,16 @@ Rectangle {
 
         Image {
             source: "../icon/plusGame.png"
-            width: parent.width
-            height: parent.width
+            width: parent.width - 4
+            height: parent.width - 4
             fillMode: Image.PreserveAspectFit
             asynchronous: true
-            anchors.fill: parent
+            anchors.centerIn: parent
         }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: mainForm.state = "New Game";
     }
 }

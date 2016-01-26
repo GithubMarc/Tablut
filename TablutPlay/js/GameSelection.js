@@ -7,10 +7,17 @@ function createGrid(container, id) {
     }
 }
 
+function createNewGrid(container, id) {
+    var component = Qt.createComponent("../qml/NewGame.qml");
+    if (component.status == ComponentScript.Component.Ready){
+        return component.createObject(container);
+    }
+}
+
 function clearPage() {
     mainForm.gameSelectionPage.listGameSelection.length = 0;
     var count = mainForm.gameSelectionPage.gridContainer.children.length;
     for (var i = 0; i < count; i++) {
-        mainForm.gameSelectionPage.gridContainer.children[0].destroy();
+        mainForm.gameSelectionPage.gridContainer.children[i].destroy();
     }
 }
