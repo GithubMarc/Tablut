@@ -1,11 +1,12 @@
 .import "Jeu.js" as JeuScript
 
-function checkConnection() {
-    var json = {"login":loginTextField.text, "password":passwordTextField.text};
+function checkConnectionHTTP() {
+    var json = {"login":mainForm.connectionPage.loginTextField.text, "password":mainForm.connectionPage.passwordTextField.text};
     JeuScript.postHttpRequestServer(JeuScript.serverAddr, JeuScript.serverPath, JeuScript.httpPort, json);
 }
 
-function checkConnection2() {
+function checkConnectionWebSocket(idPartie) {
+    mainForm.playPage.wsClient.idPartie = idPartie;
     JeuScript.getHttpRequestServer(JeuScript.serverAddr, JeuScript.socketServerPath, JeuScript.httpPort);
 }
 

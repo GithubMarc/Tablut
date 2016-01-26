@@ -4,8 +4,6 @@ import "../js/Jeu.js" as JeuScript
 
 Rectangle {
     id: boardcase
-    width: grid.width / grid.columns
-    height: grid.height / grid.rows
     color: "#ffffff"
     enabled: true
     border.width: 1

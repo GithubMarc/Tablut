@@ -40,12 +40,13 @@ ColumnLayout {
 
     Grille {
         id: field
-        width: 550
-        height: 550
+        width: Math.min(applicationWindow.width, applicationWindow.height - timerLabel.height - 100)
+        height: width
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
     WebSocket {
+        property int idPartie
 
         id: wsClient
         onStatusChanged: {

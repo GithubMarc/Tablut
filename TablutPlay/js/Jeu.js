@@ -1,5 +1,6 @@
 .import "Score.js" as ScoreScript
 .import "Timer.js" as TimerScript
+.import "GameSelection.js" as GameSelectionScript
 .import QtQuick 2.5 as ComponentScript
 
 var BLACK_COLOR = "#000000";
@@ -14,13 +15,13 @@ var serverAddr = "172.30.1.1"
 var httpPort = "8000"
 var serverPath = "/tablutWebService/connexion"
 var socketServerPath = "/tablutWebService/getWebSocketAddr"
+var listGridPath = "/tablutWebService/allMatch"
 
 function createPion(container, color, team) {
     var component = Qt.createComponent("../qml/Piece.qml");
     if (component.status == ComponentScript.Component.Ready){
-        var width = 0.9 * mainForm.playPage.field.width / mainForm.playPage.field.columns;
-        var height = 0.9 * mainForm.playPage.field.height / mainForm.playPage.field.rows;
-        return component.createObject(container, {"color": color, "width": width, "height": height, "team": team});
+        var width = 0.9 * container.width;
+        return component.createObject(container, {"color": color, "width": width, "height": width, "team": team});
     }
 }
 
@@ -362,6 +363,8 @@ function onMessageHTTP(jsonParse){
         {
             case "connexion":
                 console.log(jsonParse["succes"]);
+                mainForm.state = "Game";
+                getHttpRequestServer(serverAddr, listGridPath, httpPort);
                 break;
             case "deconnexion":
                 console.log(jsonParse["succes"]);
@@ -374,6 +377,16 @@ function onMessageHTTP(jsonParse){
                 mainForm.playPage.wsClient.active = true;
                 mainForm.playPage.wsClient.url = "ws://" + jsonParse["addresse"] + ":" + jsonParse["wsport"];
                 mainForm.state = "base state";
+                break;
+            case "match_list":
+                GameSelectionScript.clearPage();
+                for(var game in jsonParse["liste"]) {
+                    mainForm.gameSelectionPage.listGameSelection.push(GameSelectionScript.createGrid(mainForm.gameSelectionPage.gridContainer));
+                    mainForm.gameSelectionPage.listGameSelection[game].nom = jsonParse["liste"][game]["nom"];
+                    mainForm.gameSelectionPage.listGameSelection[game].statut = jsonParse["liste"][game]["statusPartie"];
+                    mainForm.gameSelectionPage.listGameSelection[game].idPartie = jsonParse["liste"][game]["idPartie"];
+                    drawField(mainForm.gameSelectionPage.listGameSelection[game], jsonParse["liste"][game]["plateau"])
+                }
                 break;
             default:
                 console.log(jsonParse["succes"] + " erreur");
@@ -482,6 +495,7 @@ function sendOrderToServer(order) {
 function sendEndGameOption(option) {
     var json =
         {
+            "idPartie": mainForm.playPage.field.idPartie,
             "end": option
         };
 
@@ -494,12 +508,16 @@ function messageReceived(message) {
     messageParse = messageParse[key];
 
     switch(key) {
+    case "succes":
+        var json = {"connexion": mainForm.playPage.wsClient.idPartie};
+        mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
+        break;
     case "init":
         mainForm.state = "base state"
         mainForm.playPage.field.idPartie = messageParse["idPartie"];
         mainForm.playPage.field.playerTeam = messageParse["equipe"];
         mainForm.playPage.field.player = messageParse["tour"];
-        drawField(messageParse["plateau"]);
+        drawField(mainForm.playPage, messageParse["plateau"]);
         break;
 
     case "mouvement":
@@ -595,20 +613,20 @@ function sleep(milliseconds) {
   }
 }
 
-function drawField(jsonField) {
+function drawField(container, jsonField) {
     for (var i in jsonField) {
 
-        if(mainForm.playPage.field.board.itemAt(i).pion != null) {
-            mainForm.playPage.field.board.itemAt(i).pion.destroy();
-            mainForm.playPage.field.board.itemAt(i).pion = null;
+        if(container.field.board.itemAt(i).pion != null) {
+            container.field.board.itemAt(i).pion.destroy();
+            container.field.board.itemAt(i).pion = null;
         }
 
         switch (jsonField[i]) {
-        case "black": mainForm.playPage.field.board.itemAt(i).pion = createPion(mainForm.playPage.field.board.itemAt(i), BLACK_COLOR, BLACK_TEAM);
+        case "black": container.field.board.itemAt(i).pion = createPion(container.field.board.itemAt(i), BLACK_COLOR, BLACK_TEAM);
             break;
-        case "red": mainForm.playPage.field.board.itemAt(i).pion = createPion(mainForm.playPage.field.board.itemAt(i), RED_COLOR, RED_TEAM);
+        case "red": container.field.board.itemAt(i).pion = createPion(container.field.board.itemAt(i), RED_COLOR, RED_TEAM);
             break;
-        case "king": mainForm.playPage.field.board.itemAt(i).pion = createPion(mainForm.playPage.field.board.itemAt(i), KING_COLOR, RED_TEAM);
+        case "king": container.field.board.itemAt(i).pion = createPion(container.field.board.itemAt(i), KING_COLOR, RED_TEAM);
             break;
         default:
             break;
