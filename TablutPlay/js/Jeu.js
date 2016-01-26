@@ -17,6 +17,7 @@ var serverPath = "/tablutWebService/connexion"
 var socketServerPath = "/tablutWebService/getWebSocketAddr"
 var listGridPath = "/tablutWebService/allMatch"
 var createGamePath = "/tablutWebService/newMatch"
+var createUserPath = "/tablutWebService/newUser"
 
 function createPion(container, color, team) {
     var component = Qt.createComponent("../qml/Piece.qml");
@@ -321,7 +322,6 @@ function initKingPion() {
 
 function postHttpRequestServer(addr, path, port, sendMessage){
     var xmlHttp = new XMLHttpRequest();
-    mainForm.connectionPage.connectionInformation.visible = true;
     var message = JSON.stringify(sendMessage);
     xmlHttp.onreadystatechange = function() {
     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
@@ -370,7 +370,7 @@ function onMessageHTTP(jsonParse){
                 console.log(jsonParse["succes"]);
                 break;
             case "utilisateur_cree":
-                console.log(jsonParse["succes"]);
+                mainForm.state = "Connection";
                 break;
             case "webSocketAddr":
                 console.log(jsonParse["succes"]);
@@ -394,13 +394,15 @@ function onMessageHTTP(jsonParse){
                 break;
             default:
                 console.log(jsonParse["succes"] + " erreur");
+                break;
         }
     }
     else
     {
-        mainForm.connectionPage.alertConnection.visible = true;
-        mainForm.connectionPage.alertConnection.informativeText = jsonParse["erreur"];
-        console.log(jsonParse["erreur"]);
+        messageDialog.title = qsTr("An error occured");
+        messageDialog.text = qsTr("The connection failed due to the following error:");
+        messageDialog.informativeText = jsonParse["erreur"];
+        messageDialog.visible = true;
     }
 }
 
@@ -640,21 +642,34 @@ function drawField(container, jsonField) {
 
 function sendGameCreation(name, gameType) {
     var json =
-        {
-            "name": name,
-            "game_type": gameType
-        };
+    {
+        "name": name,
+        "game_type": gameType
+    };
 
     console.log(JSON.stringify(json));
     postHttpRequestServer(serverAddr, createGamePath, httpPort, json);
 }
 
-function checkConnectionHTTP() {
-    var json = {"login":mainForm.connectionPage.loginTextField.text, "password":mainForm.connectionPage.passwordTextField.text};
+function checkConnectionHTTP(login, password) {
+    var json =
+    {
+        "login": login,
+        "password": password
+    };
     postHttpRequestServer(serverAddr, serverPath, httpPort, json);
 }
 
 function checkConnectionWebSocket(idPartie) {
     mainForm.playPage.wsClient.idPartie = idPartie;
     getHttpRequestServer(serverAddr, socketServerPath, httpPort);
+}
+
+function sendAccountCreation(email, password) {
+    var json =
+    {
+        "email": email,
+        "password": password
+    }
+    postHttpRequestServer(serverAddr, createUserPath, httpPort, json);
 }

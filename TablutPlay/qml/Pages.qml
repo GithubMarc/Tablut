@@ -13,6 +13,13 @@ Item {
     property alias endPage: endPage
     property alias gameSelectionPage: gameSelectionPage
     property alias newGamePage: newGamePage
+    property alias newAccountPage: newAccountPage
+
+    NewAccountPage {
+        id: newAccountPage
+        visible: false
+        anchors.fill: parent
+    }
 
     NewGamePage {
         id: newGamePage
@@ -74,6 +81,11 @@ Item {
             name: "Pause"
 
             PropertyChanges {
+                target: newAccountPage
+                visible: false
+            }
+
+            PropertyChanges {
                 target: newGamePage
                 visible: false
             }
@@ -123,6 +135,11 @@ Item {
             name: "Connection"
 
             PropertyChanges {
+                target: newAccountPage
+                visible: false
+            }
+
+            PropertyChanges {
                 target: newGamePage
                 visible: false
             }
@@ -169,6 +186,11 @@ Item {
         },
         State {
             name: "Menu"
+
+            PropertyChanges {
+                target: newAccountPage
+                visible: false
+            }
 
             PropertyChanges {
                 target: newGamePage
@@ -220,6 +242,11 @@ Item {
             name: "Option"
 
             PropertyChanges {
+                target: newAccountPage
+                visible: false
+            }
+
+            PropertyChanges {
                 target: newGamePage
                 visible: false
             }
@@ -267,6 +294,11 @@ Item {
 
         State {
             name: "New Config"
+
+            PropertyChanges {
+                target: newAccountPage
+                visible: false
+            }
 
             PropertyChanges {
                 target: newGamePage
@@ -320,6 +352,11 @@ Item {
             name: "End"
 
             PropertyChanges {
+                target: newAccountPage
+                visible: false
+            }
+
+            PropertyChanges {
                 target: newGamePage
                 visible: false
             }
@@ -371,6 +408,11 @@ Item {
             name: "Game"
 
             PropertyChanges {
+                target: newAccountPage
+                visible: false
+            }
+
+            PropertyChanges {
                 target: newGamePage
                 visible: false
             }
@@ -420,6 +462,11 @@ Item {
             name: "New Game"
 
             PropertyChanges {
+                target: newAccountPage
+                visible: false
+            }
+
+            PropertyChanges {
                 target: newGamePage
                 visible: true
             }
@@ -427,7 +474,7 @@ Item {
             PropertyChanges {
               target: gameSelectionPage
               visible: true
-              opacity: 0.1
+              opacity: 0.02
               enabled: false
             }
 
@@ -439,6 +486,62 @@ Item {
             PropertyChanges {
                 target: connectionPage
                 visible: false
+            }
+
+            PropertyChanges {
+                target: pausePage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: menuPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: optionPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: newConfigPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: endPage
+                visible: false
+            }
+        },
+
+        State {
+            name: "New Account"
+
+            PropertyChanges {
+                target: newAccountPage
+                visible: true
+            }
+
+            PropertyChanges {
+                target: newGamePage
+                visible: false
+            }
+
+            PropertyChanges {
+              target: gameSelectionPage
+              visible: false
+            }
+
+            PropertyChanges {
+                target: playPage
+                visible: false
+            }
+
+            PropertyChanges {
+                target: connectionPage
+                visible: true
+                opacity: 0.02
+                enabled: false
             }
 
             PropertyChanges {

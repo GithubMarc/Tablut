@@ -152,22 +152,20 @@ ColumnLayout {
                     anchors.leftMargin: 10
                     anchors.verticalCenter: parent.verticalCenter
 
-                    MessageDialog {
-                        id: removeError
-                        icon: StandardIcon.Warning
-                        title: qsTr("An error occured")
-                    }
-
                     function deleteFile(path) {
                         if(comboBox.currentIndex != -1 && comboBox.count > 1) {
                             switch(FileIO.removeFile(path)) {
                             case FileIO.getRemoveError():
-                                removeError.text = qsTr("There is an error on the path");
-                                removeError.visible = true;
+                                messageDialog.title = qsTr("An error occured");
+                                messageDialog.text = qsTr("There is an error on the path");
+                                messageDialog.icon = StandardIcon.Warning;
+                                messageDialog.visible = true;
                                 break;
                             case FileIO.getRemoveErrorDefaultFile():
-                                removeError.text = qsTr("The file you selected is the default file");
-                                removeError.visible = true;
+                                messageDialog.title = qsTr("An error occured");
+                                messageDialog.text = qsTr("The file you selected is the default file");
+                                messageDialog.icon = StandardIcon.Warning;
+                                messageDialog.visible = true;
                                 break;
                             default:
                                 comboBox.currentIndex = -1;
@@ -302,6 +300,10 @@ ColumnLayout {
 
                     onClicked: {
                         FileIO.setDefaultPath(folderModel.get(comboBox.currentIndex, "filePath"));
+                        messageDialog.title = qsTr("Successful");
+                        messageDialog.text = qsTr("Default path changed.");
+                        messageDialog.icon = StandardIcon.Information;
+                        messageDialog.visible = true;
                     }
                 }
 
@@ -315,24 +317,14 @@ ColumnLayout {
                     onClicked: {
                         FileIO.setDefaultColor();
                         mainItem.repaint();
+                        messageDialog.title = qsTr("Successful");
+                        messageDialog.text = qsTr("the default values have been restored.");
+                        messageDialog.icon = StandardIcon.Information;
+                        messageDialog.visible = true;
                     }
                 }
             }
         }
-    }
-
-    function repaint() {
-        banner.repaint();
-        comboBox.repaint();
-        newConfigButton.repaint();
-        deleteConfigButton.repaint();
-        backgroundButtonColorSelector.repaint();
-        defaultValuesButton.repaint();
-        defaultPath.repaint();
-        applicationWindow.color = FileIO.getColor("BACKGROUND_COLOR");
-        insideButtonColorSelector.color = FileIO.getColor("INSIDE_BUTTON_COLOR");
-        borderButtonColorSelector.color = FileIO.getColor("BORDER_BUTTON_COLOR");
-        fontButtonColorSelector.color = FileIO.getColor("FONT_BUTTON_COLOR");
     }
 
     ColorDialog {
@@ -364,5 +356,19 @@ ColumnLayout {
 
             mainItem.repaint();
         }
+    }
+
+    function repaint() {
+        banner.repaint();
+        comboBox.repaint();
+        newConfigButton.repaint();
+        deleteConfigButton.repaint();
+        backgroundButtonColorSelector.repaint();
+        defaultValuesButton.repaint();
+        defaultPath.repaint();
+        applicationWindow.color = FileIO.getColor("BACKGROUND_COLOR");
+        insideButtonColorSelector.color = FileIO.getColor("INSIDE_BUTTON_COLOR");
+        borderButtonColorSelector.color = FileIO.getColor("BORDER_BUTTON_COLOR");
+        fontButtonColorSelector.color = FileIO.getColor("FONT_BUTTON_COLOR");
     }
 }

@@ -1,5 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import QtQuick.Dialogs 1.2
 
 import "../js/Timer.js" as TimerScript
 import "../js/Jeu.js" as JeuScript
@@ -33,7 +34,12 @@ ApplicationWindow {
 
     Pages {
         id: mainForm
-        state: "New Game"
+        state: "Connection"
         anchors.fill: parent
+    }
+
+    MessageDialog {
+        id: messageDialog
+        visible: false
     }
 }

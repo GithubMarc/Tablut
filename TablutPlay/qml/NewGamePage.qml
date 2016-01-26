@@ -23,11 +23,12 @@ Rectangle {
         model: ListModel {
             ListElement { text: "Tablut" }
         }
-        currentIndex: -1
         anchors.left: columnContainer.left
         anchors.leftMargin: 0
         anchors.bottom: columnContainer.top
         anchors.bottomMargin: columnContainer.spacing
+
+        Component.onCompleted: currentIndex = -1;
     }
 
     ComboBox {
@@ -36,16 +37,18 @@ Rectangle {
             ListElement { text: "Black" }
             ListElement { text: "Red" }
         }
-        currentIndex: -1
         anchors.right: columnContainer.right
         anchors.rightMargin: 0
         anchors.bottom: columnContainer.top
         anchors.bottomMargin: columnContainer.spacing
+
+        Component.onCompleted: currentIndex = -1;
     }
 
     ColumnLayout {
         id: columnContainer
         anchors.centerIn: parent
+        spacing: 20
 
         TextField {
             id: gameName
@@ -62,14 +65,24 @@ Rectangle {
             implicitHeight: 35
             Layout.alignment: Qt.AlignRight
 
-            onClicked: JeuScript.sendGameCreation(gameName.text, typeGameSelector.currentText);
-
-            MessageDialog {
-                id: textAlredayExists
-                title: qsTr("File already exists")
-                text: qsTr("The file name you entered already exists. Please enter a new name and try again.")
-                icon: StandardIcon.Warning
-                visible: false
+            onClicked: {
+                if (gameName.text != "" && typeGameSelector.currentIndex != -1 && teamSelector.currentIndex != -1) JeuScript.sendGameCreation(gameName.text, typeGameSelector.currentText);
+                else if (gameName.text == "") {
+                    messageDialog.title = qsTr("An error occured");
+                    messageDialog.text = qsTr("You didn't enter a valide game's name. Please check and try again.");
+                    messageDialog.icon = StandardIcon.Critical
+                    messageDialog.visible = true;
+                } else if (typeGameSelector.currentIndex == -1) {
+                    messageDialog.title = qsTr("An error occured");
+                    messageDialog.text = qsTr("You didn't choose for a game. Please check and try again.");
+                    messageDialog.icon = StandardIcon.Critical
+                    messageDialog.visible = true;
+                } else {
+                    messageDialog.title = qsTr("An error occured");
+                    messageDialog.text = qsTr("You didn't choose for a team. Please check and try again.");
+                    messageDialog.icon = StandardIcon.Critical
+                    messageDialog.visible = true;
+                }
             }
         }
     }

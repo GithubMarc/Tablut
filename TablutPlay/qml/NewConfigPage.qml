@@ -44,18 +44,14 @@ Rectangle {
             onClicked: {
                 if (fileName.text != "") {
                     if (FileIO.createNewConfigFile(fileName.text)) mainForm.state = "Option";
-                    else textAlredayExists.visible = true;
+                    else {
+                        messageDialog.title = qsTr("File already exists");
+                        messageDialog.text = qsTr("The file name you entered already exists. Please enter a new name and try again.");
+                        messageDialog.icon = StandardIcon.Warning;
+                        messageDialog.visible = true;
+                        fileName.text = "";
+                    }
                 }
-            }
-
-            MessageDialog {
-                id: textAlredayExists
-                title: qsTr("File already exists")
-                text: qsTr("The file name you entered already exists. Please enter a new name and try again.")
-                icon: StandardIcon.Warning
-                visible: false
-
-                onAccepted: fileName.text = "";
             }
         }
     }

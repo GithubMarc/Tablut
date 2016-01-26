@@ -8,11 +8,6 @@ import "../js/Jeu.js" as JeuScript
 
 ColumnLayout {
 
-    property alias alertConnection: alertConnection
-    property alias connectionInformation: connectionInformation
-    property alias loginTextField: loginTextField
-    property alias passwordTextField: passwordTextField
-
     Banner {
         id: banner
         title: qsTr("Connection")
@@ -80,22 +75,8 @@ ColumnLayout {
                 implicitWidth: loginTextField.implicitWidth
                 anchors.horizontalCenter: parent.horizontalCenter
                 caption: qsTr("Connection")
-                onClicked: JeuScript.checkConnectionHTTP();
+                onClicked: JeuScript.checkConnectionHTTP(loginTextField.text, passwordTextField.text);
             }
-        }
-
-        Label {
-            id: connectionInformation
-            width: 100
-            height: 50
-            text: qsTr("Connection...")
-            font.pointSize: 12
-            color: "#000000"
-            anchors.left: connectionStateLayout.left
-            anchors.leftMargin: 0
-            anchors.top: connectionStateLayout.bottom
-            anchors.topMargin: 5
-            visible: false
         }
 
         MessageDialog {
@@ -106,6 +87,24 @@ ColumnLayout {
             visible: false
 
             onAccepted: connectionInformation.visible = false;
+        }
+
+        Label {
+            id: newUser
+            text: qsTr("New Account ? Sign up")
+            color: "#0000ff"
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: connectionStateLayout.bottom
+            anchors.topMargin: 40
+            font.underline: true
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: mainForm.state = "New Account";
+                hoverEnabled: true
+                onEntered: parent.color = "#8800ff";
+                onExited: parent.color = "#0000ff";
+            }
         }
     }
 
