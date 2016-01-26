@@ -4,7 +4,7 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 
-import "../js/Connection.js" as ConnectionScript
+import "../js/Jeu.js" as JeuScript
 
 ColumnLayout {
 
@@ -80,7 +80,7 @@ ColumnLayout {
                 implicitWidth: loginTextField.implicitWidth
                 anchors.horizontalCenter: parent.horizontalCenter
                 caption: qsTr("Connection")
-                onClicked: ConnectionScript.checkConnectionHTTP();
+                onClicked: JeuScript.checkConnectionHTTP();
             }
         }
 

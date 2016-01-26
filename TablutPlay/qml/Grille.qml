@@ -5,8 +5,6 @@ import "../js/Jeu.js" as JeuScript
 
 Grid {
     id: grid
-    width: parent.width
-    height: parent.height
     rows: 9
     columns: rows
 

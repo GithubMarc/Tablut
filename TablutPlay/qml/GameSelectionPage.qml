@@ -2,7 +2,7 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 
-import "../js/GameSelection.js" as GameSelectionScript
+import "../js/Jeu.js" as JeuScript
 
 ColumnLayout {
     spacing: 5
@@ -36,6 +36,6 @@ ColumnLayout {
     }
 
     function repaint() {
-
+       JeuScript.getHttpRequestServer(JeuScript.serverAddr, JeuScript.listGridPath, JeuScript.httpPort);
     }
 }
