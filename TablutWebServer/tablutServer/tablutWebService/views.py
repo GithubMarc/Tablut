@@ -148,7 +148,21 @@ def get_match_by_id(request, idPartie):
 
 	else:
 		raise PermissionDenied
-	print "toto"
+
+def get_match_name(request, idPartie):
+	if request.method == 'GET':
+		resp = {}
+		match_init = match.objects.get(id = int(idPartie))
+		resp["nomMatch"] = {}
+		resp_name = {}
+		resp_name["typeMatch"] = match_init.game_type
+		resp_name["nom"] = match_init.name
+		resp_name["idPartie"] = idPartie
+		resp["nomMatch"] = resp_init
+		return HttpResponse(json.dumps(resp), content_type = "application/json")
+	else:
+		raise PermissionDenied
+
 
 def reset_match(request, idPartie):
 	if request.method == 'GET':
