@@ -16,7 +16,10 @@ ColumnLayout {
         anchors.left: parent.left
         anchors.leftMargin: 0
         Layout.fillWidth: true
-        previousButton.onClicked: mainForm.state = "Menu"
+        previousButton.onClicked: {
+            mainForm.menuPage.repaint();
+            mainForm.state = "Menu"
+        }
     }
 
 
@@ -79,16 +82,6 @@ ColumnLayout {
             }
         }
 
-        MessageDialog {
-            id: alertConnection
-            title: "Authentication failed"
-            text: "Your login or your password may be wrong. Please try again."
-            icon: StandardIcon.Critical
-            visible: false
-
-            onAccepted: connectionInformation.visible = false;
-        }
-
         Label {
             id: newUser
             text: qsTr("New Account ? Sign up")
@@ -100,7 +93,10 @@ ColumnLayout {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: mainForm.state = "New Account";
+                onClicked: {
+                    mainForm.newAccountPage.repaint();
+                    mainForm.state = "New Account";
+                }
                 hoverEnabled: true
                 onEntered: parent.color = "#8800ff";
                 onExited: parent.color = "#0000ff";

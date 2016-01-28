@@ -63,8 +63,8 @@ Item {
                 onEntered: parent.color = "#891ca8";
                 onExited: parent.color = "#888888";
                 onClicked: {
+                    mainForm.gameSelectionPage.repaint();
                     mainForm.state = "Game";
-                    JeuScript.getHttpRequestServer(JeuScript.serverAddr, JeuScript.listGridPath, JeuScript.httpPort);
                 }
             }
         }

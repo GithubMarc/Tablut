@@ -11,7 +11,8 @@ var RED_TEAM = "red";
 
 var ws = null;
 
-var serverAddr = "172.30.1.1"
+var serverAddr = "192.168.43.121"
+//var serverAddr = "172.30.1.1"
 var httpPort = "8000"
 var serverPath = "/tablutWebService/connexion"
 var socketServerPath = "/tablutWebService/getWebSocketAddr"
@@ -23,8 +24,8 @@ var deconnectionPath = "/tablutWebService/logout"
 function createPion(container, color, team) {
     var component = Qt.createComponent("../qml/Piece.qml");
     if (component.status == ComponentScript.Component.Ready){
-        var width = 0.9 * container.width;
-        return component.createObject(container, {"color": color, "width": width, "height": width, "team": team, "anchors.centerIn": container});
+        //var width = 0.9 * container.width;
+        return component.createObject(container, {"color": color, "_width": 0.9 * container.width, "team": team, "anchors.centerIn": container});
     }
 }
 
@@ -364,6 +365,7 @@ function onMessageHTTP(jsonParse){
         {
             case "connexion":
                 //console.log(jsonParse["succes"]);
+                mainForm.gameSelectionPage.repaint();
                 mainForm.state = "Game";
                 setUserInformation(jsonParse["email"]);
                 getHttpRequestServer(serverAddr, listGridPath, httpPort);
@@ -371,16 +373,17 @@ function onMessageHTTP(jsonParse){
             case "deconnexion":
                 //console.log(jsonParse["succes"]);
                 userConnected = false;
+                mainForm.menuPage.repaint();
                 mainForm.state = "Menu";
                 break;
             case "utilisateur_cree":
+                mainForm.connectionPage.repaint();
                 mainForm.state = "Connection";
                 break;
             case "webSocketAddr":
                 console.log(jsonParse["succes"]);
                 mainForm.playPage.wsClient.active = true;
                 mainForm.playPage.wsClient.url = "ws://" + jsonParse["addresse"] + ":" + jsonParse["wsport"];
-                //mainForm.state = "base state";
                 break;
             case "match_list":
                 GameSelectionScript.clearPage();
@@ -513,6 +516,8 @@ function sendEndGameOption(option) {
 }
 
 function messageReceived(message) {
+    messageDialog.text = message;
+    messageDialog.visible = true;
     var messageParse = JSON.parse(message);
     var key = Object.keys(messageParse)[0];
     messageParse = messageParse[key];
@@ -588,7 +593,10 @@ function messageReceived(message) {
         break;
 
     case "end":
-        if(messageParse == "menu") mainForm.state = "Menu";
+        if(messageParse == "menu") {
+            mainForm.menuPage.repaint();
+            mainForm.state = "Menu";
+        }
         break;
 
     case "start":

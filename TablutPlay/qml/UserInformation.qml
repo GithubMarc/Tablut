@@ -157,6 +157,7 @@ Item {
     }
 
     function repaint() {
+        menuContainer.visible = false;
         mainItem.borderColor = FileIO.getColor("BORDER_BUTTON_COLOR");
     }
 }

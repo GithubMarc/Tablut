@@ -1,6 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
+import QtWebSockets 1.0
 
 import "../js/Jeu.js" as JeuScript
 
@@ -73,6 +74,11 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: JeuScript.checkConnectionWebSocket(mainItem.idPartie);
+        onClicked: {
+            if (mainForm.playPage.wsClient.status == WebSocket.Open) {
+                var json = {"connexion": mainForm.playPage.wsClient.idPartie};
+                mainForm.playPage.wsClient.sendTextMessage(JSON.stringify(json));
+            } else JeuScript.checkConnectionWebSocket(mainItem.idPartie);
+        }
     }
 }

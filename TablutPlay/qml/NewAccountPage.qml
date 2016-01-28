@@ -12,7 +12,10 @@ Rectangle {
         id: previous
         anchors.left: parent.left
         anchors.top: parent.top
-        onClicked: mainForm.state = "Connection";
+        onClicked: {
+            mainForm.connectionPage.repaint();
+            mainForm.state = "Connection";
+        }
     }
 
     ColumnLayout {
@@ -74,5 +77,11 @@ Rectangle {
                 }
             }
         }
+    }
+
+    function repaint() {
+        accountEmail.text = "";
+        accountPassword.text = "";
+        accountConfirmPassword.text = "";
     }
 }

@@ -13,8 +13,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.top: parent.top
         onClicked: {
-            mainForm.state = "Game";
             mainForm.gameSelectionPage.repaint();
+            mainForm.state = "Game";
         }
     }
 

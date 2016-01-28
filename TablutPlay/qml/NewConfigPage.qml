@@ -11,8 +11,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.top: parent.top
         onClicked: {
+            mainForm.optionPage.repaint();
             mainForm.state = "Option";
-            mainForm.menuPage.repaint();
         }
     }
 
@@ -49,10 +49,14 @@ Rectangle {
                         messageDialog.text = qsTr("The file name you entered already exists. Please enter a new name and try again.");
                         messageDialog.icon = StandardIcon.Warning;
                         messageDialog.visible = true;
-                        fileName.text = "";
+                        repaint();
                     }
                 }
             }
         }
     }
+
+   function repaint() {
+       fileName.text = "";
+   }
 }

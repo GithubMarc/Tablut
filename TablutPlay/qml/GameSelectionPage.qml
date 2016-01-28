@@ -18,6 +18,7 @@ ColumnLayout {
         Layout.fillWidth: true
         isPreviousButtonVisible: true
         previousButton.onClicked: {
+            mainForm.menuPage.repaint();
             mainForm.state = "Menu";
         }
     }
@@ -36,6 +37,7 @@ ColumnLayout {
     }
 
     function repaint() {
+        banner.repaint();
        JeuScript.getHttpRequestServer(JeuScript.serverAddr, JeuScript.listGridPath, JeuScript.httpPort);
     }
 }
