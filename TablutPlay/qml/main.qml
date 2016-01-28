@@ -6,6 +6,8 @@ import "../js/Timer.js" as TimerScript
 import "../js/Jeu.js" as JeuScript
 
 ApplicationWindow {
+    property bool userConnected: false
+    property string userEmail: ""
     property string backgroundColor: FileIO.getColor("BACKGROUND_COLOR");
 
     id: applicationWindow
@@ -34,7 +36,7 @@ ApplicationWindow {
 
     Pages {
         id: mainForm
-        state: "Connection"
+        state: "Menu"
         anchors.fill: parent
     }
 

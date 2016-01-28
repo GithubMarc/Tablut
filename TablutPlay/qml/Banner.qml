@@ -9,6 +9,7 @@ Rectangle {
     color: FileIO.getColor("INSIDE_BUTTON_COLOR")
 
     property bool isPreviousButtonVisible: true
+    property bool isUserInformationVisible: userConnected;
     property string title: ""
     property alias previousButton: previousButton
 
@@ -53,6 +54,15 @@ Rectangle {
         anchors.leftMargin: 0
     }
 
+    UserInformation {
+        id: userInformation
+        anchors.top: parent.top
+        anchors.topMargin: (parent.height - mainRect.height - secondRect.height + gap) / 2
+        anchors.right: parent.right
+        anchors.rightMargin: applicationWindow.width / 50
+        visible: banner.isUserInformationVisible
+    }
+
     function repaint() {
         banner.color = FileIO.getColor("INSIDE_BUTTON_COLOR");
         title.color = FileIO.getColor("FONT_BUTTON_COLOR");
@@ -60,5 +70,6 @@ Rectangle {
         title.styleColor = FileIO.getColor("BORDER_BUTTON_COLOR");
         verticalSeparator.color = FileIO.getColor("BORDER_BUTTON_COLOR");
         horizontalSeparator.color = FileIO.getColor("BORDER_BUTTON_COLOR");
+        userInformation.repaint();
     }
 }

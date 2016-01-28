@@ -26,7 +26,7 @@ Rectangle {
             implicitHeight: 45
             font.pointSize: 18
             placeholderText: qsTr("Email")
-            validator: RegExpValidator { regExp:/\w+(.?\w+)*@\w+(.\w+){1,}/ }
+            //validator: RegExpValidator { regExp:/\w+(.?\w+)*@\w+(.\w+){1,}/ }
             onAccepted: console.log("regexp ok");
             Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
         }
@@ -58,13 +58,13 @@ Rectangle {
             Layout.alignment: Qt.AlignRight
 
             onClicked: {
-                if (accountEmail.acceptableInput && accountPassword.text == accountConfirmPassword.text) JeuScript.sendAccountCreation(accountEmail.text, accountPassword.text);
-                else if (!accountEmail.acceptableInput){
+                if (/*accountEmail.acceptableInput && */accountPassword.text == accountConfirmPassword.text) JeuScript.sendAccountCreation(accountEmail.text, accountPassword.text);
+                /*else if (!accountEmail.acceptableInput){
                     messageDialog.title = qsTr("An error occured");
                     messageDialog.text = qsTr("L'email n'est pas au bon format. Merci de réessayer avec une email valide.");
                     messageDialog.icon = StandardIcon.Warning;
                     messageDialog.visible = true;
-                } else if (accountPassword.text != accountConfirmPassword.text) {
+                } */else /*if (accountPassword.text != accountConfirmPassword.text) */{
                     messageDialog.title = qsTr("An error occured");
                     messageDialog.text = qsTr("Le mot de passe n'est pas le même.");
                     messageDialog.icon = StandardIcon.Warning;

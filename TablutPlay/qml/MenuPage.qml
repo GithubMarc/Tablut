@@ -33,8 +33,13 @@ ColumnLayout {
                 caption: qsTr("Online")
                 Layout.alignment: Qt.AlignCenter
                 onClicked: {
-                    mainForm.connectionPage.repaint();
-                    mainForm.state = "Connection";
+                    if (!userConnected) {
+                        mainForm.connectionPage.repaint();
+                        mainForm.state = "Connection";
+                    } else {
+                        mainForm.gameSelectionPage.repaint();
+                        mainForm.state = "Game";
+                    }
                 }
             }
 

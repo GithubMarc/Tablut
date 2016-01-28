@@ -18,6 +18,7 @@ var socketServerPath = "/tablutWebService/getWebSocketAddr"
 var listGridPath = "/tablutWebService/allMatch"
 var createGamePath = "/tablutWebService/newMatch"
 var createUserPath = "/tablutWebService/newUser"
+var deconnectionPath = "/tablutWebService/logout"
 
 function createPion(container, color, team) {
     var component = Qt.createComponent("../qml/Piece.qml");
@@ -362,12 +363,15 @@ function onMessageHTTP(jsonParse){
         switch(jsonParse["succes"])
         {
             case "connexion":
-                console.log(jsonParse["succes"]);
+                //console.log(jsonParse["succes"]);
                 mainForm.state = "Game";
+                setUserInformation(jsonParse["email"]);
                 getHttpRequestServer(serverAddr, listGridPath, httpPort);
                 break;
             case "deconnexion":
-                console.log(jsonParse["succes"]);
+                //console.log(jsonParse["succes"]);
+                userConnected = false;
+                mainForm.state = "Menu";
                 break;
             case "utilisateur_cree":
                 mainForm.state = "Connection";
@@ -376,7 +380,7 @@ function onMessageHTTP(jsonParse){
                 console.log(jsonParse["succes"]);
                 mainForm.playPage.wsClient.active = true;
                 mainForm.playPage.wsClient.url = "ws://" + jsonParse["addresse"] + ":" + jsonParse["wsport"];
-                mainForm.state = "base state";
+                //mainForm.state = "base state";
                 break;
             case "match_list":
                 GameSelectionScript.clearPage();
@@ -672,4 +676,9 @@ function sendAccountCreation(email, password) {
         "password": password
     }
     postHttpRequestServer(serverAddr, createUserPath, httpPort, json);
+}
+
+function setUserInformation(email) {
+    userEmail = email;
+    userConnected = true;
 }
