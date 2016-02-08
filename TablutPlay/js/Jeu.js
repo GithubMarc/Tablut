@@ -357,7 +357,7 @@ function getHttpRequestServer(addr, path, port){
     xmlHttp.send();
 }
 
-function onMessageHTTP(jsonParse){
+function onMessageHTTP(jsonParse) {
     //console.log(JSON.stringify(jsonParse));
     if("succes" in jsonParse)
     {
@@ -368,7 +368,7 @@ function onMessageHTTP(jsonParse){
                 mainForm.gameSelectionPage.repaint();
                 mainForm.state = "Game";
                 setUserInformation(jsonParse["email"]);
-                getHttpRequestServer(serverAddr, listGridPath, httpPort);
+                //getHttpRequestServer(serverAddr, listGridPath, httpPort);
                 break;
             case "deconnexion":
                 //console.log(jsonParse["succes"]);
@@ -516,8 +516,6 @@ function sendEndGameOption(option) {
 }
 
 function messageReceived(message) {
-    messageDialog.text = message;
-    messageDialog.visible = true;
     var messageParse = JSON.parse(message);
     var key = Object.keys(messageParse)[0];
     messageParse = messageParse[key];

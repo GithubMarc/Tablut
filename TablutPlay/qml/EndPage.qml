@@ -67,6 +67,7 @@ Rectangle {
             anchors.rightMargin: 0
 
             onClicked: JeuScript.sendEndGameOption("menu");
+            visible:false
         }
     }
 }
